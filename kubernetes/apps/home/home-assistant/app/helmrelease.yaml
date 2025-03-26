@@ -1,0 +1,88 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app home-assistant
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      home-assistant:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2025.3.4@sha256:f1d4348c42ca825969f5d48b50bb53aaebd501b0cad16cb56e7ac8e31387fbb8
+            env:
+              HOME_ASSISTANT_EXTERNAL_URL: https://hass.tslamars.com
+              HOME_ASSISTANT_PURGE_KEEP_DAYS: 30
+              HOME_ASSISTANT_TRUSTED_PROXIES: 10.244.0.0/16
+              HOME_ASSISTANT_UNIT_SYSTEM: us_customary
+              TZ: America/Chicago
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |
+          [{
+            "name": "multus-iot",
+            "namespace": "networking",
+            "ips": ["192.168.30.200/24"]
+          }]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+    persistence:
+      config:
+        existingClaim: *app
+      config-logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/logs
+      config-tts:
+        type: emptyDir
+        globalMounts:
+          - path: /config/tts
+      tmp:
+        type: emptyDir
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.tslamars.com"
+          - hass.tslamars.com
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: &port 8123
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
