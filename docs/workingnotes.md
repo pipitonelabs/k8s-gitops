@@ -6,6 +6,10 @@ kubectl patch pvc radarr -p '{"metadata":{"finalizers":[]}}' --type=merge
 kubectl patch pvc tautulli -p '{"metadata":{"finalizers":[]}}' --type=merge
 ```
 
+- Scale replicas
+```
+kubectl scale deployment plex -n media --replicas=1
+```
 
 1. Verify the Git Repository is up-to-date and in a ready state.
 
