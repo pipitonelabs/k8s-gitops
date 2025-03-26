@@ -5,6 +5,8 @@ metadata:
   name: &app radarr
   namespace: &namespace media
 spec:
+  components:
+    - ../../../../components/gatus/guarded
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
