@@ -8,7 +8,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-#  components:
+  components:
+    - ../../../../components/gatus/internal
 #    - ../../../../components/gatus
 #    - ../../../../components/volsync
   dependsOn:

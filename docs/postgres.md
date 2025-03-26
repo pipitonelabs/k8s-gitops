@@ -4,6 +4,8 @@ kubectl exec -it <postgres-pod-name> -n <namespace> -- bash
 psql -U <username> -d <database-name>
 select * from endpoints;
 delete from endpoints where name = 'whatever';
+or
+delete from endpoints where endpoint_id = '5';
 ```
 
 - List all tables
