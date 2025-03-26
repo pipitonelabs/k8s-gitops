@@ -113,51 +113,18 @@ graph TD;
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif" alt="🌎" width="20" height="20"> DNS
 
-In my cluster there are two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) running. One for syncing private DNS records to my `UDM Pro Max` using [ExternalDNS webhook provider for UniFi](https://github.com/kashalls/external-dns-unifi-webhook), while another instance syncs public DNS to `Cloudflare`. This setup is managed by creating routes with two specific gatways: `internal` for private DNS and `external` for public DNS. The `external-dns` instances then syncs the DNS records to their respective platforms accordingly.
+In my cluster there are two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) running. One for syncing private DNS records to my `UDM SE` using [ExternalDNS webhook provider for UniFi](https://github.com/kashalls/external-dns-unifi-webhook), while another instance syncs public DNS to `Cloudflare`. This setup is managed by creating routes with two specific gatways: `internal` for private DNS and `external` for public DNS. The `external-dns` instances then syncs the DNS records to their respective platforms accordingly.
 
 ---
 
-## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.gif" alt="⚙" width="20" height="20"> Hardware
-
-<details>
-  <summary>Click to see my rack</summary>
-
-  <img src="https://github.com/user-attachments/assets/43bd0ca8-a1a8-49d5-9b9a-04fbdcecdd3f" align="center" alt="rack"/>
-</details>
-
-| Device                    | Count | OS Disk Size | Data Disk Size          | Ram  | Operating System | Purpose                 |
-|---------------------------|-------|--------------|-------------------------|------|------------------|-------------------------|
-| MS-01 (i9-13900H)         | 3     | 1.92TB M.2   | 3.84TB U.2 + 1.92TB M.2 | 96GB | Talos            | Kubernetes              |
-| Synology NAS RS1221+      | 1     | -            | 8x22TB HDD              | 32GB | DSM 7            | NFS                     |
-| PiKVM (RasPi 4)           | 1     | 64GB (SD)    | -                       | 4GB  | PiKVM            | KVM                     |
-| TESmart 8 Port KVM Switch | 1     | -            | -                       | -    | -                | Network KVM (for PiKVM) |
-| UniFi UDM Pro Max         | 1     | -            | 2x16TB HDD              | -    | UniFi OS         | Router & NVR            |
-| UniFi USW Pro Aggregation | 1     | -            | -                       | -    | UniFi OS         | 10G/25Gb Core Switch    |
-| UniFi USW Pro Max 24 PoE  | 1     | -            | -                       | -    | UniFi OS         | 2.5Gb PoE Switch        |
-| UniFi USP PDU Pro         | 1     | -            | -                       | -    | UniFi OS         | PDU                     |
-| APC SMT15000RM2UNC        | 1     | -            | -                       | -    | -                | UPS                     |
----
-
-My MS-01 workstations are configured with the following hardware:
-
-- [Crucial 96GB Kit (48GBx2) DDR5-5600 SODIMM](https://www.crucial.com/memory/ddr5/ct2k48g56c46s5)
-- [Samsung 1.92TB M.2 22x110mm PM9A3 NVMe PCIe 4.0](https://store.supermicro.com/us_en/1-92tb-nvme-pcie4-hds-smn0-mz1l21t9hclsa7.html)
-- [Samsung 3.84TB U.2 PM9A3 NVMe PCIe 4.0](https://store.supermicro.com/us_en/3-84tb-nvme-pcie4-hds-sun0-mzql23t8hclsa7.html)
-- [Google Coral M.2 Accelerator A+E Key](https://coral.ai/products/m2-accelerator-ae)
-
-## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.gif" alt="🌟" width="20" height="20"> Stargazers
-
-<div align="center">
-
-<a href="https://star-history.com/#tslamars/k8s-gitops&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=tslamars/k8s-gitops&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=tslamars/k8s-gitops&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=tslamars/k8s-gitops&type=Date" />
-  </picture>
-</a>
-
-</div>
+| Device                    | Count | OS Disk Size | Data Disk Size          | Ram   | Operating System | Purpose                 |
+|---------------------------|-------|--------------|-------------------------|------ |------------------|-------------------------|
+| MS-01 (i9-12600H)         | 3     | 1 TB M.2     | 1 TB M.2                | 64GB  | Talos            | Kubernetes              |
+| Mars                      | 1     | -            | Random drive sizes      | 128GB | UnRAID OS        | NFS                     |
+| UniFi UNAS Pro            | 1     | -            | 7x16TB HDD              | 8GB   | UniFi OS         | NFS                     |
+| UniFi UDM SE              | 1     | -            | 1x3TB HDD               | -     | UniFi OS         | Router & NVR            |
+| UniFi USW Pro Max 24 PoE  | 1     | -            | -                       | -     | UniFi OS         | 2.5Gb PoE Switch        |
+| UniFi USW Pro Max 16 PoE  | 1     | -            | -                       | -     | UniFi OS         | 2.5Gb PoE Switch        |
 
 ---
 
