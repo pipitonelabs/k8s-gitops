@@ -93,8 +93,8 @@ spec:
           - path: /config/log
       media:
         type: nfs
-        server: nas.internal
-        path: /volume1/media
+        server: mars.internal
+        path: /mnt/user/data/media
       scripts:
         type: configMap
         name: bazarr-scripts

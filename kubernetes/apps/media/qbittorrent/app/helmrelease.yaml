@@ -69,8 +69,8 @@ spec:
         existingClaim: *app
       media:
         type: nfs
-        server: nas.internal
-        path: /volume1/media
+        server: mars.internal
+        path: /mnt/user/data/media
         globalMounts:
           - path: /media/downloads/torrents
             subPath: downloads/torrents

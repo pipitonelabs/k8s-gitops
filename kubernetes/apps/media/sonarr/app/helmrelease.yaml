@@ -84,8 +84,8 @@ spec:
           - path: /config/logs
       media:
         type: nfs
-        server: nas.internal
-        path: /volume1/media
+        server: mars.internal
+        path: /mnt/user/data/media
       tmp:
         type: emptyDir
     route:
