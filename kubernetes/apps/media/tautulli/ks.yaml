@@ -14,8 +14,6 @@ spec:
   dependsOn:
     - name: rook-ceph-cluster
       namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
   interval: 1h
   path: ./kubernetes/apps/media/tautulli/app
   postBuild:
@@ -30,4 +28,4 @@ spec:
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: true
+  wait: false
