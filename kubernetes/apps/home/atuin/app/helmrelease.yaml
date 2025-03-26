@@ -16,7 +16,8 @@ spec:
     cleanupOnFail: true
     remediation:
       strategy: rollback
-      retries: 3
+      #retries: 3
+      retries: -1
   values:
     controllers:
       atuin:
