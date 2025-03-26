@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: flux-system
 components:
   - ../../components/common
-  - ../../components/gatus/external
 resources:
   - ./flux-instance/ks.yaml
   - ./flux-operator/ks.yaml
