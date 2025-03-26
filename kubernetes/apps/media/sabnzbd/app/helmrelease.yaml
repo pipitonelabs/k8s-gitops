@@ -37,7 +37,7 @@ spec:
                 sabnzbd.media.svc.cluster.local,
                 {{ .Release.Name }}.tslamars.com,
                 sab.tslamars.com
-              TZ: America/Chicago
+              TZ: America/New_York
             envFrom:
               - secretRef:
                   name: sabnzbd-secret

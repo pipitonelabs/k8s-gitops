@@ -27,7 +27,7 @@ spec:
               tag: 2.15.1@sha256:0925254e24ca12769d437527a9463f0738d98908bc41f1bd77072aa8f0307a4c
             env:
               TAUTULLI__PORT: &port 8181
-              TZ: America/Chicago
+              TZ: America/New_York
             probes:
               liveness: &probes
                 enabled: true

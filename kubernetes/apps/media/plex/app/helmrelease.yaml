@@ -28,7 +28,7 @@ spec:
             env:
               PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.tslamars.com:443
               PLEX_NO_AUTH_NETWORKS: 192.168.1.0/24
-              TZ: America/Chicago
+              TZ: America/New_York
             probes:
               liveness: &probes
                 enabled: true

@@ -30,7 +30,7 @@ spec:
             env:
               LOG_LEVEL: info
               PORT: &port 5055
-              TZ: America/Chicago
+              TZ: America/New_York
             envFrom:
               - secretRef:
                   name: jellyseerr-secret

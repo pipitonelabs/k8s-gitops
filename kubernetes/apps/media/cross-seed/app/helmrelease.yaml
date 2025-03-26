@@ -32,7 +32,7 @@ spec:
               - -v
             env:
               CROSS_SEED_PORT: &port 2468
-              TZ: America/Chicago
+              TZ: America/New_York
             envFrom:
               - secretRef:
                   name: cross-seed-secret

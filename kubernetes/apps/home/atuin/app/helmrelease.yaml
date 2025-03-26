@@ -44,7 +44,7 @@ spec:
               ATUIN_METRICS__ENABLE: true
               ATUIN_METRICS__HOST: 0.0.0.0
               ATUIN_METRICS__PORT: &metricsPort 8081
-              TZ: America/Chicago
+              TZ: America/New_York
             envFrom: *envFrom
             args:
               - server
