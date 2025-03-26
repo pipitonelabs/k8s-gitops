@@ -23,7 +23,7 @@ storage:
 ui:
   title: Status | Gatus
   header: Status
-  logo: ../../../../../docs/assets/mars.png
+  logo: https://raw.githubusercontent.com/tslamars/k8s-gitops/main/docs/assets/mars.png
   link: https://github.com/tslamars
   buttons:
     - name: Github
