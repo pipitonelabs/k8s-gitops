@@ -76,6 +76,7 @@ spec:
           isDefault: true
           reclaimPolicy: Delete
           allowVolumeExpansion: true
+          fsGroupPolicy: "File"  # Added to support fsGroup for Plex
           parameters:
             imageFormat: "2"
             imageFeatures: layering,exclusive-lock,object-map,fast-diff,deep-flatten

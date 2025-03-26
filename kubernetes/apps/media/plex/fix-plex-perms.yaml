@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fix-plex-perms
+  namespace: media
+spec:
+  containers:
+  - name: fix
+    image: busybox:latest
+    command: ["sh", "-c", "chown -R 568:568 /config && chmod -R 775 /config && sleep 3600"]
+    securityContext:
+      runAsUser: 0
+    volumeMounts:
+    - name: config
+      mountPath: /config
+  volumes:
+  - name: config
+    persistentVolumeClaim:
+      claimName: plex
