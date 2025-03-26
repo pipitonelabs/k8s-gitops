@@ -1,6 +1,6 @@
----
 endpoints:
   - name: "${APP}"
+    group: external
     url: "https://${GATUS_SUBDOMAIN:=${APP}}.tslamars.com${GATUS_PATH:=/}"
     interval: 1m
     client:
