@@ -5,11 +5,11 @@ metadata:
   name: &app radarr
   namespace: &namespace media
 spec:
-  components:
-    - ../../../../components/gatus/guarded
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/gatus/guarded
   dependsOn:
     - name: cloudnative-pg-cluster
       namespace: databases
