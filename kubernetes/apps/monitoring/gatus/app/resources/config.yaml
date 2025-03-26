@@ -6,6 +6,7 @@ connectivity:
 
 endpoints:
   - name: flux-webhook
+    group: external
     url: https://flux-webhook.tslamars.com
     interval: 1m
     client:
