@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - ./cluster.yaml
   - ./prometheusrule.yaml
-  - ./scheduledbackup.yaml
+#  - ./scheduledbackup.yaml
