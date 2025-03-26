@@ -11,7 +11,7 @@ spec:
     namespace: flux-system
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
@@ -78,14 +78,24 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      config-logs:
-        type: emptyDir
+      config-cache:
+        existingClaim: radarr-cache
         globalMounts:
-          - path: /config/logs
+          - path: /config/MediaCover
+      scripts:
+        type: configMap
+        name: radarr-configmap
+        defaultMode: 0775
+        globalMounts:
+          - path: /scripts/pushover-notifier.sh
+            subPath: pushover-notifier.sh
+            readOnly: true
       media:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        server: expanse.internal
+        path: /mnt/eros/Media
+        globalMounts:
+          - path: /media
       tmp:
         type: emptyDir
     route:
