@@ -92,25 +92,9 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/.venv
-      config-file:
+      http-config:
         type: configMap
-        name: home-assistant-config
+        name: home-assistant-configmap
         globalMounts:
-          - path: /config/configuration.yaml
+          - path: /tmp/http-config
             subPath: configuration.yaml
-    # Define the ConfigMap with configuration.yaml content
-    additionalObjects:
-      - apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: home-assistant-config
-        data:
-          configuration.yaml: |
-            http:
-              use_x_forwarded_for: true
-              trusted_proxies:
-                - !env_var HASS_HTTP_TRUSTED_PROXY_1
-                - !env_var HASS_HTTP_TRUSTED_PROXY_2
-                - !env_var HOME_ASSISTANT_EXTERNAL_URL
-                - !env_var HOME_ASSISTANT_PURGE_KEEP_DAYS
-                - !env_var HOME_ASSISTANT_UNIT_SYSTEM
