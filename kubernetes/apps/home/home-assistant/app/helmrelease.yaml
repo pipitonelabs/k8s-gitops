@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -11,52 +12,74 @@ spec:
     namespace: flux-system
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
   values:
     controllers:
       home-assistant:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/home-assistant
               tag: 2025.3.4@sha256:f1d4348c42ca825969f5d48b50bb53aaebd501b0cad16cb56e7ac8e31387fbb8
             env:
+              TZ: America/New_York
               HOME_ASSISTANT_EXTERNAL_URL: https://hass.tslamars.com
               HOME_ASSISTANT_PURGE_KEEP_DAYS: 30
               HOME_ASSISTANT_TRUSTED_PROXIES: 10.244.0.0/16
               HOME_ASSISTANT_UNIT_SYSTEM: us_customary
-              TZ: America/New_York
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 1Gi
+            envFrom:
+              - secretRef:
+                  name: home-assistant-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 2Gi
     defaultPodOptions:
-      annotations:
-        k8s.v1.cni.cncf.io/networks: |
-          [{
-            "name": "multus-iot",
-            "namespace": "networking",
-            "ips": ["192.168.30.200/24"]
-          }]
       securityContext:
         runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: home-assistant
+        ports:
+          http:
+            port: &port 8123
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.tslamars.com"
+          - hass.tslamars.com
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *port
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: home-assistant
+        globalMounts:
+          - path: /config
+      config-cache:
+        existingClaim: home-assistant-cache
+        globalMounts:
+          - path: /config/.venv
       config-logs:
         type: emptyDir
         globalMounts:
@@ -67,22 +90,5 @@ spec:
           - path: /config/tts
       tmp:
         type: emptyDir
-    route:
-      app:
-        hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - hass.tslamars.com
-        parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - name: *app
-                port: &port 8123
-    service:
-      app:
-        controller: *app
-        ports:
-          http:
-            port: *port
+        globalMounts:
+          - path: /tmp
