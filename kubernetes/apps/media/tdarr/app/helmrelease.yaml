@@ -73,7 +73,7 @@ spec:
                 memory: 1Gi
               limits:
                 memory: 8Gi
-                gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 3
     service:
       app:
         controller: *app
