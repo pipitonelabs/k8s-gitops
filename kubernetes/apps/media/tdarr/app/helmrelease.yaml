@@ -115,6 +115,6 @@ spec:
         enabled: true
         type: nfs
         server: mars.internal
-        path: /mnt/sharecache/temp/tdarr
+        path: /mnt/sharecache/tdarr
         globalMounts:
           - path: /temp
