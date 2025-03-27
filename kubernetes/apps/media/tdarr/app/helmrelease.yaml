@@ -82,7 +82,7 @@ spec:
       app:
         controller: *app
         type: ExternalName
-        externalName: mars.internal
+        externalName: 10.69.70.30
         ports:
           http:
             port: &port 8265
