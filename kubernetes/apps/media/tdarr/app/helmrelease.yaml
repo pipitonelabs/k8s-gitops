@@ -9,65 +9,77 @@ spec:
   chartRef:
     kind: OCIRepository
     name: app-template
-    namespace: flux-system
   install:
     remediation:
-      retries: -1
+      retries: 3
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
+  dependsOn:
+    - name: intel-device-plugin-gpu
+      namespace: kube-system
   values:
+    defaultPodOptions:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: *app
+      securityContext:
+      # s6-overlay-suexec: warning: unable to gain root privileges (is the suid bit set?)
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: false
+        supplementalGroups:
+          - 44 # video
+          - 109 # render
     controllers:
       tdarr:
-        annotations:
-          reloader.stakater.com/auto: "true"
+        labels:
+          nfsMount: "true"
+        replicas: 3
         containers:
-          app:
+          node:
             image:
-              repository: ghcr.io/haveagitgat/tdarr
-              tag: 2.23.01  # Latest stable; update as needed
+              repository: ghcr.io/haveagitgat/tdarr_node
+              tag: 2.36.01
+              pullPolicy: IfNotPresent
             env:
-              TZ: America/New_York
-              serverPort: &port 8265
-              internalNode: "true"
-              nodeName: "InternalNode"
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v2/ping
-                    port: *port
-                  initialDelaySeconds: 10
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
+              - name: TZ
+                value: America/New_York
+              - name: serverPort
+                value: "8265"  # Server listens on 8265
+              - name: internalNode
+                value: "true"  # Enables the built-in node
+              - name: nodeName
+                value: "InternalNode"  # Name for the internal node
+              - name: PUID
+                value: "1000"
+              - name: PGID
+                value: "100"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 500m
-                memory: 2Gi
+                cpu: 500m  # Higher baseline for server + node
+                memory: 1Gi
               limits:
                 memory: 8Gi
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
+                gpu.intel.com/i915: 1
     service:
       app:
         controller: *app
+        type: ClusterIP
         ports:
           http:
-            port: *port
+            port: &port 8265
     route:
       app:
         hostnames: ["{{ .Release.Name }}.tslamars.com"]
@@ -81,18 +93,27 @@ spec:
                 port: *port
     persistence:
       config:
-        existingClaim: tdarr-config  # Created by VolSync
-      server:
-        existingClaim: tdarr-server  # Created by VolSync
-      logs:
-        existingClaim: tdarr-logs    # Created by VolSync
-      transcode-cache:
-        existingClaim: tdarr-cache   # Manual PVC from pvc.yaml
-        globalMounts:
-          - path: /temp
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          tdarr:
+            node:
+              - path: /app/configs
+                subPath: config
       media:
+        enabled: true
+        type: custom
+        volumeSpec:
+          nfs:
+            server: mars.internal
+            path: &mediaPath /mnt/user/data/media
+        globalMounts:
+          - path: *mediaPath
+            readOnly: false
+      cache:
+        enabled: true
         type: nfs
         server: mars.internal
-        path: /mnt/user/data/media
+        path: /mnt/sharecache/temp/tdarr
         globalMounts:
-          - path: /media
+          - path: /temp
