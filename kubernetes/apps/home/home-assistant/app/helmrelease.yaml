@@ -17,6 +17,8 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     controllers:
       home-assistant:
@@ -74,10 +76,10 @@ spec:
         rules:
           - backendRefs:
               - name: *app
-                port: &port 8123
+                port: *port
     service:
       app:
         controller: *app
         ports:
           http:
-            port: *port
+            port: &port 8123
