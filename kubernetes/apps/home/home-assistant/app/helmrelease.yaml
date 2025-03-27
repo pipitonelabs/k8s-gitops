@@ -92,9 +92,9 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/.venv
-      http-config:
+      config-file:
         type: configMap
         name: home-assistant-configmap
         globalMounts:
-          - path: /tmp/http-config
+          - path: /config/configuration.yaml
             subPath: configuration.yaml
