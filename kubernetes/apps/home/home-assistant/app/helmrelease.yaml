@@ -32,6 +32,7 @@ spec:
               HASS_HTTP_TRUSTED_PROXY_1: 192.168.10.0/24
               HASS_HTTP_TRUSTED_PROXY_2: 192.168.20.0/24
               HASS_HTTP_TRUSTED_PROXY_3: 10.244.0.0/16
+              HOMEASSISTANT__HTTP__USE_X_FORWARDED_FOR: "true"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
