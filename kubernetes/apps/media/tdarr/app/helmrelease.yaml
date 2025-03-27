@@ -52,7 +52,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               - name: TZ
-                value: Europe/Warsaw
+                value: America/New_York
               - name: nodeID
                 valueFrom:
                   fieldRef:
@@ -60,7 +60,7 @@ spec:
               - name: serverIP
                 value: mars.internal
               - name: serverPort
-                value: 8265
+                value: 8266
               - name: PUID
                 value: 1000
               - name: PGID
@@ -89,7 +89,7 @@ spec:
             targetPort: *port
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.vzkn.eu"]
+        hostnames: ["{{ .Release.Name }}.tslamars.com"]
         parentRefs:
           - name: internal
             namespace: kube-system
