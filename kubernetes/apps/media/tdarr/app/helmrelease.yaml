@@ -57,12 +57,17 @@ spec:
                 valueFrom:
                   fieldRef:
                     fieldPath: spec.nodeName
+              - name: nodeID
+                value: kube-node
               - name: serverIP
-                value: "10.69.70.30"
+                value: mars.internal.
               - name: serverPort
-                value: "8266"  # Confirm this matches your server
-              - name: internalNode
-                value: "false"  # Explicitly disable internal node
+                value: 8266
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                cpu: 2
               - name: PUID
                 value: "1000"
               - name: PGID
@@ -80,12 +85,7 @@ spec:
     service:
       app:
         controller: *app
-        type: ExternalName
-        externalName: mars.internal
-        ports:
-          http:
-            port: &port 8266  # Align with serverPort
-            targetPort: *port
+        enabled: false
     route:
       app:
         hostnames: ["{{ .Release.Name }}.tslamars.com"]
