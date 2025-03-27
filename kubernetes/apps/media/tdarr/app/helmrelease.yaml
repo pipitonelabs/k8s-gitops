@@ -4,6 +4,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app tdarr
+  namespace: media  # Added based on your kubectl exec
 spec:
   interval: 1h
   chartRef:
@@ -30,14 +31,13 @@ spec:
             matchLabels:
               app.kubernetes.io/name: *app
       securityContext:
-      # s6-overlay-suexec: warning: unable to gain root privileges (is the suid bit set?)
         runAsUser: 0
         runAsGroup: 0
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         runAsNonRoot: false
         supplementalGroups:
-          - 44 # video
+          - 44  # video
           - 109 # render
     controllers:
       tdarr:
@@ -52,25 +52,24 @@ spec:
               pullPolicy: IfNotPresent
             env:
               - name: TZ
-                value: America/New_York
+                value: "America/New_York"
               - name: nodeID
                 valueFrom:
                   fieldRef:
                     fieldPath: spec.nodeName
               - name: serverIP
-                value: mars.internal
+                value: "mars.internal"
               - name: serverPort
-                value: 8266
+                value: "8266"  # Confirm this matches your server
+              - name: internalNode
+                value: "false"  # Explicitly disable internal node
               - name: PUID
-                value: 1000
+                value: "1000"
               - name: PGID
-                value: 100
+                value: "100"
             securityContext:
               allowPrivilegeEscalation: false
-              # s6-rmrf: fatal: unable to remove /run/s6: Read-only file system
               readOnlyRootFilesystem: false
-              # s6-applyuidgid: fatal: unable to set supplementary group list: Operation not permitted
-              #capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 100m
@@ -82,10 +81,10 @@ spec:
       app:
         controller: *app
         type: ExternalName
-        externalName: 10.69.70.30
+        externalName: mars.internal
         ports:
           http:
-            port: &port 8265
+            port: &port 8266  # Align with serverPort
             targetPort: *port
     route:
       app:
