@@ -14,7 +14,7 @@ spec:
     - ../../../../components/volsync
   dependsOn:
     - name: emqx-cluster
-      namespace: default
+      namespace: databases
     - name: rook-ceph-cluster
       namespace: rook-ceph
   interval: 1h
