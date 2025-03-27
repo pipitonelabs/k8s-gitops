@@ -9,7 +9,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: app-template
-    namespace: flux-system
   install:
     remediation:
       retries: 3
@@ -53,37 +52,44 @@ spec:
               pullPolicy: IfNotPresent
             env:
               - name: TZ
-                value: America/New_York
+                value: Europe/Warsaw
+              - name: nodeID
+                valueFrom:
+                  fieldRef:
+                    fieldPath: spec.nodeName
+              - name: serverIP
+                value: mars.internal
               - name: serverPort
-                value: "8265"  # Server listens on 8265
-              - name: internalNode
-                value: "true"  # Enables the built-in node
-              - name: nodeName
-                value: "InternalNode"  # Name for the internal node
+                value: 8265
               - name: PUID
-                value: "1000"
+                value: 1000
               - name: PGID
-                value: "100"
+                value: 100
             securityContext:
               allowPrivilegeEscalation: false
+              # s6-rmrf: fatal: unable to remove /run/s6: Read-only file system
               readOnlyRootFilesystem: false
+              # s6-applyuidgid: fatal: unable to set supplementary group list: Operation not permitted
+              #capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 500m  # Higher baseline for server + node
-                memory: 1Gi
+                cpu: 100m
+                memory: 512Mi
               limits:
                 memory: 8Gi
                 gpu.intel.com/i915: 1
     service:
       app:
         controller: *app
-        type: ClusterIP
+        type: ExternalName
+        externalName: mars.internal
         ports:
           http:
             port: &port 8265
+            targetPort: *port
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
+        hostnames: ["{{ .Release.Name }}.vzkn.eu"]
         parentRefs:
           - name: internal
             namespace: kube-system
