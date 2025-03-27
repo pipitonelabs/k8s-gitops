@@ -32,10 +32,8 @@ spec:
               HOME_ASSISTANT_EXTERNAL_URL: https://hass.tslamars.com
               HOME_ASSISTANT_PURGE_KEEP_DAYS: 30
               HOME_ASSISTANT_UNIT_SYSTEM: us_customary
-              HASS_HTTP_TRUSTED_PROXY_1: 192.168.10.0/24
-              HASS_HTTP_TRUSTED_PROXY_2: 192.168.20.0/24
-              HASS_HTTP_TRUSTED_PROXY_3: 10.0.0.0/8
-              HASS_HTTP_TRUSTED_PROXY_4: 10.244.0.0/16
+              HASS_HTTP_TRUSTED_PROXY_1: 10.0.0.0/8
+              HASS_HTTP_TRUSTED_PROXY_2: 10.244.0.0/16
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -94,3 +92,25 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/.venv
+      config-file:
+        type: configMap
+        name: home-assistant-config
+        globalMounts:
+          - path: /config/configuration.yaml
+            subPath: configuration.yaml
+    # Define the ConfigMap with configuration.yaml content
+    additionalObjects:
+      - apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: home-assistant-config
+        data:
+          configuration.yaml: |
+            http:
+              use_x_forwarded_for: true
+              trusted_proxies:
+                - !env_var HASS_HTTP_TRUSTED_PROXY_1
+                - !env_var HASS_HTTP_TRUSTED_PROXY_2
+                - !env_var HOME_ASSISTANT_EXTERNAL_URL
+                - !env_var HOME_ASSISTANT_PURGE_KEEP_DAYS
+                - !env_var HOME_ASSISTANT_UNIT_SYSTEM
