@@ -1,5 +1,4 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -12,49 +11,55 @@ spec:
     namespace: flux-system
   install:
     remediation:
-      retries: -1
+      retries: 3
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   values:
     controllers:
       home-assistant:
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/home-assistant
               tag: 2025.3.4@sha256:f1d4348c42ca825969f5d48b50bb53aaebd501b0cad16cb56e7ac8e31387fbb8
             env:
-              TZ: America/New_York
               HOME_ASSISTANT_EXTERNAL_URL: https://hass.tslamars.com
               HOME_ASSISTANT_PURGE_KEEP_DAYS: 30
               HOME_ASSISTANT_TRUSTED_PROXIES: 10.244.0.0/16
               HOME_ASSISTANT_UNIT_SYSTEM: us_customary
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              TZ: America/New_York
             resources:
               requests:
                 cpu: 10m
               limits:
-                memory: 2Gi
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
-    service:
-      app:
-        controller: home-assistant
-        ports:
-          http:
-            port: &port 8123
+    persistence:
+      config:
+        existingClaim: *app
+      config-logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/logs
+      config-tts:
+        type: emptyDir
+        globalMounts:
+          - path: /config/tts
+      tmp:
+        type: emptyDir
     route:
       app:
         hostnames:
@@ -67,25 +72,10 @@ spec:
         rules:
           - backendRefs:
               - name: *app
-                port: *port
-    persistence:
-      config:
-        existingClaim: home-assistant
-        globalMounts:
-          - path: /config
-      config-cache:
-        existingClaim: home-assistant-cache
-        globalMounts:
-          - path: /config/.venv
-      config-logs:
-        type: emptyDir
-        globalMounts:
-          - path: /config/logs
-      config-tts:
-        type: emptyDir
-        globalMounts:
-          - path: /config/tts
-      tmp:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
+                port: &port 8123
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
