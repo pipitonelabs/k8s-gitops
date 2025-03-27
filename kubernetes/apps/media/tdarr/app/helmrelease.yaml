@@ -58,7 +58,7 @@ spec:
                   fieldRef:
                     fieldPath: spec.nodeName
               - name: serverIP
-                value: "mars.internal"
+                value: "10.69.70.30"
               - name: serverPort
                 value: "8266"  # Confirm this matches your server
               - name: internalNode
