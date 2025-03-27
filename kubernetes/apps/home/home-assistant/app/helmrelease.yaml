@@ -61,7 +61,7 @@ spec:
           - "{{ .Release.Name }}.tslamars.com"
           - hass.tslamars.com
         parentRefs:
-          - name: external
+          - name: internal
             namespace: kube-system
             sectionName: https
         rules:
