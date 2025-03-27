@@ -30,7 +30,7 @@ spec:
             env:
               #HOME_ASSISTANT_EXTERNAL_URL: https://hass.tslamars.com
               #HOME_ASSISTANT_PURGE_KEEP_DAYS: 30
-              #HOME_ASSISTANT_TRUSTED_PROXIES: 10.244.0.0/16
+              HOME_ASSISTANT_TRUSTED_PROXIES: 10.244.0.0/16
               #HASS_HTTP_TRUSTED_PROXY_1: 10.0.0.0/8
               #HASS_HTTP_TRUSTED_PROXY_2: 10.244.0.0/16
               #HOME_ASSISTANT_UNIT_SYSTEM: us_customary
