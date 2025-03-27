@@ -10,6 +10,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/volsync
+    - ../../../../components/gatus/guarded
   dependsOn:
     - name: emqx-cluster
       namespace: databases
