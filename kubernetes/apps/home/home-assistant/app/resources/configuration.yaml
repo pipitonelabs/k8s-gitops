@@ -15,6 +15,4 @@ http:
   trusted_proxies:
     - !env_var HASS_HTTP_TRUSTED_PROXY_1
     - !env_var HASS_HTTP_TRUSTED_PROXY_2
-    - !env_var HOME_ASSISTANT_EXTERNAL_URL
     - !env_var HOME_ASSISTANT_PURGE_KEEP_DAYS
-    - !env_var HOME_ASSISTANT_UNIT_SYSTEM
