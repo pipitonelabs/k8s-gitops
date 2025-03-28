@@ -19,8 +19,8 @@ _... managed with Flux, Renovate, and GitHub Actions_ <img src="https://fonts.gs
 
 <div align="center">
 
-[![Home-Internet](https://img.shields.io/uptimerobot/status/m793494864-dfc695db066960233ac70f45?color=brightgreeen&label=Home%20Internet&style=for-the-badge&logo=ubiquiti&logoColor=white)](https://status.tslamars.com)&nbsp;&nbsp;
-[![Status-Page](https://img.shields.io/uptimerobot/status/m793599155-ba1b18e51c9f8653acd0f5c1?color=brightgreeen&label=Status%20Page&style=for-the-badge&logo=statuspage&logoColor=white)](https://status.tslamars.com)&nbsp;&nbsp;
+[![Home-Internet](https://img.shields.io/uptimerobot/status/m798867477-4ff14f4880a35108ffb8d1d0?color=brightgreeen&label=Home%20Internet&style=for-the-badge&logo=ubiquiti&logoColor=white)](https://status.tslamars.com)&nbsp;&nbsp;
+[![Status-Page](https://img.shields.io/uptimerobot/status/m798867231-5ac0792736cd0d4802559b47?color=brightgreeen&label=Status%20Page&style=for-the-badge&logo=statuspage&logoColor=white)](https://status.tslamars.com)&nbsp;&nbsp;
 [![Alertmanager](https://img.shields.io/uptimerobot/status/m793494864-dfc695db066960233ac70f45?color=brightgreeen&label=Alertmanager&style=for-the-badge&logo=prometheus&logoColor=white)](https://status.tslamars.com)
 
 </div>
