@@ -34,14 +34,14 @@ spec:
     serviceMonitor:
       enabled: true
       params:
-        - name: nas
-          auth: [public_v2]
+        - name: mars
+          auth: [tslamars]
           module: [synology]
           target: mars.internal
-        - name: ups
-          auth: [public_v2]
-          module: [apcups]
-          target: ups.internal
+        #- name: ups
+        #  auth: [public_v2]
+        #  module: [apcups]
+        #  target: ups.internal
       relabelings:
         - sourceLabels: [__param_target]
           targetLabel: instance
