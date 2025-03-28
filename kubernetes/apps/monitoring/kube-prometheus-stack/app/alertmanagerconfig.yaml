@@ -37,30 +37,30 @@ spec:
         - urlSecret:
             name: &secret alertmanager-secret
             key: ALERTMANAGER_HEARTBEAT_URL
-    - name: pushover
-      pushoverConfigs:
-        - html: true
-          message: |-
-            {{- range .Alerts }}
-              {{- if ne .Annotations.description "" }}
-                {{ .Annotations.description }}
-              {{- else if ne .Annotations.summary "" }}
-                {{ .Annotations.summary }}
-              {{- else if ne .Annotations.message "" }}
-                {{ .Annotations.message }}
-              {{- else }}
-                Alert description not available
-              {{- end }}
-              {{- if gt (len .Labels.SortedPairs) 0 }}
-                <small>
-                {{- range .Labels.SortedPairs }}
-                  <b>{{ .Name }}:</b> {{ .Value }}
-                {{- end }}
-                </small>
-              {{- end }}
-            {{- end }}
-          priority: |-
-            {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
+    #- name: pushover
+    #  pushoverConfigs:
+    #    - html: true
+    #      message: |-
+    #        {{- range .Alerts }}
+    #          {{- if ne .Annotations.description "" }}
+    #            {{ .Annotations.description }}
+    #          {{- else if ne .Annotations.summary "" }}
+    #            {{ .Annotations.summary }}
+    #          {{- else if ne .Annotations.message "" }}
+    #            {{ .Annotations.message }}
+    #          {{- else }}
+    #            Alert description not available
+    #          {{- end }}
+    #          {{- if gt (len .Labels.SortedPairs) 0 }}
+    #            <small>
+    #            {{- range .Labels.SortedPairs }}
+    #              <b>{{ .Name }}:</b> {{ .Value }}
+    #            {{- end }}
+    #            </small>
+    #          {{- end }}
+    #        {{- end }}
+    #      priority: |-
+    #        {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
           sendResolved: true
           sound: gamelan
           title: >-
