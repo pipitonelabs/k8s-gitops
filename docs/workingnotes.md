@@ -1,4 +1,4 @@
-## Troubleshooting
+## Troubleshooting and command reference
 
 - Patch a stuck PVC
 ```
@@ -9,6 +9,11 @@ kubectl patch pvc tautulli -p '{"metadata":{"finalizers":[]}}' --type=merge
 - Scale replicas
 ```
 kubectl scale deployment plex -n media --replicas=1
+```
+
+- Encode something to base 64 for external-secrets
+```
+base64 -w 0 inputfile.txt > output.txt
 ```
 
 1. Verify the Git Repository is up-to-date and in a ready state.
