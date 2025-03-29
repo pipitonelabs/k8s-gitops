@@ -1,5 +1,12 @@
 ## Troubleshooting and command reference
 
+- Upgrade Talos to specific schematic, version
+```
+talosctl upgrade --nodes 10.20.30.40 \
+  --image factory.talos.dev/installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:v1.9.5 \
+  --wait
+```
+
 - Patch a stuck PVC
 ```
 kubectl patch pvc radarr -p '{"metadata":{"finalizers":[]}}' --type=merge
