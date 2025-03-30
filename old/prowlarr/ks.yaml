@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app plex
+  name: &app prowlarr
   namespace: &namespace media
 spec:
   commonMetadata:
@@ -12,20 +12,16 @@ spec:
     - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
-    - name: intel-device-plugin-gpu
-      namespace: kube-system
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
+    - name: cloudnative-pg-cluster
+      namespace: databases
+    - name: onepassword-store
+      namespace: external-secrets
   interval: 1h
-  path: ./kubernetes/apps/media/plex/app
+  path: ./kubernetes/apps/media/prowlarr/app
   postBuild:
     substitute:
       APP: *app
-      GATUS_PATH: /identity
-      VOLSYNC_CACHE_CAPACITY: 25Gi
-      VOLSYNC_CAPACITY: 50Gi
+      VOLSYNC_CAPACITY: 1Gi
   prune: true
   retryInterval: 2m
   sourceRef:
