@@ -1,3 +1,4 @@
+
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -24,3 +25,9 @@ spec:
   targetNamespace: *namespace
   timeout: 5m
   wait: false
+---
+# Define the Namespace resource
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default
