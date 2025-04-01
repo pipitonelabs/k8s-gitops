@@ -1,5 +1,4 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -12,34 +11,40 @@ spec:
     namespace: flux-system
   install:
     remediation:
-      retries: -1
+      retries: 3
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   values:
     controllers:
       radarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 17
+            envFrom: &envFrom
+              - secretRef:
+                  name: radarr-secret
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/radarr
-              tag: 5.21.1.9799@sha256:13171f1d476b4b0c9a44191ae60ddd0d1581b9cd89f9c5f7a82be602c0f95096
+              tag: 5.22.0.9808@sha256:2bf6a9a5f30b28f09fa5601b23d095c64739ab0667753b95493a1bcdf194057d
             env:
               RADARR__APP__INSTANCENAME: Radarr
               RADARR__APP__THEME: dark
               RADARR__AUTH__METHOD: External
               RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              RADARR__LOG__DBENABLED: "False"
               RADARR__LOG__LEVEL: info
-              RADARR__SERVER__PORT: &port 80
+              RADARR__SERVER__PORT: &port 7878
               RADARR__UPDATE__BRANCH: develop
               TZ: America/New_York
-            envFrom:
-              - secretRef:
-                  name: radarr-secret
+            envFrom: *envFrom
             probes:
               liveness: &probes
                 enabled: true
@@ -53,31 +58,40 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 1Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-            resources:
-              requests:
-                cpu: 100m
-              limits:
-                memory: 4Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
-    service:
-      app:
-        controller: *app
-        ports:
-          http:
-            port: *port
+        supplementalGroups: [65536]
+    persistence:
+      config:
+        existingClaim: *app
+      config-logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/logs
+      media:
+        type: nfs
+        server: mars.internal
+        path: /mnt/user/data/media
+      tmp:
+        type: emptyDir
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
+        hostnames:
+          - "{{ .Release.Name }}.tslamars.com"
         parentRefs:
           - name: internal
             namespace: kube-system
@@ -86,26 +100,9 @@ spec:
           - backendRefs:
               - name: *app
                 port: *port
-    persistence:
-      config:
-        existingClaim: radarr
-      config-cache:
-        existingClaim: radarr-cache
-        globalMounts:
-          - path: /config/MediaCover
-      scripts:
-        type: configMap
-        name: radarr-configmap
-        defaultMode: 0775
-        globalMounts:
-          - path: /scripts/pushover-notifier.sh
-            subPath: pushover-notifier.sh
-            readOnly: true
-      media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
-        globalMounts:
-          - path: /media
-      tmp:
-        type: emptyDir
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
