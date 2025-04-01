@@ -121,7 +121,7 @@ spec:
       media:
         type: nfs
         server: unaspro.internal
-        path: /var/nfs/shared/media
+        path: /volume1/.srv/.unifi-drive/media/.data
         #server: mars.internal
         #path: /mnt/user/data/media
         globalMounts:
