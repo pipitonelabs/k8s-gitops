@@ -93,10 +93,8 @@ spec:
         existingClaim: *app
       media:
         type: nfs
-        server: unaspro.internal
-        path: /volume1/.srv/.unifi-drive/media/.data
-        #server: mars.internal
-        #path: /mnt/user/data/media
+        server: mars.internal
+        path: /mnt/user/data/media
         globalMounts:
           - path: /media
       incomplete:

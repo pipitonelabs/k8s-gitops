@@ -45,7 +45,7 @@ spec:
         server: mars.internal
         share: /mnt/data/Kubernetes
       mountOptions:
-        - nfsvers=4.1
+        - nfsvers=4.2
         - nconnect=16
         - hard
         - noatime
