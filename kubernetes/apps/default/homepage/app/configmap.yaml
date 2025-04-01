@@ -148,7 +148,7 @@ data:
               view: monthly
               maxEvents: 10
               showTime: true
-              timezone: America/Vancouver
+              timezone: America/New_York
               integrations:
                 - type: sonarr
                   service_group: Downloads
