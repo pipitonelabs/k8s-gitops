@@ -30,8 +30,6 @@ spec:
             args:
               - --health-probe-bind-address=:8081
               - --metrics-bind-address=:8080
-              - --cluster_mode=emulated
-              - --lock_on_hashtags
             probes:
               liveness:
                 enabled: true
