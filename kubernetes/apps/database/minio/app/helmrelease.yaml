@@ -99,12 +99,12 @@ spec:
     route:
       app:
         hostnames: ["minio.tslamars.com"]
-        #annotations:
-        #  gethomepage.dev/enabled: "true"
-        #  gethomepage.dev/icon: minio.png
-        #  gethomepage.dev/name: Minio
-        #  gethomepage.dev/group: Storage
-        #  gethomepage.dev/pod-selector: app.kubernetes.io/name=minio
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: minio.png
+          gethomepage.dev/name: Minio
+          gethomepage.dev/group: Storage
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=minio
         parentRefs:
           - name: internal
             namespace: kube-system
