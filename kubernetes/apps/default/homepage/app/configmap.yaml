@@ -134,7 +134,6 @@ data:
             widget:
               type: unifi
               url: https://udm.tslamars.com
-              site: Pip-UDM-SE
               username: {{HOMEPAGE_VAR_UNIFI_USERNAME}}
               password: {{HOMEPAGE_VAR_UNIFI_PASSWORD}}
               key: {{HOMEPAGE_VAR_UNIFI_API_KEY}}
