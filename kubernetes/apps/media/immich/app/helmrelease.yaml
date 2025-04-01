@@ -44,31 +44,27 @@ spec:
               repository: ghcr.io/immich-app/immich-server
               tag: v1.131.1
             env:
-              DB_USERNAME:
+              DB_TYPE: postgres
+              DB_HOST:
                 valueFrom:
                   secretKeyRef:
                     name: &pguser immich-pguser-secret
+                    key: host
+              DB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
                     key: user
-              DB_PASSWORD:
+              DB_PASS:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
                     key: password
-              DB_DATABASE_NAME:
+              DB_NAME:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
                     key: db
-              DB_HOSTNAME:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
-                    key: host
-              DB_PORT:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
-                    key: port
             envFrom: &envFrom
               - secretRef:
                   name: immich-secret
@@ -99,6 +95,15 @@ spec:
               requests: *requests
               limits:
                 memory: 2Gi
+                
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
 
     service:
       immich:
