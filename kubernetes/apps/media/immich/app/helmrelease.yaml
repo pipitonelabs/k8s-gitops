@@ -74,6 +74,10 @@ spec:
                   name: immich-secret
               - configMapRef:
                   name: immich-configmap
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
             resources: &resources
               requests: &requests
                 cpu: 100m
