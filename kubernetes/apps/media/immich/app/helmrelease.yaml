@@ -137,6 +137,6 @@ spec:
         enabled: true
         type: nfs
         server: mars.internal
-        path: /mnt/user/data/media/photos
+        path: /mnt/user/photos
         globalMounts:
           - path: /usr/src/app/upload
