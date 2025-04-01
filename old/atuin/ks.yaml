@@ -2,21 +2,19 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app go2rtc
+  name: &app atuin
   namespace: &namespace home
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: intel-device-plugin-gpu
-      namespace: kube-system
-    - name: multus-networks
-      namespace: networking
+    - name: cloudnative-pg-cluster
+      namespace: database
     - name: onepassword-store
       namespace: external-secrets
   interval: 1h
-  path: ./kubernetes/apps/home/go2rtc/app
+  path: ./kubernetes/apps/home/atuin/app
   prune: true
   retryInterval: 2m
   sourceRef:

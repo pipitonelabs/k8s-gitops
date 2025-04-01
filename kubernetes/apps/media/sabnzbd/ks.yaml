@@ -2,35 +2,33 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app zigbee2mqtt
-  namespace: &namespace home
+  name: &app sabnzbd
+  namespace: &namespace media
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   components:
+    - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
-    - name: emqx-cluster
-      namespace: databases
     - name: onepassword-store
       namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
-  interval: 1h
-  path: ./kubernetes/apps/home/zigbee2mqtt/app
+  interval: 30m
+  path: ./kubernetes/apps/media/sabnzbd/app
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 1Gi
   prune: true
-  retryInterval: 2m
+  retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: true
+  wait: false

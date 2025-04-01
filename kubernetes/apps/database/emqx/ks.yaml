@@ -3,7 +3,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app emqx
-  namespace: &namespace databases
+  namespace: &namespace database
 spec:
   commonMetadata:
     labels:
@@ -14,7 +14,7 @@ spec:
     - name: onepassword-store
       namespace: external-secrets
   interval: 1h
-  path: ./kubernetes/apps/databases/emqx/app
+  path: ./kubernetes/apps/database/emqx/app
   prune: true
   retryInterval: 2m
   sourceRef:
@@ -29,7 +29,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app emqx-cluster
-  namespace: &namespace databases
+  namespace: &namespace database
 spec:
   commonMetadata:
     labels:
@@ -43,7 +43,7 @@ spec:
       failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
       current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   interval: 1h
-  path: ./kubernetes/apps/databases/emqx/cluster
+  path: ./kubernetes/apps/database/emqx/cluster
   prune: true
   retryInterval: 2m
   sourceRef:
