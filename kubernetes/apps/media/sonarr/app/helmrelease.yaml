@@ -119,8 +119,10 @@ spec:
     persistence:
       media:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        server: unaspro.internal
+        path: /var/nfs/shared/media
+        #server: mars.internal
+        #path: /mnt/user/data/media
         globalMounts:
           - path: /media
       scripts:
