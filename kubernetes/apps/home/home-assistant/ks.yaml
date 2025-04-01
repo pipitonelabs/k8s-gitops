@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -12,22 +13,19 @@ spec:
     - ../../../../components/gatus/external
     - ../../../../components/volsync
   dependsOn:
-    - name: onepassword-store
-      namespace: external-secrets
+    - name: emqx-cluster
+      namespace: database
     - name: rook-ceph-cluster
       namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/home/home-assistant/app
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: home
-      VOLSYNC_CACHE_CAPACITY: 20Gi
-      VOLSYNC_CAPACITY: 50Gi
+      GATUS_SUBDOMAIN: hass
+      VOLSYNC_CAPACITY: 5Gi
   prune: true
-  retryInterval: 1m
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system

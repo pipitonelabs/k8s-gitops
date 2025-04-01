@@ -1,15 +1,14 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app home-assistant
 spec:
-  interval: 30m
+  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
-    namespace: flux-system
-  maxHistory: 2
   install:
     remediation:
       retries: -1
@@ -17,62 +16,50 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  uninstall:
-    keepHistory: false
-  dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
   values:
     controllers:
       home-assistant:
-        pod:
-          annotations:
-            k8s.v1.cni.cncf.io/networks: |
-              [{
-                "name":"multus-iot",
-                "namespace": "networking",
-                "ips": ["10.0.10.250/24"]
-              }]
         annotations:
           reloader.stakater.com/auto: "true"
-
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/home-assistant
               tag: 2025.3.4@sha256:f1d4348c42ca825969f5d48b50bb53aaebd501b0cad16cb56e7ac8e31387fbb8
+            env:
+              TZ: America/New_York
+              HASS_HTTP_TRUSTED_PROXY_1: 10.0.0.0/8
+              HASS_HTTP_TRUSTED_PROXY_2: 10.244.0.0/16
             envFrom:
               - secretRef:
                   name: home-assistant-secret
-            env:
-              TZ: America/New_York
-
-          vscode-tunnel:
-            image:
-              repository: ghcr.io/mchestr/vscode-tunnel
-              tag: 1.98.2@sha256:8276a531660eff6c9b3f8ddb57b9a050dbefa1f637336dc322c7e3e943f8b9ca
-
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 2Gi
     defaultPodOptions:
-      hostname: home-assistant
       securityContext:
+        runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
-        runAsNonRoot: true
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-
     service:
       app:
-        controller: *app
+        controller: home-assistant
         ports:
           http:
             port: &port 8123
-
     route:
       app:
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
-          - home.tslamars.com
+          - hass.tslamars.com
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home
@@ -86,48 +73,24 @@ spec:
           - backendRefs:
               - name: *app
                 port: *port
-
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: home-assistant
         globalMounts:
           - path: /config
-
-      deploykey:
-        type: secret
-        name: home-assistant-deploykey-secret
-        advancedMounts:
-          home-assistant:
-            vscode-tunnel:
-              - path: /home/kah/.ssh
-      vscode-tunnel:
-        size: 4Gi
-        storageClass: ceph-block
-        accessMode: ReadWriteOnce
-        advancedMounts:
-          home-assistant:
-            vscode-tunnel:
-              - path: /.vscode
-
-    networkpolicies:
-      paperless:
-        controller: home-assistant
-
-        policyTypes:
-          - Ingress
-
-        rules:
-          ingress:
-            - from:
-                - podSelector:
-                    matchLabels:
-                      app.kubernetes.io/component: proxy
-                      app.kubernetes.io/managed-by: envoy-gateway
-                      app.kubernetes.io/name: envoy
-                      gateway.envoyproxy.io/owning-gateway-name: external
-                  namespaceSelector:
-                    matchLabels:
-                      kubernetes.io/metadata.name: networking
-              ports:
-                - protocol: TCP
-                  port: *port
+      config-cache:
+        existingClaim: home-assistant-cache
+        globalMounts:
+          - path: /config/.venv
+      config-logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/logs
+      config-tts:
+        type: emptyDir
+        globalMounts:
+          - path: /config/tts
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
