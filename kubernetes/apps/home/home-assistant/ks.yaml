@@ -9,27 +9,29 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
+    - ../../../../components/gatus/external
     - ../../../../components/volsync
-    - ../../../../components/gatus/guarded
   dependsOn:
-    - name: emqx-cluster
-      namespace: databases
+    - name: onepassword-store
+      namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
-  interval: 1h
+  interval: 30m
   path: ./kubernetes/apps/home/home-assistant/app
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 5Gi
+      GATUS_SUBDOMAIN: home
+      VOLSYNC_CACHE_CAPACITY: 20Gi
+      VOLSYNC_CAPACITY: 50Gi
   prune: true
-  retryInterval: 2m
+  retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: true
+  wait: false

@@ -1,14 +1,14 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - ./externalsecret.yaml
-  - ./helmrelease.yaml
 configMapGenerator:
-  - name: bazarr-scripts
-    files:
-      - ./resources/subcleaner.sh
+  - files:
+      - subcleaner.sh=./resources/subcleaner.sh
+    name: bazarr-scripts
 generatorOptions:
-  disableNameSuffixHash: true
   annotations:
     kustomize.toolkit.fluxcd.io/substitute: disabled
+  disableNameSuffixHash: true
+resources:
+  - externalsecret.yaml
+  - helmrelease.yaml
