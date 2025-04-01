@@ -25,9 +25,3 @@ spec:
   targetNamespace: *namespace
   timeout: 5m
   wait: false
----
-# Define the Namespace resource
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: default
