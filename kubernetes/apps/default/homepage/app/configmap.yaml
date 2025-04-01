@@ -131,13 +131,20 @@ data:
         - Unifi:
             href: https://udm.tslamars.com
             icon: unifi.png
+            widget:
+              type: unifi
+              url: https://unifi.host.or.ip:port
+              site: Site Name # optional
+              username: {{HOMEPAGE_VAR_UNIFI_USERNAME}}
+              password: {{HOMEPAGE_VAR_UNIFI_PASSWORD}}
+              key: {{HOMEPAGE_VAR_UNIFI_API_KEY}}
     - Storage:
-        - LochNAS:
+        - Mars:
             href: https://unraid.tslamars.com
             icon: unraid-dsm.png
             widget:
               type: unraid
-              url: https://unraid.tslamars.com
+              url: https://unraid.tslamars.com:61208
               username: {{HOMEPAGE_VAR_UNRAID_USER}}
               password: {{HOMEPAGE_VAR_UNRAID_PASSWORD}}
     - Calendar:
