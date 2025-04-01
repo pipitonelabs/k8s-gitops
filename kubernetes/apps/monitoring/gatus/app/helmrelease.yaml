@@ -124,7 +124,7 @@ spec:
         #  gethomepage.dev/group: System
         parentRefs:
           - name: external
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
