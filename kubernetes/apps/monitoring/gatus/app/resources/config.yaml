@@ -13,6 +13,28 @@ endpoints:
     conditions:
       - "[STATUS] == 404"
 
+  - name: heartbeat
+    group: external
+    ui:
+      hide-hostname: true
+      hide-url: true
+    url: ${STATUS_PAGE_HEARTBEAT_URL}
+    interval: 1m
+    client:
+      dns-resolver: tcp://1.1.1.1:53
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "*.tslamars.com"
+    group: certificates
+    url: "tls://external.tslamars.com:443"
+    interval: 24h
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+    alerts:
+      - type: pushover
+
 metrics: true
 
 storage:
