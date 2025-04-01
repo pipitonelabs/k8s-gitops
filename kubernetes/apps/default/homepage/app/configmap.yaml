@@ -128,24 +128,18 @@ data:
             href: https://pikvm.chestr.dev
             icon: pikvm.png
     - System:
-        - Mainsail:
-            href: https://mainsail.chestr.dev
-            icon: mdi-printer-3d-nozzle
-            widget:
-              type: moonraker
-              url: https://mainsail.chestr.dev:7130
         - Unifi:
-            href: https://udm.chestr.dev
+            href: https://udm.tslamars.com
             icon: unifi.png
     - Storage:
         - LochNAS:
-            href: https://lochnas.chestr.dev
-            icon: synology-dsm.png
+            href: https://unraid.tslamars.com
+            icon: unraid-dsm.png
             widget:
-              type: diskstation
-              url: https://lochnas.chestr.dev:5001
-              username: {{HOMEPAGE_VAR_DSM_USER}}
-              password: {{HOMEPAGE_VAR_DSM_PASSWORD}}
+              type: unraid
+              url: https://unraid.tslamars.com
+              username: {{HOMEPAGE_VAR_UNRAID_USER}}
+              password: {{HOMEPAGE_VAR_UNRAID_PASSWORD}}
     - Calendar:
         - Calendar:
             widget:
