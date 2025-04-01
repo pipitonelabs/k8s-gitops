@@ -12,3 +12,9 @@ delete from endpoints where endpoint_id = '5';
 ```
 \dt
 ```
+
+- Trigger a manual backup
+```
+kubectl annotate cluster postgres17 -n database postgresql.cnpg.io/backup=true --overwrite
+kubectl annotate cluster immich -n database postgresql.cnpg.io/backup=true --overwrite
+```
