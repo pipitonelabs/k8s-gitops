@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -8,28 +9,18 @@ spec:
   chartRef:
     kind: OCIRepository
     name: app-template
-    namespace: flux-system
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
   values:
     controllers:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-db:
-            image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: 17
-            envFrom: &envFrom
-              - secretRef:
-                  name: sonarr-secret
         containers:
           app:
             image:
@@ -40,11 +31,14 @@ spec:
               SONARR__APP__THEME: dark
               SONARR__AUTH__METHOD: External
               SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: "False"
               SONARR__LOG__LEVEL: info
-              SONARR__SERVER__PORT: &port 8989
+              SONARR__SERVER__PORT: &port 80
               SONARR__UPDATE__BRANCH: develop
               TZ: America/New_York
-            envFrom: *envFrom
+            envFrom:
+              - secretRef:
+                  name: sonarr-secret
             probes:
               liveness: &probes
                 enabled: true
@@ -58,40 +52,31 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 1Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                memory: 4Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [65536]
-    persistence:
-      config:
-        existingClaim: *app
-      config-logs:
-        type: emptyDir
-        globalMounts:
-          - path: /config/logs
-      media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
-      tmp:
-        type: emptyDir
+    service:
+      app:
+        controller: sonarr
+        ports:
+          http:
+            port: *port
     route:
       app:
-        hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
+        hostnames: ["{{ .Release.Name }}.tslamars.com"]
         parentRefs:
           - name: internal
             namespace: kube-system
@@ -100,9 +85,32 @@ spec:
           - backendRefs:
               - name: *app
                 port: *port
-    service:
-      app:
-        controller: *app
-        ports:
-          http:
-            port: *port
+    persistence:
+      config:
+        existingClaim: sonarr
+      config-cache:
+        existingClaim: sonarr-cache
+        globalMounts:
+          - path: /config/MediaCover
+      scripts:
+        type: configMap
+        name: sonarr-configmap
+        defaultMode: 0775
+        globalMounts:
+          - path: /scripts/codec-tagger.sh
+            subPath: codec-tagger.sh
+            readOnly: true
+          - path: /scripts/pushover-notifier.sh
+            subPath: pushover-notifier.sh
+            readOnly: true
+          - path: /scripts/tba-refresher.sh
+            subPath: tba-refresher.sh
+            readOnly: true
+      media:
+        type: nfs
+        server: mars.internal
+        path: /mnt/user/data/media
+        globalMounts:
+          - path: /media
+      tmp:
+        type: emptyDir
