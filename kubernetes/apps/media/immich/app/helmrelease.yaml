@@ -28,6 +28,7 @@ spec:
       immich:
         annotations:
           reloader.stakater.com/auto: "true"
+
         initContainers:
           01-init-db:
             image:
@@ -36,6 +37,7 @@ spec:
             envFrom:
               - secretRef:
                   name: immich-initdb-secret
+
         containers:
           app:
             image:
@@ -67,8 +69,6 @@ spec:
                   secretKeyRef:
                     name: *pguser
                     key: port
-              # Explicitly set Bull queue prefix for Dragonfly compatibility
-              BULL_QUEUE_PREFIX: "{immich}"
             envFrom: &envFrom
               - secretRef:
                   name: immich-secret
@@ -90,9 +90,6 @@ spec:
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
               tag: v1.131.1
-            env:
-              # Explicitly set Bull queue prefix for Dragonfly compatibility
-              BULL_QUEUE_PREFIX: "{immich}"
             envFrom: *envFrom
             resources:
               requests: *requests
