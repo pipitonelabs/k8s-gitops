@@ -45,7 +45,7 @@ spec:
               - secretRef:
                   name: home-assistant-secret
             env:
-              TZ: America/Vancouver
+              TZ: America/New_York
 
           vscode-tunnel:
             image:
@@ -71,8 +71,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.chestr.dev"
-          - home.chestr.dev
+          - "{{ .Release.Name }}.tslamars.com"
+          - home.tslamars.com
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home
@@ -80,7 +80,7 @@ spec:
           gethomepage.dev/icon: home-assistant.png
         parentRefs:
           - name: external
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:

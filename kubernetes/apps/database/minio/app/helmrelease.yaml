@@ -107,7 +107,7 @@ spec:
         #  gethomepage.dev/pod-selector: app.kubernetes.io/name=minio
         parentRefs:
           - name: internal
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
@@ -118,7 +118,7 @@ spec:
         hostnames: ["s3.tslamars.com"]
         parentRefs:
           - name: internal
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:

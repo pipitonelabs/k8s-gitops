@@ -96,11 +96,11 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.chestr.dev"
-          - sh.chestr.dev
+          - "{{ .Release.Name }}.tslamars.com"
+          - sh.tslamars.com
         parentRefs:
           - name: internal
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:

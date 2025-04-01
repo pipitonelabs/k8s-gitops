@@ -99,17 +99,17 @@ spec:
     route:
       app:
         hostnames: ["{{ .Release.Name }}.tslamars.com"]
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sonarr.png
-          gethomepage.dev/name: Sonarr
-          gethomepage.dev/group: Downloads
-          gethomepage.dev/widget.type: *app
-          gethomepage.dev/widget.url: http://sonarr.media.svc.cluster.local:8989
-          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SONARR_API_KEY}}" }}'
+        #annotations:
+        #  gethomepage.dev/enabled: "true"
+        #  gethomepage.dev/icon: sonarr.png
+        #  gethomepage.dev/name: Sonarr
+        #  gethomepage.dev/group: Downloads
+        #  gethomepage.dev/widget.type: *app
+        #  gethomepage.dev/widget.url: http://sonarr.media.svc.cluster.local:8989
+        #  gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SONARR_API_KEY}}" }}'
         parentRefs:
           - name: internal
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
@@ -119,8 +119,8 @@ spec:
     persistence:
       media:
         type: nfs
-        server: lochnas.tslamars.com
-        path: /volume1/shared/media
+        server: mars.internal
+        path: /mnt/user/data/media
         globalMounts:
           - path: /media
       scripts:

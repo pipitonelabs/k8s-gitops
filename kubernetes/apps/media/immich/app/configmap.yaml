@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: immich-configmap
 data:
-  TZ: America/Vancouver
+  TZ: America/New_York
   DISABLE_REVERSE_GEOCODING: "true"
   ENABLE_MAPBOX: "false"
   LOG_LEVEL: log

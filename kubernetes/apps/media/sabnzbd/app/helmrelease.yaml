@@ -34,7 +34,7 @@ spec:
               repository: ghcr.io/home-operations/sabnzbd
               tag: 4.5.0@sha256:9892fb7cd246b64de151f9200e0882d558b19808f9157f37c4d74b13fa29857b
             env:
-              TZ: America/Vancouver
+              TZ: America/New_York
               SABNZBD__PORT: 8080
               SABNZBD__HOST_WHITELIST_ENTRIES: >-
                 sabnzbd,
@@ -42,7 +42,7 @@ spec:
                 sabnzbd.default.svc,
                 sabnzbd.default.svc.cluster,
                 sabnzbd.default.svc.cluster.local,
-                sabnzbd.chestr.dev
+                sabnzbd.tslamars.com
             envFrom:
               - secretRef:
                   name: sabnzbd-secret
@@ -81,7 +81,7 @@ spec:
         #  gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SABNZBD_API_KEY}}" }}'
         parentRefs:
           - name: internal
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
