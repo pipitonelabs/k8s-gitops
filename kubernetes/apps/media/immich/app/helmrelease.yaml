@@ -23,13 +23,6 @@ spec:
     defaultPodOptions:
       automountServiceAccountToken: false
       enableServiceLinks: false
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
 
     controllers:
       immich:
@@ -51,36 +44,36 @@ spec:
               repository: ghcr.io/immich-app/immich-server
               tag: v1.131.1
             env:
-              DB_TYPE: postgres
-              DB_HOST:
+              DB_USERNAME:
                 valueFrom:
                   secretKeyRef:
                     name: &pguser immich-pguser-secret
-                    key: host
-              DB_USER:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
                     key: user
-              DB_PASS:
+              DB_PASSWORD:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
                     key: password
-              DB_NAME:
+              DB_DATABASE_NAME:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
                     key: db
+              DB_HOSTNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: host
+              DB_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: port
             envFrom: &envFrom
               - secretRef:
                   name: immich-secret
               - configMapRef:
                   name: immich-configmap
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
             resources: &resources
               requests: &requests
                 cpu: 100m
@@ -131,8 +124,8 @@ spec:
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_IMMICH_API_KEY}}" }}'
           gethomepage.dev/widget.version: '2'
         parentRefs:
-          - name: internal
-            namespace: kube-system
+          - name: external
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:
@@ -144,6 +137,6 @@ spec:
         enabled: true
         type: nfs
         server: mars.internal
-        path: /mnt/user/photos
+        path: /mnt/user/data/media/photos
         globalMounts:
           - path: /usr/src/app/upload
