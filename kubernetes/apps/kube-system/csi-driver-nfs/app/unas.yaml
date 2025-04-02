@@ -25,7 +25,7 @@ spec:
         server: unaspro.internal
         share: /volume1/.srv/.unifi-drive/kubernetes/.data
       mountOptions:
-        - nfsvers=4.1
+        - nfsvers=3
         - nconnect=16
         - hard
         - noatime
