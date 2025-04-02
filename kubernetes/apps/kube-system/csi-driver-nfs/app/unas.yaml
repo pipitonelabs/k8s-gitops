@@ -29,5 +29,6 @@ spec:
         - nconnect=16
         - hard
         - noatime
+        - nolock
       reclaimPolicy: Delete
       volumeBindingMode: Immediate
