@@ -1,4 +1,3 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -48,7 +47,6 @@ spec:
               RADARR__PORT: 7878
               RADARR__LOG__LEVEL: info
               RADARR__THEME: dark
-              # Postgres Setup
               # Postgres Setup
               RADARR__POSTGRES__HOST:
                 valueFrom:
@@ -135,3 +133,10 @@ spec:
         existingClaim: *app
       tmp:
         type: emptyDir
+      unaspro:
+        type: pvc
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: nfs-unaspro
+        globalMounts:
+          - path: /unaspro  # Adjust this mount path as needed
