@@ -124,13 +124,6 @@ spec:
         path: /mnt/user/data/media
         globalMounts:
           - path: /media
-      scripts:
-        type: configMap
-        name: radarr-pushover
-        defaultMode: 509
-        globalMounts:
-          - path: /scripts/pushover-notify.sh
-            subPath: pushover-notify.sh
       config:
         existingClaim: *app
       tmp:

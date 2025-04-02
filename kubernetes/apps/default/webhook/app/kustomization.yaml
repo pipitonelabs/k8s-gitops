@@ -4,15 +4,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ./externalsecret.yaml
-  - ./pvc.yaml
   - ./helmrelease.yaml
 configMapGenerator:
-  - name: radarr-loki-rules
+  - name: webhook-configmap
     files:
-      - radarr.yaml=./lokirule.yaml
-    options:
-      labels:
-        loki_rule: "true"
+      #- cross-seed-pushover.sh=./resources/cross-seed-pushover.sh
+      - hooks.yaml=./resources/hooks.yaml
+      - jellyseerr-pushover.sh=./resources/jellyseerr-pushover.sh
+      - radarr-pushover.sh=./resources/radarr-pushover.sh
+      - sonarr-pushover.sh=./resources/sonarr-pushover.sh
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
