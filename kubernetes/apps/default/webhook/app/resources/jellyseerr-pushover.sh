@@ -16,7 +16,7 @@ function notify() {
     if [[ "${type}" == "TEST_NOTIFICATION" ]]; then
         printf -v pushover_title "Test Notification"
         printf -v pushover_msg "Howdy this is a test notification from <b>%s</b>" "Jellyseerr"
-        printf -v pushover_url "%s" "https://requests.devbu.io"
+        printf -v pushover_url "%s" "https://requests.tslamars.com"
         printf -v pushover_url_title "Open %s" "Jellyseerr"
         printf -v pushover_priority "%s" "low"
     fi
