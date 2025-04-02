@@ -23,7 +23,7 @@ spec:
       name: nfs-unaspro
       parameters:
         server: unaspro.internal
-        share: /var/nfs/shared/kubernetes
+        share: /volume1/.srv/.unifi-drive/kubernetes/.data
       mountOptions:
         - nfsvers=4.1
         - nconnect=16
