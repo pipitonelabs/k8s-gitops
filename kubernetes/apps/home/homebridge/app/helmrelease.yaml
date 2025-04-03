@@ -55,7 +55,7 @@ spec:
       app:
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
-          - hb.tslamars.com/tslamars.com
+          - hb.tslamars.com
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home
