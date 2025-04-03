@@ -94,7 +94,7 @@ spec:
       media:
         type: nfs
         server: mars.internal
-        path: /media/downloads/nzbs
+        path: /mnt/user/data/media/downloads/nzbs
         globalMounts:
           - path: downloads/nzbs
       incomplete:
