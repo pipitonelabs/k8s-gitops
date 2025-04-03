@@ -13,6 +13,7 @@ configMapGenerator:
       - jellyseerr-pushover.sh=./resources/jellyseerr-pushover.sh
       - radarr-pushover.sh=./resources/radarr-pushover.sh
       - sonarr-pushover.sh=./resources/sonarr-pushover.sh
+      - sonarr-refresh-series.sh=./resources/sonarr-refresh-series.sh
 generatorOptions:
   disableNameSuffixHash: true
   annotations:

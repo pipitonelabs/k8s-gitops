@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-PUSHOVER_URI=${1:?}
+PUSHOVER_URL=${1:?}
 PAYLOAD=${2:?}
 
 echo "[DEBUG] Payload: ${PAYLOAD}"
@@ -52,7 +52,7 @@ function notify() {
     fi
 
     apprise -vv --title "${pushover_title}" --body "${pushover_msg}"  \
-        "${PUSHOVER_URI}?url=${pushover_url}&url_title=${pushover_url_title}&priority=${pushover_priority}&format=html"
+        "${PUSHOVER_URL}?url=${pushover_url}&url_title=${pushover_url_title}&priority=${pushover_priority}&format=html"
 }
 
 function main() {
