@@ -99,14 +99,6 @@ graph TD;
   id8>Kustomization: atuin] -->|Depends on| id5>Kustomization: postgres-cluster];
 ```
 
-### Networking
-
-<details>
-  <summary>Click to see a high-level network diagram</summary>
-
-  <img src="https://github.com/user-attachments/assets/c24d1d42-0cab-4aff-8b75-d2ebc1d15ab8" align="center" width="600px" alt="network"/>
-</details>
-
 ---
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif" alt="🌎" width="20" height="20"> DNS
