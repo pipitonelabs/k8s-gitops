@@ -94,10 +94,9 @@ spec:
       media:
         type: nfs
         server: mars.internal
-        path: /mnt/user/data/media/downloads/nzbs
+        path: /mnt/user/data/media
         globalMounts:
-          - path: /downloads/nzbs
-      incomplete:
+          - path: /media/downloads/sabnzbd
+            subPath: downloads/sabnzbd
+      tmp:
         type: emptyDir
-        globalMounts:
-          - path: /incomplete
