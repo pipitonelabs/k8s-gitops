@@ -27,9 +27,11 @@ machine:
         bond:
           deviceSelectors: [{ hardwareAddr: "58:47:ca:7b:*", driver: igc }]
           mode: 802.3ad
-          xmitHashPolicy: layer2+3
+          xmitHashPolicy: layer3+4
           lacpRate: slow
-          miimon: 1000
+          miimon: 100
+          updelay: 200
+          downdelay: 200
         dhcp: true
         mtu: 1500
         vlans:
@@ -83,6 +85,9 @@ machine:
     vm.nr_hugepages: "1024"
   sysfs:
     devices.system.cpu.intel_pstate.hwp_dynamic_boost: 1
+    {% for i in range(0, 20) %}
+    devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_performance
+    {% endfor %}
   features:
     rbac: true
     stableHostname: true
