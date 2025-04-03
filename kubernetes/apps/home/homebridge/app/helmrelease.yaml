@@ -1,9 +1,9 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: homebridge
-  namespace: home
+  name: &app homebridge
 spec:
   interval: 1h
   chartRef:
@@ -17,34 +17,34 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  maxHistory: 2
   values:
     controllers:
-      main:
-        type: statefulset
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              accessMode: ReadWriteOnce
-              size: 3Gi
-              storageClass: rook-ceph
-              globalMounts:
-                - path: /homebridge
+      home-assistant:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
-          main:
+          app:
             image:
               repository: oznu/homebridge
               tag: "2023-01-08"
             env:
               TZ: America/New_York
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 10m
-                memory: 250Mi
               limits:
-                cpu: 500m
-                memory: 500Mi
-
+                memory: 2Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
     service:
       app:
         controller: homebridge
@@ -59,7 +59,7 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home
-          gethomepage.dev/name: Homebridge
+          gethomepage.dev/name: Homebrige
           gethomepage.dev/icon: homebridge.png
         parentRefs:
           - name: internal
@@ -69,3 +69,8 @@ spec:
           - backendRefs:
               - name: *app
                 port: *port
+    persistence:
+      config:
+        existingClaim: homebridge
+        globalMounts:
+          - path: /homebridge
