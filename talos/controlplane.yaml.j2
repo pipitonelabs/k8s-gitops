@@ -27,11 +27,9 @@ machine:
         bond:
           deviceSelectors: [{ hardwareAddr: "58:47:ca:7b:*", driver: igc }]
           mode: 802.3ad
-          xmitHashPolicy: layer3+4
+          xmitHashPolicy: layer2+3
           lacpRate: slow
           miimon: 100
-          updelay: 200
-          downdelay: 200
         dhcp: true
         mtu: 1500
         vlans:

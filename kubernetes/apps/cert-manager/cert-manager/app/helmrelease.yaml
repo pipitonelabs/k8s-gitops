@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: OCIRepository
 metadata:
@@ -10,10 +11,9 @@ spec:
     operation: copy
   ref:
     tag: v1.17.1
-  url: oci://ghcr.io/home-operations/charts-mirror/cert-manager
-  verify:
-    provider: cosign
+  url: oci://quay.io/jetstack/charts/cert-manager
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -25,11 +25,10 @@ spec:
     name: cert-manager
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
   valuesFrom:
     - kind: ConfigMap
