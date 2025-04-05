@@ -84,7 +84,7 @@ machine:
   sysfs:
     devices.system.cpu.intel_pstate.hwp_dynamic_boost: 1
     {% for i in range(0, 20) %}
-    devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_performance
+    devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
     {% endfor %}
   features:
     rbac: true
