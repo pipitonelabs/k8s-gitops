@@ -1,0 +1,57 @@
+---
+connectivity:
+  checker:
+    target: 1.1.1.1:53
+    interval: 1m
+endpoints:
+  - name: flux-webhook
+    group: external
+    url: https://flux-webhook.tslamars.com
+    interval: 1m
+    client:
+      dns-resolver: tcp://1.1.1.1:53
+    conditions:
+      - "[STATUS] == 404"
+
+  - name: heartbeat
+    group: external
+    ui:
+      hide-hostname: true
+      hide-url: true
+    url: ${STATUS_PAGE_HEARTBEAT_URL}
+    interval: 1m
+    client:
+      dns-resolver: tcp://1.1.1.1:53
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "*.tslamars.com"
+    group: certificates
+    url: "tls://external.tslamars.com:443"
+    interval: 24h
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+    alerts:
+      - type: pushover
+
+metrics: true
+
+storage:
+  type: postgres
+  path: ${DB_URI}
+  caching: true
+
+ui:
+  title: Status | Gatus
+  header: Status
+  logo: https://raw.githubusercontent.com/tslamars/k8s-gitops/main/docs/assets/mars.png
+  link: https://github.com/tslamars
+  buttons:
+    - name: Github
+      link: https://github.com/tslamars
+    - name: Homelab
+      link: https://github.com/tslamars/k8s-gitops
+
+web:
+  port: ${CUSTOM_WEB_PORT}

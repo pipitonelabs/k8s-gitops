@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: debug-pod
+  namespace: default
+  labels:
+    app: debug-temperature
+spec:
+  selector:
+    matchLabels:
+      app: debug-temperature
+  template:
+    metadata:
+      labels:
+        app: debug-temperature
+    spec:
+      tolerations:
+      # Ensure the pod can run on all nodes, including tainted ones (e.g., master)
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: debug-container
+        image: ubuntu:latest
+        command: ["/bin/bash", "-c", "apt update && apt install -y lm-sensors && sleep infinity"]
+        securityContext:
+          privileged: true  # Required to access hardware data
+        volumeMounts:
+        - name: host-sys
+          mountPath: /host/sys
+          readOnly: true
+      volumes:
+      - name: host-sys
+        hostPath:
+          path: /sys
+      hostPID: true  # Allows access to host processes if needed
+      hostIPC: true  # Allows access to host IPC if needed
