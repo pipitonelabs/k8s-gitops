@@ -98,3 +98,8 @@ spec:
           - backendRefs:
               - name: *app
                 port: *port
+    
+    persistence:
+      config:
+        enabled: true
+        type: emptyDir
