@@ -21,6 +21,24 @@ machine:
     nodeIP:
       validSubnets: ["192.168.10.0/24"]
     disableManifestsDirectory: true  
+  network:
+    interfaces:
+      - interface: bond0
+        bond:
+          deviceSelectors: [{ hardwareAddr: "58:47:ca:7b:*", driver: igc }]
+          mode: 802.3ad
+          xmitHashPolicy: layer2+3
+          lacpRate: slow
+          miimon: 1000
+        dhcp: true
+        mtu: 1500
+        vlans:
+          - { vlanId: 20, dhcp: false, mtu: 1500 }
+          - { vlanId: 30, dhcp: false, mtu: 1500 }
+        vip:
+          ip: 192.168.20.2
+    nameservers: ["192.168.10.1"]
+    disableSearchDomain: true
   install:
     extraKernelArgs:
       - apparmor=0              # Less security, faster puter
