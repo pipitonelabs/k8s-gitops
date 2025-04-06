@@ -92,6 +92,13 @@ spec:
               limits:
                 memory: 256Mi
 
+    service:
+      app:
+        controller: memos
+        ports:
+          http:
+            port: &port 5230
+
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
