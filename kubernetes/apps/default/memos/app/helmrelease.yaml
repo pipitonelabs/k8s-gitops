@@ -100,12 +100,6 @@ spec:
           http:
             port: &port 5230
 
-    persistence:
-          data:
-            existingClaim: *app
-            globalMounts:
-              - path: /var/opt/memos
-
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
