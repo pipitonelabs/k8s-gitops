@@ -1,5 +1,10 @@
 ## Troubleshooting and command reference
 
+- Ceph clear / acknowledge crash
+```
+ceph crash archive-all
+```
+
 - Upgrade Talos to specific schematic, version
 ```
 talosctl upgrade --nodes 10.20.30.40 \

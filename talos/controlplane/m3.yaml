@@ -1,7 +1,0 @@
----
-machine:
-  install:
-    disk: /dev/sdb
-  network:
-    hostname: m3.k8s.internal
-    

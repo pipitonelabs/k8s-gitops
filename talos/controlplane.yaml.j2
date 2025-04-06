@@ -21,6 +21,22 @@ machine:
     nodeIP:
       validSubnets: ["192.168.10.0/24"]
     disableManifestsDirectory: true  
+  network:
+    interfaces:
+      - interface: bond0
+        bond:
+          deviceSelectors: [{ hardwareAddr: "58:47:ca:7b:*", driver: igc }]
+          mode: active-backup
+          miimon: 1000
+        dhcp: true
+        mtu: 1500
+        vlans:
+          - { vlanId: 20, dhcp: false, mtu: 1500 }
+          - { vlanId: 30, dhcp: false, mtu: 1500 }
+        vip:
+          ip: 192.168.20.2
+    nameservers: ["192.168.10.1"]
+    disableSearchDomain: true
   install:
     extraKernelArgs:
       - apparmor=0              # Less security, faster puter
@@ -32,7 +48,6 @@ machine:
       - security=none           # Less security, faster puter
       - talos.auditd.disabled=1 # Less security, faster puter
     image: factory.talos.dev/installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:{{ ENV.TALOS_VERSION }}
-    wipe: true
   files:
     - op: create
       path: /etc/cri/conf.d/20-customization.part

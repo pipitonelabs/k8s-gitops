@@ -17,21 +17,3 @@ machine:
         mtu: 65520
         addresses: [169.254.255.11/32]
         routes: [{ network: 169.254.255.12/32, metric: 2048 }]
-      - interface: bond0
-        bond:
-          mode: 802.3ad
-          deviceSelectors:
-            - permanentAddr: "58:47:ca:7b:f4:24"
-            - permanentAddr: "58:47:ca:7b:f4:25"
-          xmitHashPolicy: layer2+3
-          lacpRate: slow
-          miimon: 1000
-        dhcp: true
-        mtu: 1500
-        vlans:
-          - { vlanId: 20, dhcp: false, mtu: 1500 }
-          - { vlanId: 30, dhcp: false, mtu: 1500 }
-        vip:
-          ip: 192.168.20.2
-    nameservers: ["192.168.10.1"]
-    disableSearchDomain: true
