@@ -66,6 +66,32 @@ spec:
                   secretKeyRef:
                     name: memos-pguser-secret
                     key: uri
+                          # Postgres Setup
+              MEMOS__POSTGRES__HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pguser memos-pguser-secret
+                    key: host
+              MEMOS__POSTGRES__PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: port
+              MEMOS__POSTGRES__USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: user
+              MEMOS__POSTGRES__PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: password
+              MEMOS__POSTGRES__MAINDB:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: db
             envFrom:
               - secretRef:
                   name: memos-secret
