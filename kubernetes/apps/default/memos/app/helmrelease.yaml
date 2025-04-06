@@ -107,13 +107,6 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
 
-    service:
-      app:
-        controller: memos
-        ports:
-          http:
-            port: *port
-
     route:
       app:
         hostnames:
