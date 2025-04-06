@@ -43,6 +43,7 @@ spec:
               MEMOS_DRIVER: postgres
               MEMOS_PORT: &port 5230
               MEMOS_PUBLIC: false
+              MEMOS_PASSWORD_AUTH: false
               MEMOS_DSN:
                 valueFrom:
                   secretKeyRef:
