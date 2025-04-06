@@ -61,7 +61,7 @@ spec:
               MEMOS_DRIVER: postgres
               MEMOS_PORT: &port 5230
               MEMOS_PUBLIC: false
-              DB_URI:
+              MEMOS_DSN:
                 valueFrom:
                   secretKeyRef:
                     name: memos-pguser-secret
