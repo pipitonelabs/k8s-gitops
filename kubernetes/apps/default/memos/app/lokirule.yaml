@@ -1,0 +1,23 @@
+---
+groups:
+  - name: memos
+    rules:
+      - alert: MemosDatabaseIsLocked
+        expr: |
+          sum by (app) (count_over_time({app=~"memos"} |~ "(?i)database is locked"[5m])) > 0
+        for: 5m
+        annotations:
+          summary: >-
+            {{ $labels.app }} is experiencing database issues
+        labels:
+          severity: critical
+
+      - alert: MemosDatabaseIsMalformed
+        expr: |
+          sum by (app) (count_over_time({app=~"memos"} |~ "(?i)database disk image is malformed"[5m])) > 0
+        for: 5m
+        annotations:
+          summary: >-
+            {{ $labels.app }} is experiencing database issues
+        labels:
+          severity: critical
