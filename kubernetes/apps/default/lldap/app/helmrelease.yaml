@@ -97,7 +97,7 @@ spec:
           gethomepage.dev/icon: mdi-account-key
         parentRefs:
           - name: internal
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
