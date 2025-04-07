@@ -30,6 +30,8 @@ spec:
             args:
               - --cloudflare-dns-records-per-page=1000
               - --cloudflare-proxied
+              - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
+              - --crd-source-kind=DNSEndpoint
               - --domain-filter=tslamars.com
               - --events
               - --gateway-name=external
@@ -43,6 +45,9 @@ spec:
               - --txt-owner-id=k8s
               - --txt-prefix=k8s.
               - --zone-id-filter=$(CF_ZONE_ID)
+            sources:
+              - crd
+              - gateway-httproute
             envFrom:
               - secretRef:
                   name: external-dns-cloudflare-secret
