@@ -1,8 +1,8 @@
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app smtp-relay
-  namespace: default  # Added for consistency
 spec:
   interval: 1h
   chartRef:
@@ -60,9 +60,8 @@ spec:
         type: emptyDir
         medium: Memory
       config:
-        enabled: true  # Added to enable the persistence item
         type: configMap
-        name: smtp-relay-configmap  # Matches external ConfigMap
+        name: smtp-relay-configmap
         globalMounts:
           - path: /data/maddy.conf
             subPath: maddy.conf

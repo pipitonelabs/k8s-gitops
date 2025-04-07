@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: smtp-relay
-  namespace: default
-data:
-  maddy.conf: |-
-    {{ .Files.Get "resources/maddy.conf" | indent 4 }}
