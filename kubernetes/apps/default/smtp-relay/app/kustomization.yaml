@@ -5,10 +5,7 @@ resources:
   - ./dnsendpoint.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
-configMapGenerator:
-  - name: smtp-relay
-    files:
-      - resources/maddy.conf
+  - ./resources/configmap.yaml
 generatorOptions:
   disableNameSuffixHash: true
   annotations:

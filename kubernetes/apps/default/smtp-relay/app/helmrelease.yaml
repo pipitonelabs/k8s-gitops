@@ -66,9 +66,9 @@ spec:
 
     persistence:
       config:
-        enabled: true
         type: configMap
         name: smtp-relay
+        create: false
         globalMounts:
           - path: /data/maddy.conf
             subPath: maddy.conf
