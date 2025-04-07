@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app smtp-relay
-  namespace: default
+  namespace: &namespace default
 spec:
   interval: 30m
   chartRef:
@@ -66,6 +66,7 @@ spec:
 
     persistence:
       config:
+        enabled: true
         type: configMap
         name: smtp-relay
         globalMounts:
