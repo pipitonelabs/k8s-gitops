@@ -9,3 +9,4 @@ Thumbs.db
 kubeconfig
 talosconfig
 m3-machineconfig.yaml
+m4-machineconfig.yaml
