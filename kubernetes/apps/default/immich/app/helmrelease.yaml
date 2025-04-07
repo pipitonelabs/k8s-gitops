@@ -24,14 +24,6 @@ spec:
     defaultPodOptions:
       automountServiceAccountToken: false
       enableServiceLinks: false
-      securityContext:
-        runAsUser: 99
-        runAsGroup: 100
-        fsGroup: 100
-        runAsNonRoot: true
-        fsGroupChangePolicy: "OnRootMismatch"
-        supplementalGroups:
-          - 65537
 
     controllers:
       immich:
