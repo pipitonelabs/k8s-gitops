@@ -35,8 +35,8 @@ session:
   expiration: 7d
   remember_me: 6M
   cookies:
-    - domain: chestr.dev
-      authelia_url: https://auth.chestr.dev
+    - domain: tslamars.com
+      authelia_url: https://auth.tslamars.com
   redis:
     host: authelia-dragonfly.default.svc.cluster.local
 
@@ -49,60 +49,60 @@ access_control:
         - 172.16.0.0/12
         - 192.168.0.0/16
   rules:
-    - domain: displex.chestr.dev
+    - domain: displex.tslamars.com
       resources: ["^/auth.*$"]
       policy: bypass
     - domain:
-        - sonarr.chestr.dev
-        - radarr.chestr.dev
+        - sonarr.tslamars.com
+        - radarr.tslamars.com
       resources: ["^/api.*$"]
       policy: bypass
     # Bypass domains that have their own auth
     - domain:
-        - atuin.chestr.dev
-        - autobrr.chestr.dev
-        - dashbrr.chestr.dev
-        - docs.chestr.dev
-        - emqx.chestr.dev
-        - grafana.chestr.dev
-        - homepage.chestr.dev
-        - irc.chestr.dev
-        - jellyfin.chestr.dev
-        - lldap.chestr.dev
-        - minio.chestr.dev
-        - s3.chestr.dev
-        - ollama.chestr.dev
-        - paperless.chestr.dev
-        - syncthing.chestr.dev
-        - sync.chestr.dev
-        - tautulli.chestr.dev
-        - thelounge.chestr.dev
-        - rook.chestr.dev
-        - sh.chestr.dev
+        - atuin.tslamars.com
+        - autobrr.tslamars.com
+        - dashbrr.tslamars.com
+        - docs.tslamars.com
+        - emqx.tslamars.com
+        - grafana.tslamars.com
+        - homepage.tslamars.com
+        - irc.tslamars.com
+        - jellyfin.tslamars.com
+        - lldap.tslamars.com
+        - minio.tslamars.com
+        - s3.tslamars.com
+        - ollama.tslamars.com
+        - paperless.tslamars.com
+        - syncthing.tslamars.com
+        - sync.tslamars.com
+        - tautulli.tslamars.com
+        - thelounge.tslamars.com
+        - rook.tslamars.com
+        - sh.tslamars.com
       policy: bypass
     - domain:
-        - sonarr.chestr.dev
-        - radarr.chestr.dev
-        - sabnzbd.chestr.dev
-        - qbittorrent.chestr.dev
+        - sonarr.tslamars.com
+        - radarr.tslamars.com
+        - sabnzbd.tslamars.com
+        - qbittorrent.tslamars.com
       subject:
         - "group:media"
       policy: one_factor
     - domain:
-        - paperless.chestr.dev
+        - paperless.tslamars.com
       subject:
         - "group:documents"
       policy: two_factor
-    - domain: "*.chestr.dev"
+    - domain: "*.tslamars.com"
       subject:
         - "group:admin"
       policy: two_factor
-    - domain: "*.chestr.dev"
+    - domain: "*.tslamars.com"
       policy: deny
 
 notifier:
   smtp:
-    sender: "Authelia <auth@chestr.dev>"
+    sender: "Authelia <auth@tslamars.com>"
 
 identity_validation:
   reset_password:
@@ -137,7 +137,7 @@ identity_providers:
           - openid
           - profile
         redirect_uris:
-          - https://autobrr.chestr.dev/api/auth/oidc/callback
+          - https://autobrr.tslamars.com/api/auth/oidc/callback
         userinfo_signed_response_alg: none
         claims_policy: default
       - client_id: dashbrr
@@ -151,7 +151,7 @@ identity_providers:
           - openid
           - profile
         redirect_uris:
-          - https://dashbrr.chestr.dev/api/auth/callback
+          - https://dashbrr.tslamars.com/api/auth/callback
         userinfo_signed_response_alg: none
         claims_policy: default
       - client_id: grafana
@@ -166,7 +166,7 @@ identity_providers:
           - groups
           - email
         redirect_uris:
-          - https://grafana.chestr.dev/login/generic_oauth
+          - https://grafana.tslamars.com/login/generic_oauth
         userinfo_signed_response_alg: none
         claims_policy: default
       - client_id: immich
@@ -180,7 +180,7 @@ identity_providers:
           - profile
           - email
         redirect_uris:
-          - https://photos.chestr.dev/auth/login
+          - https://photos.tslamars.com/auth/login
           - app.immich:/
         userinfo_signed_response_alg: none
         claims_policy: default
@@ -196,7 +196,7 @@ identity_providers:
           - email
           - groups
         redirect_uris:
-          - https://minio.chestr.dev/oauth_callback
+          - https://minio.tslamars.com/oauth_callback
         userinfo_signed_response_alg: none
         claims_policy: default
       - client_id: paperless
@@ -210,6 +210,6 @@ identity_providers:
           - profile
           - email
         redirect_uris:
-          - https://paperless.chestr.dev/accounts/oidc/authelia/login/callback/
+          - https://paperless.tslamars.com/accounts/oidc/authelia/login/callback/
         userinfo_signed_response_alg: none
         claims_policy: default
