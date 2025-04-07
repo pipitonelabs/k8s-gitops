@@ -43,7 +43,7 @@ spec:
               tag: 0.8.1
             env:
               DEBUG: "false"
-              SMTP_DOMAIN: chestr.dev
+              SMTP_DOMAIN: tslamars.com
             envFrom:
               - secretRef:
                   name: smtp-relay-secret
