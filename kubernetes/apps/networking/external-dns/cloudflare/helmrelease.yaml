@@ -1,8 +1,8 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app external-dns-cloudflare
+  namespace: default  # Added for consistency
 spec:
   interval: 1h
   chartRef:
@@ -28,14 +28,12 @@ spec:
               repository: registry.k8s.io/external-dns/external-dns
               tag: v0.16.1@sha256:37d3a7a05c4638b8177382b80a627c223bd84a53c1a91be137245bd3cfdf9986
             args:
-              args:
               - --cloudflare-dns-records-per-page=1000  # From extraArgs
               - --cloudflare-proxied                    # From extraArgs
               - --crd-source-apiversion=externaldns.k8s.io/v1alpha1  # From extraArgs
               - --crd-source-kind=DNSEndpoint           # From extraArgs
-              - --gateway-name=external                 # From extraArgs (already present)
+              - --gateway-name=external                 # From extraArgs
               - --zone-id-filter=$(CF_ZONE_ID)          # From extraArgs
-              # Existing args retained and merged
               - --domain-filter=tslamars.com
               - --events
               - --interval=1m
@@ -44,7 +42,7 @@ spec:
               - --policy=sync
               - --provider=cloudflare
               - --registry=txt
-              - --source=gateway-httproute
+              - --source=gateway-httproute              # Correctly in args, not "sources"
               - --txt-owner-id=k8s
               - --txt-prefix=k8s.
             envFrom:
