@@ -49,10 +49,6 @@ spec:
                   secretKeyRef:
                     name: memos-pguser-secret
                     key: uri
-                valueFrom:
-                  secretKeyRef:
-                    name: memos-pguser-secret
-                    key: index
             envFrom:
               - secretRef:
                   name: memos-secret
