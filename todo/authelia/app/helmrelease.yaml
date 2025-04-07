@@ -140,10 +140,10 @@ spec:
 
     route:
       app:
-        hostnames: ["auth.chestr.dev"]
+        hostnames: ["auth.tslamars.com"]
         parentRefs:
           - name: external
-            namespace: networking
+            namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
