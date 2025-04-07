@@ -28,13 +28,16 @@ spec:
               repository: registry.k8s.io/external-dns/external-dns
               tag: v0.16.1@sha256:37d3a7a05c4638b8177382b80a627c223bd84a53c1a91be137245bd3cfdf9986
             args:
-              - --cloudflare-dns-records-per-page=1000
-              - --cloudflare-proxied
-              - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
-              - --crd-source-kind=DNSEndpoint
+              args:
+              - --cloudflare-dns-records-per-page=1000  # From extraArgs
+              - --cloudflare-proxied                    # From extraArgs
+              - --crd-source-apiversion=externaldns.k8s.io/v1alpha1  # From extraArgs
+              - --crd-source-kind=DNSEndpoint           # From extraArgs
+              - --gateway-name=external                 # From extraArgs (already present)
+              - --zone-id-filter=$(CF_ZONE_ID)          # From extraArgs
+              # Existing args retained and merged
               - --domain-filter=tslamars.com
               - --events
-              - --gateway-name=external
               - --interval=1m
               - --log-format=text
               - --log-level=info
@@ -44,10 +47,6 @@ spec:
               - --source=gateway-httproute
               - --txt-owner-id=k8s
               - --txt-prefix=k8s.
-              - --zone-id-filter=$(CF_ZONE_ID)
-            sources:
-              - crd
-              - gateway-httproute
             envFrom:
               - secretRef:
                   name: external-dns-cloudflare-secret
