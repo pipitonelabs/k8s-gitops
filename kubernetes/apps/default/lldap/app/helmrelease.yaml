@@ -62,6 +62,12 @@ spec:
                   secretKeyRef:
                     name: lldap-pguser-secret
                     key: uri
+              # SMTP Configuration for Password Reset
+              LLDAP_SMTP_OPTIONS__ENABLE_PASSWORD_RESET: "true"
+              LLDAP_SMTP_OPTIONS__SERVER: "smtp-relay.network.svc.cluster.local"
+              LLDAP_SMTP_OPTIONS__PORT: "587"
+              LLDAP_SMTP_OPTIONS__SMTP_ENCRYPTION: "STARTTLS"  # Options: NONE, TLS, STARTTLS
+              LLDAP_SMTP_OPTIONS__FROM: "LLDAP Admin <no-reply@tslamars.com>"
             envFrom:
               - secretRef:
                   name: lldap-secret
