@@ -8,7 +8,6 @@ spec:
   interfaces:
     - bond0.20
     - enp0s31f6.20
-    - enp1s0.20
   nodeSelector:
     matchLabels:
       kubernetes.io/os: linux
