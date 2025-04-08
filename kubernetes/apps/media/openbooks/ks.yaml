@@ -29,9 +29,5 @@ spec:
       VOLSYNC_CLAIM: openbooks-config
       VOLSYNC_CAPACITY: 2Gi
   prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
   timeout: 5m
   wait: false
