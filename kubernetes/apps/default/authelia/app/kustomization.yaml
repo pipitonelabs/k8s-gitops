@@ -5,6 +5,7 @@ configMapGenerator:
   - files:
       - resources/configuration.yaml
     name: authelia-configmap
+    namespace: default
 generatorOptions:
   annotations:
     # Disable or env-sub no worky for authelia config
