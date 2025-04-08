@@ -62,14 +62,12 @@ access_control:
         - atuin.tslamars.com
         - autobrr.tslamars.com
         - dashbrr.tslamars.com
-        - docs.tslamars.com
         - emqx.tslamars.com
         - grafana.tslamars.com
         - homepage.tslamars.com
         - irc.tslamars.com
         - jellyfin.tslamars.com
         - lldap.tslamars.com
-        - minio.tslamars.com
         - s3.tslamars.com
         - ollama.tslamars.com
         - paperless.tslamars.com
@@ -126,8 +124,8 @@ identity_providers:
       - key_id: default
         key: {{ env "JWKS_KEY" | mindent 10 "|" | msquote }}
     clients:
-      - client_id: autobrr
-        client_name: Autobrr
+      - client_name: Autobrr
+        client_id: '{{ env "AUTOBRR_OAUTH_CLIENT_ID" }}'
         client_secret: '{{ env "AUTOBRR_OAUTH_CLIENT_SECRET" }}'
         public: false
         authorization_policy: two_factor
@@ -140,8 +138,8 @@ identity_providers:
           - https://autobrr.tslamars.com/api/auth/oidc/callback
         userinfo_signed_response_alg: none
         claims_policy: default
-      - client_id: dashbrr
-        client_name: Dashbrr
+      - client_name: Dashbrr
+        client_id: '{{ env "DASHBRR_OAUTH_CLIENT_ID" }}'
         client_secret: '{{ env "DASHBRR_OAUTH_CLIENT_SECRET" }}'
         public: false
         authorization_policy: two_factor
@@ -154,8 +152,8 @@ identity_providers:
           - https://dashbrr.tslamars.com/api/auth/callback
         userinfo_signed_response_alg: none
         claims_policy: default
-      - client_id: grafana
-        client_name: Grafana
+      - client_name: Grafana
+        client_id: '{{ env "GRAFANA_OAUTH_CLIENT_ID" }}'
         client_secret: '{{ env "GRAFANA_OAUTH_CLIENT_SECRET" }}'
         public: false
         authorization_policy: two_factor
@@ -169,8 +167,8 @@ identity_providers:
           - https://grafana.tslamars.com/login/generic_oauth
         userinfo_signed_response_alg: none
         claims_policy: default
-      - client_id: immich
-        client_name: Immich
+      - client_name: Immich
+        client_id: '{{ env "IMMICH_OAUTH_CLIENT_ID" }}'
         client_secret: '{{ env "IMMICH_OAUTH_CLIENT_SECRET" }}'
         public: false
         authorization_policy: two_factor
@@ -184,23 +182,8 @@ identity_providers:
           - app.immich:/
         userinfo_signed_response_alg: none
         claims_policy: default
-      - client_id: minio
-        client_name: minio
-        client_secret: '{{ env "MINIO_OAUTH_CLIENT_SECRET" }}'
-        public: false
-        authorization_policy: two_factor
-        pre_configured_consent_duration: 1y
-        scopes:
-          - openid
-          - profile
-          - email
-          - groups
-        redirect_uris:
-          - https://minio.tslamars.com/oauth_callback
-        userinfo_signed_response_alg: none
-        claims_policy: default
-      - client_id: paperless
-        client_name: Paperless
+      - client_name: Paperless
+        client_id: '{{ env "PAPERLESS_OAUTH_CLIENT_ID" }}'
         client_secret: '{{ env "PAPERLESS_OAUTH_CLIENT_SECRET" }}'
         public: false
         authorization_policy: two_factor
