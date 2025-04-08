@@ -18,7 +18,7 @@ spec:
     - name: lldap
       namespace: *namespace
     - name: smtp-relay
-      namespace: default
+      namespace: *namespace
   interval: 30m
   path: ./kubernetes/apps/default/authelia/app
   postBuild:
