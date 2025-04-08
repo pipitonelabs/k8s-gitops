@@ -17,8 +17,9 @@ spec:
     namespace: flux-system
   dependsOn:
     - name: volsync
-      namespace: system
+      namespace: volsync-system
   components:
+    - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   postBuild:
     substitute:
@@ -28,6 +29,10 @@ spec:
       VOLSYNC_CLAIM: openbooks-config
       VOLSYNC_CAPACITY: 2Gi
   prune: true
-  wait: false
-  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: *namespace
   timeout: 5m
+  wait: false

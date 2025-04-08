@@ -5,14 +5,12 @@ kind: HelmRelease
 metadata:
   name: &app openbooks
 spec:
-  interval: 1h
+  interval: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
-  maxHistory: 3
   install:
-    createNamespace: true
     remediation:
       retries: -1
   upgrade:
@@ -23,7 +21,7 @@ spec:
     keepHistory: false
   values:
     controllers:
-      main:
+      openbooks:
         annotations:
           reloader.stakater.com/auto: "true"
         pod:
@@ -34,7 +32,7 @@ spec:
             fsGroup: 100
             fsGroupChangePolicy: OnRootMismatch
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/evan-buss/openbooks
               tag: 4.5.0@sha256:3f2e59a75b68950d57cfec5dc2b1b31d6c6b02706097c70b5438499b59fbdea2
@@ -47,7 +45,7 @@ spec:
               - --port
               - "8080"
               - --name
-              - ronwood
+              - jimmyjams1234
               - --useragent
               - "HexChat 2.9.1"
               - --searchbot
@@ -55,8 +53,8 @@ spec:
             env:
               TZ: America/New_York
     service:
-      main:
-        controller: main
+      app:
+        controller: *app
         ports:
           http:
             port: &port 8080
@@ -69,7 +67,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: main
+              - name: *app
                 port: *port
 
     persistence:
