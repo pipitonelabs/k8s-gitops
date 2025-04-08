@@ -67,7 +67,7 @@ spec:
               LLDAP_SMTP_OPTIONS__SERVER: "smtp-relay.networking.svc.cluster.local"
               LLDAP_SMTP_OPTIONS__PORT: "25"
               LLDAP_SMTP_OPTIONS__FROM: "LLDAP Admin <no-reply@tslamars.com>"
-              LLDAP_SMTP_OPTIONS__SMTP_ENCRYPTION: "none"  # Explicitly disable encryption
+              LLDAP_SMTP_OPTIONS__SMTP_ENCRYPTION: "NONE"  # Explicitly disable encryption
             envFrom:
               - secretRef:
                   name: lldap-secret
