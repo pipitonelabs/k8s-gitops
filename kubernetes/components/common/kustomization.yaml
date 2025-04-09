@@ -4,3 +4,4 @@ kind: Component
 resources:
   - ./alerts
   - ./namespace.yaml
+  - ./repos
