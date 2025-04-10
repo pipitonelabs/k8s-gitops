@@ -112,6 +112,17 @@ spec:
               sourceLabels:
                 - __meta_kubernetes_pod_node_name
               targetLabel: kubernetes_node
+      pod:
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: node-exporter
+              topologyKey: kubernetes.io/hostname
+      hostNetwork: true
+      hostPort: 9100
+      tolerations: []
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
       metricLabelsAllowlist:
