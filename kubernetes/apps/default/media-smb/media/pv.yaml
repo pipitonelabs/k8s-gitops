@@ -11,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: ""
+  storageClassName: "media-smb-unaspro"
   mountOptions:
     - vers=3.1.1
     - mfsymlinks
