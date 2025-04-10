@@ -90,6 +90,7 @@ spec:
         globalMounts:
           - path: /media
             readOnly: true
+            subPath: media
       tmp:
         type: emptyDir
       transcode:

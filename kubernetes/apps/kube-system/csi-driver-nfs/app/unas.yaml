@@ -23,7 +23,7 @@ spec:
       name: nfs-unaspro-media
       parameters:
         server: unaspro.internal
-        share: /volume1/.srv/.unifi-drive/media/.data/media
+        share: /volume1/.srv/.unifi-drive/media/.data
       mountOptions:
         - nfsvers=3
         - nconnect=16
