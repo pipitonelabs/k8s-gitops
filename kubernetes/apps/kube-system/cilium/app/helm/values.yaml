@@ -8,7 +8,7 @@ bpf:
   masquerade: true
   preallocateMaps: true
   # tproxy: true
-bpfClockProbe: true  
+bpfClockProbe: true
 bgpControlPlane:
   enabled: true
 cgroup:
@@ -48,6 +48,7 @@ loadBalancer:
   algorithm: maglev
   mode: dsr
 localRedirectPolicy: true
+MTU: 1500
 operator:
   replicas: 2
   rollOutPods: true
