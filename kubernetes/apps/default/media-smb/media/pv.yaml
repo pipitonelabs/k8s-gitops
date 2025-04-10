@@ -28,5 +28,5 @@ spec:
     volumeAttributes:
       source: "//unaspro.internal/media"
     nodeStageSecretRef:
-      name: media-smb-media
+      name: media-smb-unaspro
       namespace: media
