@@ -1,0 +1,8 @@
+---
+originRequest:
+  originServerName: external.tslamars.com
+
+ingress:
+  - { hostname: tslamars.com, service: https://cilium-gateway-external.kube-system.svc.cluster.local }
+  - { hostname: "*.tslamars.com", service: https://cilium-gateway-external.kube-system.svc.cluster.local }
+  - { service: http_status:404 }
