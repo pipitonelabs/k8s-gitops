@@ -88,12 +88,6 @@ spec:
         type: nfs
         server: 10.10.0.20
         path: /volume1/.srv/.unifi-drive/media/.data
-        mountOptions:
-          - nfsvers=3
-          - nconnect=16
-          - hard
-          - noatime
-          - nolock
         globalMounts:
           - path: /media
             readOnly: true
