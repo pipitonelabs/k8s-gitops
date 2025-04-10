@@ -74,7 +74,7 @@ spec:
       media:
         type: nfs
         server: mars.internal
-        path: /mnt/user/data/media/books
+        path: /mnt/user/data/media
         globalMounts:
           - path: /books
       config:
