@@ -87,7 +87,7 @@ spec:
       media:
         type: nfs
         server: 10.10.0.20
-        path: /volume1/.srv/.unifi-drive/media/.data
+        path: /var/nfs/shared/media
         globalMounts:
           - path: /media
             readOnly: true
