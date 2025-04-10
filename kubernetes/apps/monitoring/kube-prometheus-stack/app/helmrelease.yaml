@@ -100,6 +100,7 @@ spec:
               resources:
                 requests:
                   storage: 50Gi
+
     prometheus-node-exporter:
       fullnameOverride: node-exporter
       prometheus: &prometheus
@@ -112,6 +113,12 @@ spec:
               sourceLabels:
                 - __meta_kubernetes_pod_node_name
               targetLabel: kubernetes_node
+            # Add the pod name as a label to make series unique
+            - action: replace
+              sourceLabels:
+                - __meta_kubernetes_pod_name
+              targetLabel: pod
+    
       pod:
         affinity:
           podAntiAffinity:
