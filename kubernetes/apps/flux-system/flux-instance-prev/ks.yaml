@@ -8,24 +8,19 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../components/gatus/external
   dependsOn:
-    - name: onepassword-store
-      namespace: external-secrets
     - name: flux-operator
       namespace: *namespace
-  interval: 30m
+    - name: onepassword-store
+      namespace: external-secrets
+  interval: 1h
   path: ./kubernetes/apps/flux-system/flux-instance/app
-  postBuild:
-    substitute:
-      APP: flux-webhook
-      GATUS_STATUS: '404'
-  prune: false
+  prune: true
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
-    namespace: *namespace
+    namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: false
+  wait: true
