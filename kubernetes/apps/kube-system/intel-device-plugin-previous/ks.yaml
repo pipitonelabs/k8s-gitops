@@ -8,13 +8,10 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: node-feature-discovery
-      namespace: *namespace
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/kube-system/intel-device-plugin/app
   prune: true
-  retryInterval: 1m
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -35,10 +32,10 @@ spec:
   dependsOn:
     - name: intel-device-plugin-operator
       namespace: *namespace
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/kube-system/intel-device-plugin/gpu
   prune: true
-  retryInterval: 1m
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
