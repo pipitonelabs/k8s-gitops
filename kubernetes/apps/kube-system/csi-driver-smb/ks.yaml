@@ -9,13 +9,14 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  path: ./kubernetes/apps/kube-system/csi-driver-smb/app
+  interval: 1h
+  path: ./kubernetes/apps/kube-system/csi-driver-nfs/app
   prune: true
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  interval: 1h
-  retryInterval: 2m
   timeout: 5m
+  wait: false
