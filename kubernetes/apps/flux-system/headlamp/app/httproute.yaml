@@ -10,7 +10,7 @@ metadata:
     gethomepage.dev/name: Headlamp
     gethomepage.dev/group: System
 spec:
-  hostnames: ["headlamp.chestr.dev"]
+  hostnames: ["headlamp.tslamars.com"]
   parentRefs:
     - name: internal
       namespace: networking
