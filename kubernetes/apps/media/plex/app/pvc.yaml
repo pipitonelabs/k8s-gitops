@@ -16,8 +16,7 @@ metadata:
   name: plex-media-pvc
 spec:
   storageClassName: nfs-unaspro-media
-  accessModes:
-    - ReadOnlyMany
+  accessModes: ["ReadOnlyMany"]
   resources:
     requests:
       storage: 1Gi
