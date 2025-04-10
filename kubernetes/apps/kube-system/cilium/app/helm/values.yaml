@@ -23,7 +23,7 @@ cni:
 dashboards:
   enabled: true
 #devices: bond+
-devices: "bond+ enp+"
+devices: "bond+ ^enp.*"
 enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
