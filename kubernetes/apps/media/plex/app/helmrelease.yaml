@@ -84,11 +84,12 @@ spec:
       #    - path: /media
       #      readOnly: true
       media:
-        enabled: true  # Ensure this is explicitly enabled
-        type: pvc
+        enabled: true
+        type: persistentVolumeClaim
         existingClaim: plex-media-pvc
-        mountPath: /media
-        readOnly: true
+        globalMounts:
+          - path: /media
+            readOnly: true
       tmp:
         type: emptyDir
       transcode:
