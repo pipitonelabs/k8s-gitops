@@ -10,5 +10,5 @@ spec:
   resources:
     requests:
       storage: 60Ti
-  volumeName: default-media-smb-unaspro
+  volumeName: media-smb-unaspro
   storageClassName: ""
