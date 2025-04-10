@@ -4,9 +4,8 @@ kind: Kustomization
 configMapGenerator:
   - files:
       - ./resources/values.yaml
-    name: cilium-helm-values
+    name: kubelet-csr-approver-helm-values
 configurations:
-  - kustomizeconfig.yaml
+  - ./kustomizeconfig.yaml
 resources:
   - ./helmrelease.yaml
-  - ./httproute.yaml
