@@ -88,11 +88,8 @@ spec:
         enabled: true
         type: smb
         server: unaspro.internal
-        share: media
-        credentials:
-          secretName: smb-media-credentials
-          usernameKey: SMB_MEDIA_USERNAME
-          passwordKey: SMB_MEDIA_PASSWORD
+        path: /media
+        credentialsSecret: smb-media-credentials
         globalMounts:
           - path: /media
             readOnly: true
