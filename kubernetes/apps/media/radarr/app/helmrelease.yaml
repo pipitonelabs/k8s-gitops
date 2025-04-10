@@ -122,11 +122,17 @@ spec:
 
     persistence:
       media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        type: persistentVolumeClaim
+        existingClaim: media-smb-unaspro
         globalMounts:
           - path: /media
+            readOnly: true
+      #media:
+      #  type: nfs
+      #  server: mars.internal
+      #  path: /mnt/user/data/media
+      #  globalMounts:
+      #    - path: /media
       config:
         existingClaim: *app
       tmp:
