@@ -83,14 +83,20 @@ spec:
       #  globalMounts:
       #    - path: /media
       #      readOnly: true
+
       media:
         enabled: true
-        type: persistentVolumeClaim
-        existingClaim: plex-media-pvc
+        type: smb
+        server: unaspro.internal
+        share: media
+        credentials:
+          secretName: smb-media-credentials
+          usernameKey: SMB_MEDIA_USERNAME
+          passwordKey: SMB_MEDIA_PASSWORD
         globalMounts:
           - path: /media
             readOnly: true
-            subPath: media
+
       tmp:
         type: emptyDir
       transcode:

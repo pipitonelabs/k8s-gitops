@@ -9,14 +9,3 @@ spec:
     requests:
       storage: 100Gi
   storageClassName: ceph-block
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: plex-media-pvc
-spec:
-  storageClassName: nfs-unaspro-media
-  accessModes: ["ReadOnlyMany"]
-  resources:
-    requests:
-      storage: 1Gi
