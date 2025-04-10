@@ -78,7 +78,7 @@ spec:
           - path: /config/Library/Application Support/Plex Media Server/Logs
       media:
         type: persistentVolumeClaim
-        existingClaim: default-media-smb-unaspro
+        existingClaim: media-smb-unaspro
         globalMounts:
           - path: /media
             #subPath: library
