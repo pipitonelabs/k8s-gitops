@@ -20,10 +20,10 @@ spec:
       replicas: 1
     storageClass:
       create: true
-      name: nfs-unaspro
+      name: nfs-unaspro-media
       parameters:
         server: unaspro.internal
-        share: /var/nfs/shared/kubernetes
+        share: /var/nfs/shared/media
       mountOptions:
         - nfsvers=3
         - nconnect=16

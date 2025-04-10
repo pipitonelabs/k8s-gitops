@@ -85,13 +85,11 @@ spec:
       #      readOnly: true
 
       media:
-        type: nfs
-        server: 10.10.0.20
-        path: /var/nfs/shared/media
-        globalMounts:
-          - path: /media
-            readOnly: true
-        
+        type: pvc
+        existingClaim: plex-media-pvc
+        mountPath: /media
+        readOnly: true
+
       tmp:
         type: emptyDir
       transcode:
