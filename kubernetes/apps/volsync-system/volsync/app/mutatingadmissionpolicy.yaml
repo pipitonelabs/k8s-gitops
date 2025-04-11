@@ -98,8 +98,8 @@ spec:
               value: Object.spec.template.spec.volumes{
                 name: "repository",
                 nfs: Object.spec.template.spec.volumes.nfs{
-                  server: "unaspro.internal",
-                  path: "/volume1/.srv/.unifi-drive/Volsync/.data"
+                  server: "mars.internal",
+                  path: "/mnt/user/Volsync"
                 }
               }
             }
