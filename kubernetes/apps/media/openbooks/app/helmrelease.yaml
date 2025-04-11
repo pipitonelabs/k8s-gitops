@@ -32,6 +32,8 @@ spec:
             fsGroup: 988
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups: [988]
+            seccompProfile:
+              type: RuntimeDefault
         containers:
           app:
             image:
@@ -76,7 +78,7 @@ spec:
         type: persistentVolumeClaim
         existingClaim: media-smb-unaspro
         globalMounts:
-          - path: /media
+          - path: /books
             subPath: books
       
       #media:
