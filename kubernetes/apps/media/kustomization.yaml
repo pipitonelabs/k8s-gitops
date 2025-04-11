@@ -9,8 +9,8 @@ resources:
   - ./bazarr/ks.yaml
 #  - ./cross-seed/ks.yaml
   - ./jellyseerr/ks.yaml
-  - ./openbooks/ks.yaml
-  - ./pinchflat/ks.yaml
+#  - ./openbooks/ks.yaml
+#  - ./pinchflat/ks.yaml
   - ./plex/ks.yaml
   - ./prowlarr/ks.yaml
 #  - ./qbittorrent/ks.yaml
