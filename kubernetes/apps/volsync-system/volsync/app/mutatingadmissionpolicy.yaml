@@ -104,8 +104,7 @@ spec:
                     "source": "//unaspro.internal/volsync"
                   },
                   nodeStageSecretRef: {
-                    name: "volsync-smb-unaspro",
-                    namespace: "volsync-system"
+                    name: "volsync-smb-unaspro"
                   }
                 }
               }
