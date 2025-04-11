@@ -57,11 +57,11 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 988
-        fsGroup: 988
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [44]
+        supplementalGroups: [44, 988]
     service:
       app:
         controller: pinchflat
