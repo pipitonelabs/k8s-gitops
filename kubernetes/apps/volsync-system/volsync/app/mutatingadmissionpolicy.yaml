@@ -32,17 +32,7 @@ spec:
   mutations:
     - patchType: JSONPatch
       jsonPatch:
-        operations:
-          - op: add
-            path: "/spec/template/spec/initContainers"
-            value:
-              - name: jitter
-                image: docker.io/library/busybox:latest
-                imagePullPolicy: IfNotPresent
-                command:
-                  - sh
-                  - -c
-                  - sleep $(shuf -i 0-60 -n 1)
+        expression: "[{'op': 'add', 'path': '/spec/template/spec/initContainers', 'value': [{'name': 'jitter', 'image': 'docker.io/library/busybox:latest', 'command': ['sh', '-c', 'sleep $(shuf -i 0-60 -n 1)']}]}]"
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.32.0/mutatingadmissionpolicybinding-admissionregistration-v1alpha1.json
 apiVersion: admissionregistration.k8s.io/v1alpha1
@@ -79,15 +69,4 @@ spec:
   mutations:
     - patchType: JSONPatch
       jsonPatch:
-        operations:
-          - op: add
-            path: "/spec/template/spec/containers/0/volumeMounts/-"
-            value:
-              name: repository
-              mountPath: /repository
-          - op: add
-            path: "/spec/template/spec/volumes/-"
-            value:
-              name: repository
-              persistentVolumeClaim:
-                claimName: smb-volsync-pvc
+        expression: "[{'op': 'add', 'path': '/spec/template/spec/containers/0/volumeMounts/-', 'value': {'name': 'repository', 'mountPath': '/repository'}}, {'op': 'add', 'path': '/spec/template/spec/volumes/-', 'value': {'name': 'repository', 'persistentVolumeClaim': {'claimName': 'smb-volsync-pvc'}}}]"
