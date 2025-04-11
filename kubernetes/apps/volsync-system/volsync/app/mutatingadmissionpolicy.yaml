@@ -34,18 +34,17 @@ spec:
       jsonPatch:
         expression: >
           [
-            JSONPatch{
-              op: "add", path: "/spec/template/spec/initContainers",
-              value: []
-            },
-            JSONPatch{
-              op: "add", path: "/spec/template/spec/initContainers/-",
-              value: {
-                "name": "jitter",
-                "image": "docker.io/library/busybox:latest",
-                "imagePullPolicy": "IfNotPresent", 
-                "command": ["sh", "-c", "sleep $(shuf -i 0-60 -n 1)"]
-              }
+            {
+              "op": "add",
+              "path": "/spec/template/spec/initContainers",
+              "value": [
+                {
+                  "name": "jitter",
+                  "image": "docker.io/library/busybox:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "command": ["sh", "-c", "sleep $(shuf -i 0-60 -n 1)"]
+                }
+              ]
             }
           ]
 ---
@@ -86,64 +85,22 @@ spec:
       jsonPatch:
         expression: >
           [
-            JSONPatch{
-              op: "add", 
-              path: "/spec/template/spec/containers/0/volumeMounts/-",
-              value: {
+            {
+              "op": "add", 
+              "path": "/spec/template/spec/containers/0/volumeMounts/-",
+              "value": {
                 "name": "repository",
                 "mountPath": "/repository"
               }
             },
-            JSONPatch{
-              op: "add", 
-              path: "/spec/template/spec/volumes/-",
-              value: {
+            {
+              "op": "add", 
+              "path": "/spec/template/spec/volumes/-",
+              "value": {
                 "name": "repository",
-                "hostPath": {
-                  "path": "/mnt/smb-volsync",
-                  "type": "DirectoryOrCreate"
+                "persistentVolumeClaim": {
+                  "claimName": "smb-volsync-pvc"
                 }
-              }
-            },
-            JSONPatch{
-              op: "add",
-              path: "/spec/template/spec/initContainers",
-              value: []
-            },
-            JSONPatch{
-              op: "add",
-              path: "/spec/template/spec/initContainers/-",
-              value: {
-                "name": "smb-mount",
-                "image": "docker.io/library/alpine:latest",
-                "securityContext": {
-                  "privileged": true
-                },
-                "command": [
-                  "sh",
-                  "-c",
-                  "apk add --no-cache cifs-utils && mkdir -p /mnt/smb-volsync && mount -t cifs //unaspro.internal/volsync /mnt/smb-volsync -o username=${SMB_USER},password=${SMB_PASSWORD},vers=3.0,dir_mode=0755,file_mode=0644"
-                ],
-                "env": [
-                  {
-                    "name": "SMB_USER",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "volsync-smb-unaspro",
-                        "key": "username"
-                      }
-                    }
-                  },
-                  {
-                    "name": "SMB_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "volsync-smb-unaspro",
-                        "key": "password"
-                      }
-                    }
-                  }
-                ]
               }
             }
           ]
