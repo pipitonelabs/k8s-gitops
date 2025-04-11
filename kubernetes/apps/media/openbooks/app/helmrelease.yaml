@@ -76,8 +76,8 @@ spec:
         type: persistentVolumeClaim
         existingClaim: media-smb-unaspro
         globalMounts:
-          - path: /media/books
-            #subPath: books
+          - path: /media
+            subPath: books
       
       #media:
       #  type: nfs
