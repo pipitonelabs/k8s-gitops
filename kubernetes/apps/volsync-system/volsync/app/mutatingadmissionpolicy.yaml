@@ -26,6 +26,29 @@ spec:
         expression: >
           [
             JSONPatch{
+              op: "add", path: "/spec/template/spec/initContainers/-",
+              value: Object.spec.template.spec.initContainers{
+                name: "mount-smb",
+                image: "debian:bullseye",
+                command: ["sh", "-c", "apt-get update && apt-get install -y cifs-utils && mkdir -p /repository && mount -t cifs //unaspro.internal/Volsync /repository -o username=$(SMB_USERNAME),password=$(SMB_PASSWORD),dir_mode=0777,file_mode=0777,vers=3.0"],
+                env: [
+                  {name: "SMB_USERNAME", valueFrom: {secretKeyRef: {name: "${APP}-volsync-secret", key: "SMB_USERNAME"}}},
+                  {name: "SMB_PASSWORD", valueFrom: {secretKeyRef: {name: "${APP}-volsync-secret", key: "SMB_PASSWORD"}}}
+                ],
+                volumeMounts: [
+                  {name: "smb-repo", mountPath: "/repository"}
+                ],
+                securityContext: {privileged: true}
+              }
+            },
+            JSONPatch{
+              op: "add", path: "/spec/template/spec/volumes/-",
+              value: Object.spec.template.spec.volumes{
+                name: "smb-repo",
+                emptyDir: {}
+              }
+            },
+            JSONPatch{
               op: "add", path: "/spec/template/spec/containers/0/volumeMounts/-",
               value: Object.spec.template.spec.containers.volumeMounts{
                 name: "smb-repo",
@@ -33,12 +56,11 @@ spec:
               }
             },
             JSONPatch{
-              op: "add", path: "/spec/template/spec/volumes/-",
-              value: Object.spec.template.spec.volumes{
-                name: "smb-repo",
-                persistentVolumeClaim: Object.spec.template.spec.volumes.persistentVolumeClaim{
-                  claimName: "${APP}-smb-repo"
-                }
+              op: "add", path: "/spec/template/spec/securityContext",
+              value: Object.spec.template.spec.securityContext{
+                fsGroup: ${VOLSYNC_PGID:=988},
+                runAsUser: ${VOLSYNC_PUID:=1008},
+                runAsGroup: ${VOLSYNC_PGID:=988}
               }
             }
           ]
