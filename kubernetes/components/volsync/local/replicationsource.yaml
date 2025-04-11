@@ -4,6 +4,7 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: "${APP}"
+  namespace: volsync-system
 spec:
   sourcePVC: "${APP}"
   trigger:
@@ -11,13 +12,11 @@ spec:
   restic:
     copyMethod: "${VOLSYNC_COPYMETHOD:=Snapshot}"
     pruneIntervalDays: 14
-    # Secret defining RESTIC_REPOSITORY=/repository and RESTIC_PASSWORD
     repository: "${APP}-volsync-secret"
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=2Gi}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=ceph-block}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
-    # storageClassName/accessModes here relate to temporary volumes for 'CopyMethod: Clone/Direct' if used
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-block}"
     accessModes: ["${VOLSYNC_SNAP_ACCESSMODES:=ReadWriteOnce}"]
     moverSecurityContext:
@@ -27,33 +26,4 @@ spec:
     retain:
       hourly: 24
       daily: 7
-
-    # --- Start VolSync SMB Modification ---
-    moverPodTemplate:
-      spec:
-        # Define the SMB CSI volume
-        volumes:
-          - name: restic-smb-repo # Volume name
-            csi:
-              driver: smb.csi.k8s.io # Your SMB CSI driver name
-              readOnly: false
-              # Unique handle for the volume
-              volumeHandle: "${APP}-src-smb-repo-volsync-unaspro" # Make it unique per source if needed
-              # !! IMPORTANT: Reference your actual SMB credentials secret !!
-              nodeStageSecretRef:
-                name: smb-credentials      # <-- YOUR SMB SECRET NAME
-                namespace: volsync-system  # <-- YOUR SMB SECRET NAMESPACE
-              volumeAttributes:
-                source: "//unaspro.internal/volsync" # Your SMB Share path
-                # Optional: Add mount options if needed by your share/driver
-                # mountOptions: "dir_mode=0777,file_mode=0777,vers=3.0"
-        # Define how to mount the volume into the mover container
-        containers:
-          # Apply the mount to the main mover container (usually named 'restic' or similar)
-          # Omitting 'name' usually works if there's only one main container.
-          # - name: <container-name> # Specify if needed
-          - volumeMounts: # Note: This should be a list item under containers
-              - name: restic-smb-repo # Must match volume name above
-                # Mount path MUST match RESTIC_REPOSITORY in the repository secret
-                mountPath: /repository
-    # --- End VolSync SMB Modification ---
+    cachePVC: "${APP}-smb-repo" # Use SMB PVC for repository

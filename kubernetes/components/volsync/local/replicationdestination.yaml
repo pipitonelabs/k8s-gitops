@@ -4,56 +4,27 @@ apiVersion: volsync.backube/v1alpha1
 kind: ReplicationDestination
 metadata:
   name: "${APP}-dst"
+  namespace: volsync-system
   labels:
     kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
 spec:
   trigger:
     manual: restore-once
   restic:
-    # Secret defining RESTIC_REPOSITORY=/repository and RESTIC_PASSWORD
     repository: "${APP}-volsync-secret"
     copyMethod: Snapshot
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=ceph-block}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=2Gi}"
-    storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-block}" # For the restored PVC
-    accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"] # For the restored PVC
-    capacity: "${VOLSYNC_CAPACITY:=5Gi}" # For the restored PVC
+    storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-block}"
+    accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
+    capacity: "${VOLSYNC_CAPACITY:=5Gi}"
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=1000}
       fsGroup: ${VOLSYNC_PGID:=1000}
     enableFileDeletion: true
-    cleanupCachePVC: true
+    cleanupCachePVC: false # Retain SMB PVC
     cleanupTempPVC: true
-
-    # --- Start VolSync SMB Modification ---
-    moverPodTemplate:
-      spec:
-        # Define the SMB CSI volume
-        volumes:
-          - name: restic-smb-repo # Volume name
-            csi:
-              driver: smb.csi.k8s.io # Your SMB CSI driver name
-              readOnly: false
-              # Unique handle for the volume
-              volumeHandle: "${APP}-dst-smb-repo-volsync-unaspro" # Make it unique per destination if needed
-              # !! IMPORTANT: Reference your actual SMB credentials secret !!
-              nodeStageSecretRef:
-                name: smb-credentials      # <-- YOUR SMB SECRET NAME
-                namespace: volsync-system  # <-- YOUR SMB SECRET NAMESPACE
-              volumeAttributes:
-                source: "//unaspro.internal/volsync" # Your SMB Share path
-                # Optional: Add mount options if needed by your share/driver
-                # mountOptions: "dir_mode=0777,file_mode=0777,vers=3.0"
-        # Define how to mount the volume into the mover container
-        containers:
-          # Apply the mount to the main mover container (usually named 'restic' or similar)
-          # Omitting 'name' usually works if there's only one main container.
-          # - name: <container-name> # Specify if needed
-          - volumeMounts: # Note: This should be a list item under containers
-              - name: restic-smb-repo # Must match volume name above
-                # Mount path MUST match RESTIC_REPOSITORY in the repository secret
-                mountPath: /repository
-    # --- End VolSync SMB Modification ---
+    cachePVC: "${APP}-smb-repo" # Use SMB PVC for repository
