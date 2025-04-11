@@ -1,0 +1,14 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: volsync-smb-unaspro
+  namespace: volsync-system
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 60Ti
+  volumeName: volsync-smb-unaspro
+  storageClassName: ""
