@@ -17,9 +17,9 @@ spec:
     - mfsymlinks
     - noperm
     - noserverino
-    - uid=4000
+    - uid=1001
     - forceuid
-    - gid=4000
+    - gid=988
     - forcegid
   csi:
     driver: smb.csi.k8s.io

@@ -60,11 +60,11 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 1001
+        runAsGroup: 988
+        fsGroup: 988
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [44, 4000]
+        supplementalGroups: [44, 988]
     persistence:
       config:
         existingClaim: *app
@@ -81,7 +81,7 @@ spec:
         existingClaim: media-smb-unaspro
         globalMounts:
           - path: /media
-            #subPath: library
+            subPath: library
             readOnly: true
       #media:
       #  type: nfs

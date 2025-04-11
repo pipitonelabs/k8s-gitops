@@ -53,13 +53,12 @@ spec:
 
     defaultPodOptions:
       securityContext:
-        runAsUser: 99
-        runAsGroup: 100
-        fsGroup: 100
         runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 988
+        fsGroup: 988
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups:
-          - 65537
+        supplementalGroups: [988]
 
     service:
       app:
@@ -92,11 +91,18 @@ spec:
       config:
         existingClaim: *app
       media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        type: persistentVolumeClaim
+        existingClaim: media-smb-unaspro
         globalMounts:
-          - path: /media/downloads/sabnzbd
-            subPath: downloads/sabnzbd
+          - path: /media/sabnzbd
+            subPath: sabnzbd
+      
+      #media:
+      #  type: nfs
+      #  server: mars.internal
+      #  path: /mnt/user/data/media
+      #  globalMounts:
+      #    - path: /media/downloads/sabnzbd
+      #      subPath: downloads/sabnzbd
       tmp:
         type: emptyDir

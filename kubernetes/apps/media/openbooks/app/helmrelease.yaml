@@ -26,10 +26,10 @@ spec:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
-            runAsUser: 99
-            runAsGroup: 100
+            runAsUser: 1001
+            runAsGroup: 988
             runAsNonRoot: true
-            fsGroup: 100
+            fsGroup: 988
             fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
@@ -72,11 +72,18 @@ spec:
 
     persistence:
       media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        type: persistentVolumeClaim
+        existingClaim: media-smb-unaspro
         globalMounts:
-          - path: /books
+          - path: /media/books
+            subPath: books
+      
+      #media:
+      #  type: nfs
+      #  server: mars.internal
+      #  path: /mnt/user/data/media
+      #  globalMounts:
+      #    - path: /books
       config:
         existingClaim: *app
       tmp:
