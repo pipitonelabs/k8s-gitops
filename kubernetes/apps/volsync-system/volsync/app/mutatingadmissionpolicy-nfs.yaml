@@ -53,15 +53,15 @@ spec:
 apiVersion: admissionregistration.k8s.io/v1alpha1
 kind: MutatingAdmissionPolicyBinding
 metadata:
-  name: volsync-mover-smb
+  name: volsync-mover-nfs
 spec:
-  policyName: volsync-mover-smb
+  policyName: volsync-mover-nfs
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.32.0/mutatingadmissionpolicy-admissionregistration-v1alpha1.json
 apiVersion: admissionregistration.k8s.io/v1alpha1
 kind: MutatingAdmissionPolicy
 metadata:
-  name: volsync-mover-smb
+  name: volsync-mover-nfs
 spec:
   matchConstraints:
     resourceRules:
@@ -97,15 +97,9 @@ spec:
               op: "add", path: "/spec/template/spec/volumes/-",
               value: Object.spec.template.spec.volumes{
                 name: "repository",
-                csi: Object.spec.template.spec.volumes.csi{
-                  driver: "smb.csi.k8s.io",
-                  volumeAttributes: {
-                    "source": "//unaspro.internal/Volsync"
-                  },
-                  nodePublishSecretRef: {
-                    name: "volsync-smb-unaspro",
-                    namespace: "media"
-                  }
+                nfs: Object.spec.template.spec.volumes.nfs{
+                  server: "mars.internal",
+                  path: "/mnt/user/Volsync"
                 }
               }
             }
