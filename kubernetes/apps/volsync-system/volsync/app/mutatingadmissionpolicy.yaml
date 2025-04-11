@@ -99,7 +99,7 @@ spec:
                 name: "repository",
                 nfs: Object.spec.template.spec.volumes.nfs{
                   server: "unaspro.internal",
-                  path: "/var/nfs/shared/Volsync",
+                  path: "/volume1/.srv/.unifi-drive/Volsync/.data",
                   mountOptions: ["vers=3, "hard"]
                 }
               }
