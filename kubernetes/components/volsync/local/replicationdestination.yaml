@@ -25,6 +25,4 @@ spec:
       runAsGroup: ${VOLSYNC_PGID:=1000}
       fsGroup: ${VOLSYNC_PGID:=1000}
     enableFileDeletion: true
-    cleanupCachePVC: false # Retain SMB PVC
     cleanupTempPVC: true
-    cachePVC: "${APP}-smb-repo" # Use SMB PVC for repository
