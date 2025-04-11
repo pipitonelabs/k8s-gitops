@@ -81,7 +81,7 @@ spec:
         existingClaim: media-smb-unaspro
         globalMounts:
           - path: /media
-            subPath: library
+            #subPath: library
             readOnly: true
       #media:
       #  type: nfs
