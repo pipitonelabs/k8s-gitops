@@ -87,23 +87,26 @@ spec:
         expression: >
           [
             JSONPatch{
-              op: "add", path: "/spec/template/spec/containers/0/volumeMounts/-",
+              op: "add", 
+              path: "/spec/template/spec/containers/0/volumeMounts/-",
               value: {
                 "name": "repository",
                 "mountPath": "/repository"
               }
             },
             JSONPatch{
-              op: "add", path: "/spec/template/spec/volumes/-",
+              op: "add", 
+              path: "/spec/template/spec/volumes/-",
               value: {
                 "name": "repository",
-                "csi": {
-                  "driver": "csi.smb.k8s.io",
-                  "readOnly": false,
-                  "volumeAttributes": {
-                    "source": "//unaspro.internal/volsync"
+                "flexVolume": {
+                  "driver": "k8s/cifs",
+                  "fsType": "cifs",
+                  "options": {
+                    "source": "//unaspro.internal/volsync",
+                    "mountOptions": "vers=3.0,dir_mode=0755,file_mode=0644"
                   },
-                  "nodeStageSecretRef": {
+                  "secretRef": {
                     "name": "volsync-smb-unaspro"
                   }
                 }
