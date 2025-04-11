@@ -86,7 +86,6 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /etc/yt-dlp
-    persistence:
       media:
         type: persistentVolumeClaim
         existingClaim: media-smb-unaspro
