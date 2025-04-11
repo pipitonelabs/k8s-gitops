@@ -104,7 +104,7 @@ spec:
                   },
                   nodePublishSecretRef: {
                     name: "volsync-smb-unaspro",
-                    namespace: "media"
+                    namespace: "volsync-system"
                   }
                 }
               }
