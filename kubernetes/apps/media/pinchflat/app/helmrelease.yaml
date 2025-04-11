@@ -91,7 +91,7 @@ spec:
         existingClaim: media-smb-unaspro
         globalMounts:
           - path: /media/youtube
-            subPath: Library/YouTube
+            #subPath: Library/YouTube
       #media:
       #  type: nfs
       #  server: mars.internal
