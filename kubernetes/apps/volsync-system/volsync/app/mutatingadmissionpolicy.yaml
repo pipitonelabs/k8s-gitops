@@ -100,6 +100,7 @@ spec:
                 nfs: Object.spec.template.spec.volumes.nfs{
                   server: "unaspro.internal",
                   path: "/var/nfs/shared/Volsync"
+                  mountOptions: ["vers=3, "hard"]
                 }
               }
             }
