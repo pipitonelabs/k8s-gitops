@@ -123,8 +123,6 @@ spec:
       media:
         type: persistentVolumeClaim
         existingClaim: media-smb-unaspro
-        globalMounts:
-          - path: /media
       #media:
       #  type: nfs
       #  server: mars.internal
