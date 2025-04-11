@@ -76,7 +76,7 @@ spec:
         existingClaim: media-smb-unaspro
         globalMounts:
           - path: /media/books
-            subPath: books
+            #subPath: books
       
       #media:
       #  type: nfs
