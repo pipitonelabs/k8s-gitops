@@ -112,23 +112,19 @@ spec:
 
     defaultPodOptions:
       securityContext:
+        runAsUser: 99
+        runAsGroup: 100
+        fsGroup: 100
         runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 988
-        fsGroup: 988
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [988]
 
     persistence:
       media:
-        type: persistentVolumeClaim
-        existingClaim: media-smb-unaspro
-      #media:
-      #  type: nfs
-      #  server: mars.internal
-      #  path: /mnt/user/data/media
-      #  globalMounts:
-      #    - path: /media
+        type: nfs
+        server: mars.internal
+        path: /mnt/user/data/media
+        globalMounts:
+          - path: /media
       config:
         existingClaim: *app
       tmp:

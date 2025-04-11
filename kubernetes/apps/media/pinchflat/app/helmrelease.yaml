@@ -57,9 +57,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 988
-        fsGroup: 988
+        runAsUser: 99
+        runAsGroup: 100
+        fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [44, 988]
     service:
@@ -87,21 +87,13 @@ spec:
         globalMounts:
           - path: /etc/yt-dlp
       media:
-        type: persistentVolumeClaim
-        existingClaim: media-smb-unaspro
-        globalMounts:
-          - path: /media/youtube
-            subPath: Library/YouTube
-          - path: /downloads
-            subPath: Library/YouTube/downloads
-      #media:
-      #  type: nfs
-      #  server: mars.internal
-      #  path: /mnt/user/data/media/youtube
-      #  advancedMounts:
-      #    pinchflat:
-      #      app:
-      #        - path: /downloads
-      #          subPath: Library/YouTube
+        type: nfs
+        server: mars.internal
+        path: /mnt/user/data/media/youtube
+        advancedMounts:
+          pinchflat:
+            app:
+              - path: /downloads
+                subPath: Library/YouTube
       tmp:
         type: emptyDir

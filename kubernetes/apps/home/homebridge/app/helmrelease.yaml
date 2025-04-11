@@ -43,7 +43,7 @@ spec:
       securityContext:
         runAsUser: 0  # Changed to root (required by s6-overlay)
         runAsGroup: 0
-        fsGroup: 1000
+        fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:

@@ -1,9 +1,9 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/volsync.backube/replicationsource_v1alpha1.json
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: "${APP}"
-  namespace: volsync-system
 spec:
   sourcePVC: "${APP}"
   trigger:
@@ -19,9 +19,9 @@ spec:
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-block}"
     accessModes: ["${VOLSYNC_SNAP_ACCESSMODES:=ReadWriteOnce}"]
     moverSecurityContext:
-      runAsUser: 1008 # Match SMB UID
-      runAsGroup: 988 # Match SMB GID
-      fsGroup: 988 # Match SMB GID
+      runAsUser: ${VOLSYNC_PUID:=99}
+      runAsGroup: ${VOLSYNC_PGID:=100}
+      fsGroup: ${VOLSYNC_PGID:=100}
     retain:
       hourly: 24
       daily: 7

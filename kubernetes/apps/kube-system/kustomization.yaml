@@ -14,5 +14,4 @@ resources:
   - ./irqbalance/ks.yaml
   - ./metrics-server/ks.yaml
   - ./reloader/ks.yaml
-  - ./csi-driver-smb/ks.yaml
   - ./spegel/ks.yaml

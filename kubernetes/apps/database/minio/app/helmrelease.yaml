@@ -27,8 +27,6 @@ spec:
         runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups:
-          - 65539 # Media NFS gid
     controllers:
       minio:
         annotations:
