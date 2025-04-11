@@ -104,9 +104,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsUser: 1000
-        runAsGroup: 1000
+        runAsGroup: 100
+        fsGroup: 100
         runAsNonRoot: true
-        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
 
     service:
