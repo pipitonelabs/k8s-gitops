@@ -7,7 +7,7 @@ components:
 resources:
 #  - ./autobrr/ks.yaml
   - ./bazarr/ks.yaml
-#  - ./jellyseerr/ks.yaml
+  - ./jellyseerr/ks.yaml
   - ./openbooks/ks.yaml
   - ./pinchflat/ks.yaml
   - ./plex/ks.yaml
