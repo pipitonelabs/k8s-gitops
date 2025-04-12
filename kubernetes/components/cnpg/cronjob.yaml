@@ -12,7 +12,7 @@ spec:
       template:
         spec:
           securityContext:
-            runAsUser: 99
+            runAsUser: 1000
             runAsGroup: 100
             fsGroup: 100
             runAsNonRoot: true
