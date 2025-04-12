@@ -17,8 +17,6 @@ spec:
             fsGroup: 100
             runAsNonRoot: true
             fsGroupChangePolicy: OnRootMismatch
-            supplementalGroups:
-              - 65539
           containers:
             - name: *name
               image: docker.io/prodrigestivill/postgres-backup-local:17
