@@ -7,13 +7,18 @@ spec:
   containers:
   - name: fix
     image: busybox:latest
-    command: ["sh", "-c", "chown -R 1000:1000 /config && chmod -R 775 /config && sleep 3600"]
+    command: ["sh", "-c", "chown -R 1000:100 /config && chown -R 1000:100 /transcode && chmod -R 775 /config && chmod -R 775 /transcode"]
     securityContext:
       runAsUser: 0
     volumeMounts:
     - name: config
       mountPath: /config
+    - name: transcode
+      mountPath: /transcode
   volumes:
   - name: config
     persistentVolumeClaim:
       claimName: plex
+  - name: transcode
+    emptyDir: {}
+  restartPolicy: Never
