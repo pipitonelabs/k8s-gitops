@@ -65,16 +65,8 @@ spec:
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [44]
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: NotIn
-                values:
-                - m3
-                - m4
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
     persistence:
       config:
         existingClaim: *app
