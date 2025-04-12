@@ -123,8 +123,6 @@ spec:
         type: nfs
         server: mars.internal
         path: /mnt/user/data/media
-        globalMounts:
-          - path: /media
       config:
         existingClaim: *app
       tmp:
