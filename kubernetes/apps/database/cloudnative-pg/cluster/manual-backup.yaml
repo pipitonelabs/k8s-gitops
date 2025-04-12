@@ -1,0 +1,8 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Backup
+metadata:
+  name: postgres17-manual-20250412
+  namespace: database
+spec:
+  cluster:
+    name: postgres17
