@@ -49,7 +49,7 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 250Mi
+                memory: 500Mi
 
     defaultPodOptions:
       securityContext:
@@ -58,7 +58,7 @@ spec:
         runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
-
+        supplementalGroups: [100]
     service:
       app:
         controller: *app
@@ -92,9 +92,9 @@ spec:
       media:
         type: nfs
         server: mars.internal
-        path: /mnt/user/data/media
+        path: /mnt/user/data/media/downloads
         globalMounts:
           - path: /media/downloads/nzbs
-            subPath: downloads/nzbs
+            subPath: nzbs
       tmp:
         type: emptyDir
