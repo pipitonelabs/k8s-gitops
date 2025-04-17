@@ -1,0 +1,113 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app outline
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      outline:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "17"
+            envFrom:
+              - secretRef:
+                  name: outline-initdb-secret
+
+        containers:
+          app:
+            image:
+              repository: docker.io/outlinewiki/outline
+              tag: 0.83.0@sha256:8998d433bf50355c06cea9860786a350372a4efc7984c95a044b748ebd1aab34
+            command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
+            env:
+              TZ: ${TIMEZONE}
+              URL: "https://outline.tslamars.com"
+              ENABLE_UPDATES: false
+              AWS_REGION: us-east-1
+              AWS_S3_ACL: private
+              AWS_S3_FORCE_PATH_STYLE: "true"
+              AWS_S3_UPLOAD_BUCKET_NAME: outline
+              AWS_S3_UPLOAD_BUCKET_URL: "https://s3.tslamars.com"
+              FILE_STORAGE: s3
+              FILE_STORAGE_UPLOAD_MAX_SIZE: "26214400"
+              FILE_STORAGE_IMPORT_MAX_SIZE: "26214400"
+              PORT: 8080
+              REDIS_URL: redis://outline-dragonfly.default.svc.cluster.local:6379
+              SMTP_HOST: smtp-relay.default.svc.cluster.local.
+              SMTP_PORT: 2525
+              SMTP_FROM_EMAIL: "outline@tslamars.com"
+              SMTP_SECURE: false
+              WEB_CONCURRENCY: 10
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: outline-pguser-secret
+                    key: uri
+            envFrom:
+              - secretRef:
+                  name: outline-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 750Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: outline
+        ports:
+          http:
+            port: 8080
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.tslamars.com"
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *port
+    persistence:
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /home/node
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
