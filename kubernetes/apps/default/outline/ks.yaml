@@ -22,7 +22,7 @@ spec:
     - ../../../../components/gatus/guarded
     - ../../../../components/dragonfly
     - ../../../../components/volsync
-  path: ./kubernetes/main/apps/default/outline/app
+  path: ./kubernetes/apps/default/outline/app
   prune: true
   sourceRef:
     kind: GitRepository
