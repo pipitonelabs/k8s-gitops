@@ -20,6 +20,7 @@ spec:
       namespace: database
   components:
     - ../../../../components/gatus/guarded
+    - ../../../../components/cnpg
     - ../../../../components/dragonfly
     - ../../../../components/volsync
   path: ./kubernetes/apps/default/outline/app
