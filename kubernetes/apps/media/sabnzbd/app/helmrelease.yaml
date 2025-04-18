@@ -38,18 +38,19 @@ spec:
               SABNZBD__PORT: 8080
               SABNZBD__HOST_WHITELIST_ENTRIES: >-
                 sabnzbd,
-                sabnzbd.default,
-                sabnzbd.default.svc,
-                sabnzbd.default.svc.cluster,
-                sabnzbd.default.svc.cluster.local,
-                sabnzbd.tslamars.com
+                sabnzbd.media,
+                sabnzbd.media.svc,
+                sabnzbd.media.svc.cluster,
+                sabnzbd.media.svc.cluster.local,
+                {{ .Release.Name }}.tslamars.com,
+                sabnzbd.media.com
             envFrom:
               - secretRef:
                   name: sabnzbd-secret
             resources:
               requests:
                 cpu: 100m
-                memory: 500Mi
+                memory: 10Gi
 
     defaultPodOptions:
       securityContext:
@@ -58,7 +59,6 @@ spec:
         runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [100]
     service:
       app:
         controller: *app
@@ -75,7 +75,7 @@ spec:
           gethomepage.dev/name: SABnzbd
           gethomepage.dev/group: Downloads
           gethomepage.dev/widget.type: sabnzbd
-          gethomepage.dev/widget.url: http://sabnzbd.default.svc.cluster.local:8080
+          gethomepage.dev/widget.url: http://sabnzbd.media.svc.cluster.local:8080
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SABNZBD_API_KEY}}" }}'
         parentRefs:
           - name: internal
@@ -92,9 +92,6 @@ spec:
       media:
         type: nfs
         server: mars.internal
-        path: /mnt/user/data/media/downloads
-        globalMounts:
-          - path: /media/downloads/nzbs
-            subPath: nzbs
+        path: /mnt/user/data/media
       tmp:
         type: emptyDir
