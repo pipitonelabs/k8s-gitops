@@ -7,4 +7,4 @@ resources:
   - ./helmrelease.yaml
   - ./pvc.yaml
 patches:
-  - path: patch.yaml
+  - path: ./patch.yaml
