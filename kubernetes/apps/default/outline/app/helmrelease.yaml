@@ -60,6 +60,7 @@ spec:
               SMTP_FROM_EMAIL: "outline@tslamars.com"
               SMTP_SECURE: false
               WEB_CONCURRENCY: 10
+              EMAIL_ENABLED: "true"
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
