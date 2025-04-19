@@ -6,6 +6,7 @@ components:
   - ../../components/common
 resources:
   - ./cloudnative-pg/ks.yaml
+  - ./crunchy-postgres/ks.yaml
   - ./dragonfly/ks.yaml
   - ./minio/ks.yaml
   - ./emqx/ks.yaml
