@@ -61,6 +61,14 @@ spec:
               SMTP_SECURE: false
               WEB_CONCURRENCY: 10
               EMAIL_ENABLED: "true"
+              NODE_TLS_REJECT_UNAUTHORIZED: "0"
+              OIDC_AUTH_URI: "https://auth.tslamars.com/api/oidc/authorization"
+              OIDC_CLIENT_ID: outline
+              OIDC_DISPLAY_NAME: Authelia
+              OIDC_SCOPES: openid profile email offline_access
+              OIDC_TOKEN_URI: "https://auth.tslamars.com/api/oidc/token"
+              OIDC_USERINFO_URI: "https://auth.tslamars.com/api/oidc/userinfo"
+              OIDC_USERNAME_CLAIM: preferred_username
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
