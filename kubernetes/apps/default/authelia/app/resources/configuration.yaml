@@ -204,6 +204,6 @@ identity_providers:
           - profile
           - email
         redirect_uris:
-          - https://docs.tslamars.com/auth/oidc.callback
+          - https://outline.tslamars.com/auth/oidc.callback
         userinfo_signed_response_alg: none
         claims_policy: default
