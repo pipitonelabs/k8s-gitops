@@ -6,7 +6,6 @@ metadata:
   namespace: security
 spec:
   interval: 30m
-  createNamespace: true
   chartRef:
     kind: OCIRepository
     name: app-template
