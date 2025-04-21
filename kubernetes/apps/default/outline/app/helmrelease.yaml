@@ -71,6 +71,8 @@ spec:
               OIDC_USERNAME_CLAIM: preferred_username
               OIDC_LOGOUT_URI: "https://auth.tslamars.com/api/oidc/logout"
               OIDC_AUTH_ENABLED: "true"
+              SECRET_KEY: "{{ .OUTLINE_SECRET_KEY }}"
+              UTILS_SECRET: "{{ .OUTLINE_UTILS_SECRET }}"
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
