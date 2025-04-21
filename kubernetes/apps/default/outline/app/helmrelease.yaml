@@ -77,9 +77,11 @@ spec:
                   secretKeyRef:
                     name: outline-pguser-secret
                     key: uri
-            envFrom:
-              - secretRef:
-                  name: outline-secret
+            envFromSecrets:
+              - name: outline-secret
+            #envFrom:
+            #  - secretRef:
+            #      name: outline-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
