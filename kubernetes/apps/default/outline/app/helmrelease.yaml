@@ -44,7 +44,6 @@ spec:
             #command: ["/bin/sh", "-c", "echo SECRET_KEY=$SECRET_KEY; echo UTILS_SECRET=$UTILS_SECRET; sleep 3600"]
             env:
               URL: "https://outline.tslamars.com"
-              DEBUG: "oidc,auth"
               LOG_LEVEL: debug
               ENABLE_UPDATES: false
               AWS_REGION: us-east-1
