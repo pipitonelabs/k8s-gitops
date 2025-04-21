@@ -42,7 +42,6 @@ spec:
               tag: 0.83.0@sha256:8998d433bf50355c06cea9860786a350372a4efc7984c95a044b748ebd1aab34
             command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
             env:
-              TZ: ${TIMEZONE}
               URL: "https://outline.tslamars.com"
               ENABLE_UPDATES: false
               AWS_REGION: us-east-1
@@ -63,7 +62,7 @@ spec:
               EMAIL_ENABLED: "true"
               NODE_TLS_REJECT_UNAUTHORIZED: "0"
               OIDC_AUTH_URI: "https://auth.tslamars.com/api/oidc/authorization"
-              OIDC_CLIENT_ID: outline
+              OIDC_CLIENT_ID: "{{ .OUTLINE_OAUTH_CLIENT_ID }}"
               OIDC_DISPLAY_NAME: Authelia
               OIDC_SCOPES: openid profile email offline_access
               OIDC_TOKEN_URI: "https://auth.tslamars.com/api/oidc/token"
