@@ -73,7 +73,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: &pguser outline-pguser-secret
-                    key: user
+                    key: uri
             envFrom:
               - secretRef:
                   name: outline-secret
