@@ -62,10 +62,10 @@ spec:
               SMTP_SECURE: false
               WEB_CONCURRENCY: 10
               EMAIL_ENABLED: "true"
-              NODE_TLS_REJECT_UNAUTHORIZED: "0"
+              NODE_TLS_REJECT_UNAUTHORIZED: "0"             
               OIDC_CLIENT_ID: "{{ .OUTLINE_OAUTH_CLIENT_ID }}"
               OIDC_CLIENT_SECRET: "{{ .OUTLINE_OAUTH_CLIENT_SECRET }}"
-              OIDC_DISPLAY_NAME: Authentik
+              OIDC_DISPLAY_NAME: authentik
               OIDC_SCOPES: openid profile email
               OIDC_AUTH_URI: "https://sso.tslamars.com/application/o/authorize/"
               OIDC_TOKEN_URI: "https://sso.tslamars.com/application/o/token/"
