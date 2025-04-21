@@ -40,17 +40,8 @@ spec:
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: natel-discrete-panel,pr0ps-trackmap-panel,panodata-map-panel
       GF_SECURITY_ANGULAR_SUPPORT_ENABLED: true
       GF_SERVER_ROOT_URL: https://{{ .Release.Name }}.tslamars.com
-    extraEnvVars:
-    - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: grafana-secret
-          key: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
-    - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: grafana-secret
-          key: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+    envFromSecrets:
+      - name: grafana-secret
     grafana.ini:
       analytics:
         check_for_updates: false
