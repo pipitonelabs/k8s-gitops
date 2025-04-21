@@ -4,6 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: OCIRepository
 metadata:
   name: authentik
+  namespace: security
 spec:
   interval: 5m
   layerSelector:
@@ -23,6 +24,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: authentik
+    namespace: flux-system
   install:
     remediation:
       retries: -1
