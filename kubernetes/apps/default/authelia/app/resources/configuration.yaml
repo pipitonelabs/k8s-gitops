@@ -202,7 +202,6 @@ identity_providers:
         scopes:
           - openid
           - profile
-          - offline_access
           - email
         redirect_uris:
           - https://outline.tslamars.com/auth/oidc.callback
