@@ -40,8 +40,8 @@ spec:
             image:
               repository: docker.io/outlinewiki/outline
               tag: 0.83.0@sha256:8998d433bf50355c06cea9860786a350372a4efc7984c95a044b748ebd1aab34
-            #command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
-            command: ["/bin/sh", "-c", "echo SECRET_KEY=$SECRET_KEY; echo UTILS_SECRET=$UTILS_SECRET; sleep 3600"]
+            command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
+            #command: ["/bin/sh", "-c", "echo SECRET_KEY=$SECRET_KEY; echo UTILS_SECRET=$UTILS_SECRET; sleep 3600"]
             env:
               URL: "https://outline.tslamars.com"
               DEBUG: "oidc,auth"
