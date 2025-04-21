@@ -3,10 +3,9 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app authentik
-  namespace: &namespace security
+  namespace: security
 spec:
   interval: 30m
-  createNamespace: true
   chartRef:
     kind: OCIRepository
     name: app-template
@@ -57,44 +56,24 @@ spec:
               AUTHENTIK_POSTGRESQL__NAME:
                 valueFrom:
                   secretKeyRef:
-                    name: &pgsecret authentik-cnpg-secret
-                    key: dbname
+                    name: &pguser authentik-pguser-secret
+                    key: db
               AUTHENTIK_POSTGRESQL__HOST:
                 valueFrom:
                   secretKeyRef:
-                    name: *pgsecret
+                    name: *pguser
                     key: host
               AUTHENTIK_POSTGRESQL__USER:
                 valueFrom:
                   secretKeyRef:
-                    name: *pgsecret
-                    key: username
+                    name: *pguser
+                    key: user
               AUTHENTIK_POSTGRESQL__PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: *pgsecret
+                    name: *pguser
                     key: password
               AUTHENTIK_REDIS__HOST: authentik-dragonfly.security.svc.cluster.local
-              AUTHENTIK_BOOTSTRAP_TOKEN:
-                valueFrom:
-                  secretKeyRef:
-                    name: authentik-secret
-                    key: AUTHENTIK_BOOTSTRAP_TOKEN
-              AUTHENTIK_BOOTSTRAP_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: authentik-secret
-                    key: AUTHENTIK_BOOTSTRAP_PASSWORD
-              AUTHENTIK_BOOTSTRAP_EMAIL:
-                valueFrom:
-                  secretKeyRef:
-                    name: authentik-secret
-                    key: AUTHENTIK_BOOTSTRAP_EMAIL
-              AUTHENTIK_SECRET_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: authentik-secret
-                    key: AUTHENTIK_SECRET_KEY
             envFrom:
               - secretRef:
                   name: authentik-secret
@@ -104,6 +83,31 @@ spec:
                 memory: 500Mi
               limits:
                 memory: 1Gi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &authentik-port 9000
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *authentik-port
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              startup:
+                enabled: false
 
       dragonfly:
         replicas: 1
@@ -132,18 +136,55 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 512Mi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &dragonfly-port 6379
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *dragonfly-port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              startup:
+                enabled: false
 
     service:
       authentik:
         controller: authentik
         ports:
           http:
-            port: 9000
+            port: *authentik-port
+          metrics:
+            enabled: true
+            port: 9300
       dragonfly:
         controller: dragonfly
         ports:
           redis:
-            port: 6379
+            port: *dragonfly-port
+
+    serviceMonitor:
+      authentik:
+        serviceName: authentik
+        enabled: true
+        endpoints:
+          - port: metrics
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
 
     autoscaling:
       authentik:
