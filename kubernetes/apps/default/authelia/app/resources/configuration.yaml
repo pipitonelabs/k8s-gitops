@@ -194,7 +194,7 @@ identity_providers:
         userinfo_signed_response_alg: none
         claims_policy: default
       - client_name: Outline
-        client_id: outline
+        client_id: '{{ env "OUTLINE_OAUTH_CLIENT_ID" }}'
         client_secret: '{{ env "OUTLINE_OAUTH_CLIENT_SECRET" }}'
         public: false
         authorization_policy: two_factor
