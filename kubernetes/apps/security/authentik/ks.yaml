@@ -21,7 +21,7 @@ spec:
   path: ./kubernetes/apps/security/authentik/app
   postBuild:
     substitute:
-      APP: *app
+      APP: sso
   prune: true
   retryInterval: 1m
   sourceRef:
