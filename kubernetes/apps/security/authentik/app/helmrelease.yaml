@@ -74,6 +74,26 @@ spec:
                     name: *pguser
                     key: password
               AUTHENTIK_REDIS__HOST: authentik-dragonfly.security.svc.cluster.local
+              AUTHENTIK_BOOTSTRAP_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secret
+                    key: AUTHENTIK_BOOTSTRAP_TOKEN
+              AUTHENTIK_BOOTSTRAP_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secret
+                    key: AUTHENTIK_BOOTSTRAP_PASSWORD
+              AUTHENTIK_BOOTSTRAP_EMAIL:
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secret
+                    key: AUTHENTIK_BOOTSTRAP_EMAIL
+              AUTHENTIK_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secret
+                    key: AUTHENTIK_SECRET_KEY
             envFrom:
               - secretRef:
                   name: authentik-secret
