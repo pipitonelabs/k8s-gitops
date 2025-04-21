@@ -43,6 +43,7 @@ spec:
             command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
             env:
               URL: "https://outline.tslamars.com"
+              DEBUG: "oidc,auth"
               ENABLE_UPDATES: false
               AWS_REGION: us-east-1
               AWS_S3_ACL: private
@@ -70,7 +71,6 @@ spec:
               OIDC_USERINFO_URI: "https://auth.tslamars.com/api/oidc/userinfo"
               OIDC_USERNAME_CLAIM: preferred_username
               OIDC_LOGOUT_URI: "https://auth.tslamars.com/api/oidc/logout"
-              OIDC_AUTH_ENABLED: "true"
               SECRET_KEY: "{{ .OUTLINE_SECRET_KEY }}"
               UTILS_SECRET: "{{ .OUTLINE_UTILS_SECRET }}"
               DATABASE_URL:
