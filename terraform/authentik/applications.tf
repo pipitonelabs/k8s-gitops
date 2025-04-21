@@ -6,13 +6,14 @@ locals {
     "kyoo",
     "lubelogger",
     "paperless",
-    "portainer"
+    "portainer",
+    "outline"
   ]
 }
 
 module "onepassword_application" {
   for_each = toset(local.oauth_apps)
-  source   = "github.com/joryirving/terraform-1password-item"
+  source   = "github.com/tslamars/terraform-1password-item"
   vault    = "Kubernetes"
   item     = each.key
 }
