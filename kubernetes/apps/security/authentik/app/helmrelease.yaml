@@ -24,14 +24,7 @@ spec:
     defaultPodOptions:
       enableServiceLinks: false
       annotations:
-        secret.reloader.stakater.com/reload: authentik-secret,authentik-cnpg-secret
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: *app
+        secret.reloader.stakater.com/reload: authentik-secret
 
     controllers:
       authentik:
@@ -83,31 +76,12 @@ spec:
                 memory: 500Mi
               limits:
                 memory: 1Gi
-            probes:
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /health
-                    port: &authentik-port 9000
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 3
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /health
-                    port: *authentik-port
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 3
-              startup:
-                enabled: false
+        autoscaling:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 3
+        targetCPUUtilizationPercentage: 80
+        targetMemoryUtilizationPercentage: 80
 
       dragonfly:
         replicas: 1
@@ -136,29 +110,6 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 512Mi
-            probes:
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  tcpSocket:
-                    port: &dragonfly-port 6379
-                  initialDelaySeconds: 10
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 3
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  tcpSocket:
-                    port: *dragonfly-port
-                  initialDelaySeconds: 10
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 3
-              startup:
-                enabled: false
 
     service:
       authentik:
@@ -174,22 +125,3 @@ spec:
         ports:
           redis:
             port: *dragonfly-port
-
-    serviceMonitor:
-      authentik:
-        serviceName: authentik
-        enabled: true
-        endpoints:
-          - port: metrics
-            scheme: http
-            path: /metrics
-            interval: 1m
-            scrapeTimeout: 10s
-
-    autoscaling:
-      authentik:
-        enabled: true
-        minReplicas: 1
-        maxReplicas: 3
-        targetCPUUtilizationPercentage: 80
-        targetMemoryUtilizationPercentage: 80
