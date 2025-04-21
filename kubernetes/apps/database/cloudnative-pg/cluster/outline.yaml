@@ -45,7 +45,7 @@ spec:
       wal:
         compression: bzip2
         maxParallel: 8
-      destinationPath: s3://cloudnative-pg/
+      destinationPath: s3://outline-pg/
       endpointURL: https://s3.tslamars.com
       #endpointURL: https://5d92d34288d78f2937b65f30517ec598.r2.cloudflarestorage.com
       # Note: serverName version needs to be incremented
