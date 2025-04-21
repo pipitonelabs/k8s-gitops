@@ -37,22 +37,22 @@ spec:
       deploymentStrategy:
         type: RollingUpdate
       env:
-        AUTHENTIK_POSTGRESQL__NAME:
+        - name: AUTHENTIK_POSTGRESQL__NAME
           valueFrom:
             secretKeyRef:
               name: &pguser authentik-pguser-secret
               key: db
-        AUTHENTIK_POSTGRESQL__HOST:
+        - name: AUTHENTIK_POSTGRESQL__HOST
           valueFrom:
             secretKeyRef:
               name: *pguser
               key: host
-        AUTHENTIK_POSTGRESQL__USER:
+        - name: AUTHENTIK_POSTGRESQL__USER
           valueFrom:
             secretKeyRef:
               name: *pguser
               key: user
-        AUTHENTIK_POSTGRESQL__PASSWORD:
+        - name: AUTHENTIK_POSTGRESQL__PASSWORD
           valueFrom:
             secretKeyRef:
               name: *pguser
