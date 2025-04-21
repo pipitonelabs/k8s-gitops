@@ -111,17 +111,3 @@ spec:
               limits:
                 memory: 512Mi
 
-    service:
-      authentik:
-        controller: authentik
-        ports:
-          http:
-            port: *authentik-port
-          metrics:
-            enabled: true
-            port: 9300
-      dragonfly:
-        controller: dragonfly
-        ports:
-          redis:
-            port: *dragonfly-port
