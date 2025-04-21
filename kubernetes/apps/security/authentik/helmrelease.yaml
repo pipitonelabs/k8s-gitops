@@ -56,22 +56,22 @@ spec:
               AUTHENTIK_POSTGRESQL__NAME:
                 valueFrom:
                   secretKeyRef:
-                    name: &pgsecret authentik-cnpg-secret
-                    key: dbname
+                    name: &pguser authentik-pguser-secret
+                    key: db
               AUTHENTIK_POSTGRESQL__HOST:
                 valueFrom:
                   secretKeyRef:
-                    name: *pgsecret
+                    name: *pguser
                     key: host
               AUTHENTIK_POSTGRESQL__USER:
                 valueFrom:
                   secretKeyRef:
-                    name: *pgsecret
-                    key: username
+                    name: *pguser
+                    key: user
               AUTHENTIK_POSTGRESQL__PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: *pgsecret
+                    name: *pguser
                     key: password
               AUTHENTIK_REDIS__HOST: authentik-dragonfly.security.svc.cluster.local
             envFrom:
