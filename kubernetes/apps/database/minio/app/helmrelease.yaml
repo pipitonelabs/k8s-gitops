@@ -42,7 +42,11 @@ spec:
               MINIO_UPDATE: "off"
               MINIO_BROWSER_REDIRECT_URL: https://minio.tslamars.com
               MINIO_SERVER_URL: "https://s3.tslamars.com"
-              MINIO_API_CORS_ALLOW_ORIGIN: https://minio.tslamars.com,https://s3.tslamars.com
+              MINIO_API_CORS_ALLOW_ORIGIN: "https://outline.tslamars.com"
+              MINIO_API_CORS_ALLOW_METHODS: "GET,PUT,POST,DELETE"
+              MINIO_API_CORS_ALLOW_HEADERS: "Authorization,Content-Type,Accept,Origin"
+              MINIO_API_CORS_EXPOSE_HEADERS: "ETag"
+              MINIO_API_CORS_ALLOW_CREDENTIALS: "true"
               #MINIO_IDENTITY_OPENID_CONFIG_URL: https://auth.tslamars.com/.well-known/openid-configuration
               #MINIO_IDENTITY_OPENID_CLIENT_ID: minio
               #MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,groups
