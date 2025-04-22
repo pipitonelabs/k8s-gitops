@@ -43,7 +43,7 @@ spec:
             command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
             env:
               URL: "https://outline.tslamars.com"
-              LOG_LEVEL: trace
+              LOG_LEVEL: verbose
               ENABLE_UPDATES: false
               AWS_REGION: us-east-1
               AWS_S3_ACL: private
