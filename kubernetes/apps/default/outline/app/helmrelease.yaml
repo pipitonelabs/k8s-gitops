@@ -43,7 +43,7 @@ spec:
             command: ["/bin/sh", "-c", "yarn db:migrate --env=production-ssl-disabled && yarn start --env=production-ssl-disabled"]
             env:
               URL: "https://outline.tslamars.com"
-              LOG_LEVEL: debug
+              LOG_LEVEL: trace
               ENABLE_UPDATES: false
               AWS_REGION: us-east-1
               AWS_S3_ACL: private
@@ -61,7 +61,7 @@ spec:
               SMTP_SECURE: false
               WEB_CONCURRENCY: 10
               EMAIL_ENABLED: "true"
-              NODE_TLS_REJECT_UNAUTHORIZED: "0"             
+              NODE_TLS_REJECT_UNAUTHORIZED: "0"
               OIDC_DISPLAY_NAME: authentik
               OIDC_SCOPES: openid profile email
               OIDC_AUTH_URI: "https://sso.tslamars.com/application/o/authorize/"
