@@ -26,6 +26,12 @@ resource "authentik_stage_user_login" "authentication-login" {
   name = "authentication-login"
 }
 
+# Add user_write stage for authentication flow
+resource "authentik_stage_user_write" "authentication-user-write" {
+  name                     = "authentication-user-write"
+  create_users_as_inactive = false
+}
+
 ## Invalidation stages
 resource "authentik_stage_user_logout" "invalidation-logout" {
   name = "invalidation-logout"
@@ -108,7 +114,6 @@ resource "authentik_stage_prompt" "user-settings" {
   validation_policies = [
     resource.authentik_policy_expression.user-settings-authorization.id
   ]
-
 }
 
 resource "authentik_stage_user_write" "user-settings-write" {

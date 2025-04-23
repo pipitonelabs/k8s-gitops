@@ -61,6 +61,7 @@ spec:
         - secretRef:
             name: authentik-secret
     authentik:
+      log_level: debug
       redis:
         host: authentik-dragonfly.security.svc.cluster.local
       email:

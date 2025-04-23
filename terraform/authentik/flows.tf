@@ -24,6 +24,13 @@ resource "authentik_flow_stage_binding" "authentication-flow-binding-10" {
   order  = 10
 }
 
+# Add user_write stage binding to ensure attributes are populated
+resource "authentik_flow_stage_binding" "authentication-flow-binding-90" {
+  target = authentik_flow.authentication.uuid
+  stage  = authentik_stage_user_write.authentication-user-write.id
+  order  = 90
+}
+
 resource "authentik_flow_stage_binding" "authentication-flow-binding-100" {
   target = authentik_flow.authentication.uuid
   stage  = authentik_stage_user_login.authentication-login.id
@@ -86,7 +93,6 @@ resource "authentik_flow_stage_binding" "recovery-flow-binding-30" {
 }
 
 ## Invitation flow
-
 data "authentik_flow" "default-source-enrollment" {
   slug = "default-source-enrollment"
 }
