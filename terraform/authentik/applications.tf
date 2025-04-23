@@ -1,5 +1,6 @@
 locals {
   oauth_apps = [
+    "dashbrr",
     "grafana",
     "headlamp",
     "outline"
@@ -15,6 +16,14 @@ module "onepassword_application" {
 
 locals {
   applications = {
+    dashbrr = {
+      client_id     = module.onepassword_application["dashbrr"].fields["DASHBRR_CLIENT_ID"]
+      client_secret = module.onepassword_application["dashbrr"].fields["DASHBRR_CLIENT_SECRET"]
+      group         = "downloads"
+      icon_url      = "https://raw.githubusercontent.com/joryirving/home-ops/main/docs/src/assets/icons/dashbrr.png"
+      redirect_uri  = "https://dashbrr.${var.CLUSTER_DOMAIN}/api/auth/callback"
+      launch_url    = "https://dashbrr.${var.CLUSTER_DOMAIN}/api/auth/callback"
+    },
     grafana = {
       client_id     = module.onepassword_application["grafana"].fields["GRAFANA_CLIENT_ID"]
       client_secret = module.onepassword_application["grafana"].fields["GRAFANA_CLIENT_SECRET"]
