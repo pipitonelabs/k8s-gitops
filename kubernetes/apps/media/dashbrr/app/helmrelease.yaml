@@ -20,9 +20,6 @@ spec:
       dashbrr:
         labels:
           postgres: "true"
-        annotations:
-          reloader.stakater.com/auto: "true"
-
         initContainers:
           01-init-db:
             image:
