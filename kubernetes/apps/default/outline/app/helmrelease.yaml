@@ -69,6 +69,7 @@ spec:
               OIDC_USERINFO_URI: "https://sso.tslamars.com/application/o/userinfo/"
               OIDC_USERNAME_CLAIM: preferred_username
               OIDC_LOGOUT_URI: "https://sso.tslamars.com/application/o/outline/end-session/"
+              OIDC_REDIRECT_URI: "https://outline.tslamars.com/auth/oidc-callback"
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
