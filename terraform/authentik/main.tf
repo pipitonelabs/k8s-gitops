@@ -18,7 +18,7 @@ provider "onepassword" {
 }
 
 module "onepassword_authentik" {
-  source = "github.com/joryirving/terraform-1password-item"
+  source = "github.com/tslamars/terraform-1password-item"
   vault  = "Kubernetes"
   item   = "authentik"
 }

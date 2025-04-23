@@ -1,12 +1,7 @@
 locals {
   oauth_apps = [
-    "dashbrr",
     "grafana",
     "headlamp",
-    "kyoo",
-    "lubelogger",
-    "paperless",
-    "portainer",
     "outline"
   ]
 }
@@ -20,14 +15,6 @@ module "onepassword_application" {
 
 locals {
   applications = {
-    dashbrr = {
-      client_id     = module.onepassword_application["dashbrr"].fields["DASHBRR_CLIENT_ID"]
-      client_secret = module.onepassword_application["dashbrr"].fields["DASHBRR_CLIENT_SECRET"]
-      group         = "downloads"
-      icon_url      = "https://raw.githubusercontent.com/joryirving/home-ops/main/docs/src/assets/icons/dashbrr.png"
-      redirect_uri  = "https://dashbrr.${var.CLUSTER_DOMAIN}/api/auth/callback"
-      launch_url    = "https://dashbrr.${var.CLUSTER_DOMAIN}/api/auth/callback"
-    },
     grafana = {
       client_id     = module.onepassword_application["grafana"].fields["GRAFANA_CLIENT_ID"]
       client_secret = module.onepassword_application["grafana"].fields["GRAFANA_CLIENT_SECRET"]
@@ -44,37 +31,13 @@ locals {
       redirect_uri  = "https://headlamp.${var.CLUSTER_DOMAIN}/oidc-callback"
       launch_url    = "https://headlamp.${var.CLUSTER_DOMAIN}/"
     },
-    kyoo = {
-      client_id     = module.onepassword_application["kyoo"].fields["KYOO_CLIENT_ID"]
-      client_secret = module.onepassword_application["kyoo"].fields["KYOO_CLIENT_SECRET"]
-      group         = "media"
-      icon_url      = "https://raw.githubusercontent.com/zoriya/Kyoo/master/icons/icon-256x256.png"
-      redirect_uri  = "https://kyoo.${var.CLUSTER_DOMAIN}/api/auth/logged/authentik"
-      launch_url    = "https://kyoo.${var.CLUSTER_DOMAIN}/api/auth/login/authentik?redirectUrl=https://kyoo.${var.CLUSTER_DOMAIN}/login/callback"
-    },
-    lubelogger = {
-      client_id     = module.onepassword_application["lubelogger"].fields["LUBELOGGER_CLIENT_ID"]
-      client_secret = module.onepassword_application["lubelogger"].fields["LUBELOGGER_CLIENT_SECRET"]
-      group         = "home"
-      icon_url      = "https://demo.lubelogger.com/defaults/lubelogger_icon_72.png"
-      redirect_uri  = "https://lubelogger.${var.CLUSTER_DOMAIN}/Login/RemoteAuth"
-      launch_url    = "https://lubelogger.${var.CLUSTER_DOMAIN}/Login/RemoteAuth"
-    },
-    paperless = {
-      client_id     = module.onepassword_application["paperless"].fields["PAPERLESS_CLIENT_ID"]
-      client_secret = module.onepassword_application["paperless"].fields["PAPERLESS_CLIENT_SECRET"]
-      group         = "home"
-      icon_url      = "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/png/paperless.png"
-      redirect_uri  = "https://paperless.${var.CLUSTER_DOMAIN}/accounts/oidc/authentik/login/callback/"
-      launch_url    = "https://paperless.${var.CLUSTER_DOMAIN}/"
-    },
-    portainer = {
-      client_id     = module.onepassword_application["portainer"].fields["PORTAINER_CLIENT_ID"]
-      client_secret = module.onepassword_application["portainer"].fields["PORTAINER_CLIENT_SECRET"]
-      group         = "infrastructure"
-      icon_url      = "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/png/portainer.png"
-      redirect_uri  = "https://portainer.${var.CLUSTER_DOMAIN}/"
-      launch_url    = "https://portainer.${var.CLUSTER_DOMAIN}/"
+    outline = {
+      client_id     = module.onepassword_application["outline"].fields["OUTLINE_OAUTH_CLIENT_ID"]
+      client_secret = module.onepassword_application["outline"].fields["OUTLINE_OAUTH_CLIENT_SECRET"]
+      group         = "self-hosted"
+      icon_url      = "https://avatars.githubusercontent.com/u/1765001?s=48&v=4"
+      redirect_uri  = "https://outline.${var.CLUSTER_DOMAIN}/auth/oidc-callback"
+      launch_url    = "https://outline.${var.CLUSTER_DOMAIN}/"
     }
   }
 }

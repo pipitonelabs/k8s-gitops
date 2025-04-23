@@ -1,5 +1,5 @@
-/.private/
-/.task/
+.private/
+.task/
 *.crt
 *.key
 .decrypted~*
@@ -10,3 +10,13 @@ kubeconfig
 talosconfig
 m3-machineconfig.yaml
 m4-machineconfig.yaml
+terraform.tfvars
+# Terraform
+.terraform
+.terraform.tfstate*
+.terraform.lock.hcl
+terraform.tfstate*
+*.tfvars
+# Trash
+.DS_Store
+Thumbs.db

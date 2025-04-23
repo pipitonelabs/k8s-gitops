@@ -63,6 +63,13 @@ spec:
     authentik:
       redis:
         host: authentik-dragonfly.security.svc.cluster.local
+      email:
+        host: smtp-relay.default.svc.cluster.local
+        port: 2525
+        from: no-reply@tslamars.com
+        use_tls: true
+        use_ssl: false
+        timeout: 10
     server:
       autoscaling:
         enabled: true

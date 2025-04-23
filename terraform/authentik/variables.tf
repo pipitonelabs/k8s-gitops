@@ -1,6 +1,6 @@
 variable "OP_CONNECT_HOST" {
   type        = string
-  description = "Oneopass Connect URL"
+  description = "Onepass Connect URL"
 }
 
 variable "OP_CONNECT_TOKEN" {
@@ -13,5 +13,5 @@ variable "OP_CONNECT_TOKEN" {
 variable "CLUSTER_DOMAIN" {
   type        = string
   description = "Domain for Authentik"
-  default     = "jory.dev"
+  default     = "tslamars.com"
 }
