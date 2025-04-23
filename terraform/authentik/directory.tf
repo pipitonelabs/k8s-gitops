@@ -40,14 +40,14 @@ module "onepassword_discord" {
 }
 
 ##Oauth
-resource "authentik_source_oauth" "discord" {
-  name                = "Discord"
-  slug                = "discord"
-  authentication_flow = data.authentik_flow.default-source-authentication.id
-  enrollment_flow     = authentik_flow.enrollment-invitation.uuid
-  user_matching_mode  = "email_deny"
+#resource "authentik_source_oauth" "discord" {
+#  name                = "Discord"
+#  slug                = "discord"
+#  authentication_flow = data.authentik_flow.default-source-authentication.id
+#  enrollment_flow     = authentik_flow.enrollment-invitation.uuid
+#  user_matching_mode  = "email_deny"
 
-  provider_type   = "discord"
-  consumer_key    = module.onepassword_discord.fields["DISCORD_CLIENT_ID"]
-  consumer_secret = module.onepassword_discord.fields["DISCORD_CLIENT_SECRET"]
-}
+#  provider_type   = "discord"
+#  consumer_key    = module.onepassword_discord.fields["DISCORD_CLIENT_ID"]
+#  consumer_secret = module.onepassword_discord.fields["DISCORD_CLIENT_SECRET"]
+#}

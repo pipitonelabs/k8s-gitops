@@ -7,7 +7,7 @@ resource "authentik_stage_identification" "authentication-identification" {
   show_matched_user         = false
   password_stage            = authentik_stage_password.authentication-password.id
   recovery_flow             = authentik_flow.recovery.uuid
-  sources                   = [authentik_source_oauth.discord.uuid]
+  #sources                   = [authentik_source_oauth.discord.uuid]
 }
 
 resource "authentik_stage_password" "authentication-password" {
@@ -24,12 +24,6 @@ resource "authentik_stage_authenticator_validate" "authentication-mfa-validation
 
 resource "authentik_stage_user_login" "authentication-login" {
   name = "authentication-login"
-}
-
-# Add user_write stage for authentication flow
-resource "authentik_stage_user_write" "authentication-user-write" {
-  name                     = "authentication-user-write"
-  create_users_as_inactive = false
 }
 
 ## Invalidation stages
@@ -114,6 +108,7 @@ resource "authentik_stage_prompt" "user-settings" {
   validation_policies = [
     resource.authentik_policy_expression.user-settings-authorization.id
   ]
+
 }
 
 resource "authentik_stage_user_write" "user-settings-write" {

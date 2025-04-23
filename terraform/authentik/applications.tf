@@ -36,7 +36,7 @@ locals {
       client_secret = module.onepassword_application["outline"].fields["OUTLINE_OAUTH_CLIENT_SECRET"]
       group         = "self-hosted"
       icon_url      = "https://avatars.githubusercontent.com/u/1765001?s=48&v=4"
-      redirect_uri  = "https://outline.${var.CLUSTER_DOMAIN}/auth/oidc-callback"
+      redirect_uri  = "https://outline.${var.CLUSTER_DOMAIN}/auth/oidc.callback"
       launch_url    = "https://outline.${var.CLUSTER_DOMAIN}/"
     }
   }
@@ -49,7 +49,7 @@ resource "authentik_provider_oauth2" "oauth2" {
   client_secret         = each.value.client_secret
   authorization_flow    = authentik_flow.provider-authorization-implicit-consent.uuid
   authentication_flow   = authentik_flow.authentication.uuid
-  invalidation_flow     = data.authentik_flow.default-provider-invalidation-flow.id
+  invalidation_flow     = authentik_flow.invalidation.uuid  # Updated to use new invalidation flow
   property_mappings     = data.authentik_property_mapping_provider_scope.oauth2.ids
   access_token_validity = "hours=4"
   signing_key           = data.authentik_certificate_key_pair.generated.id
@@ -60,7 +60,6 @@ resource "authentik_provider_oauth2" "oauth2" {
     }
   ]
 }
-
 resource "authentik_application" "application" {
   for_each           = local.applications
   name               = title(each.key)

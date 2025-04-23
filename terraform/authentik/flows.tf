@@ -5,7 +5,7 @@ data "authentik_flow" "default-source-authentication" {
 
 resource "authentik_flow" "authentication" {
   name               = "authentication-flow"
-  title              = "welcome to mars"
+  title              = "Welcome!"
   slug               = "authentication-flow"
   designation        = "authentication"
   policy_engine_mode = "all"
@@ -24,13 +24,6 @@ resource "authentik_flow_stage_binding" "authentication-flow-binding-10" {
   order  = 10
 }
 
-# Add user_write stage binding to ensure attributes are populated
-resource "authentik_flow_stage_binding" "authentication-flow-binding-90" {
-  target = authentik_flow.authentication.uuid
-  stage  = authentik_stage_user_write.authentication-user-write.id
-  order  = 90
-}
-
 resource "authentik_flow_stage_binding" "authentication-flow-binding-100" {
   target = authentik_flow.authentication.uuid
   stage  = authentik_stage_user_login.authentication-login.id
@@ -43,8 +36,8 @@ data "authentik_flow" "default-provider-invalidation-flow" {
 }
 
 resource "authentik_flow" "invalidation" {
-  name               = "invalidation-flow"
-  title              = "Invalidation Flow"
+  name               = "Logged out of application"
+  title              = "You've logged out of %(app)s."
   slug               = "invalidation-flow"
   policy_engine_mode = "any"
   designation        = "invalidation"
@@ -93,6 +86,7 @@ resource "authentik_flow_stage_binding" "recovery-flow-binding-30" {
 }
 
 ## Invitation flow
+
 data "authentik_flow" "default-source-enrollment" {
   slug = "default-source-enrollment"
 }
@@ -100,7 +94,7 @@ data "authentik_flow" "default-source-enrollment" {
 resource "authentik_flow" "enrollment-invitation" {
   name               = "enrollment-invitation-flow"
   title              = "Enrollment invitation"
-  slug               = "enrollmment-invitation"
+  slug               = "enrollment-invitation"
   designation        = "enrollment"
   compatibility_mode = true
   background         = "https://raw.githubusercontent.com/tslamars/k8s-gitops/main/docs/assets/surface-of-mars.jpg"
