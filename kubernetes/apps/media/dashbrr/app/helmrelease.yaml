@@ -33,14 +33,14 @@ spec:
               DASHBRR__DB_TYPE: postgres
               DASHBRR__DB_HOST:
                 valueFrom:
-                    secretKeyRef:
-                      name: &pguser dashbrr-pguser-secret
-                      key: host
+                  secretKeyRef:
+                    name: &pguser dashbrr-pguser-secret
+                    key: host
               DASHBRR__DB_USER:
                 valueFrom:
-                    secretKeyRef:
-                      name: *pguser
-                      key: user
+                  secretKeyRef:
+                    name: *pguser
+                    key: user
               DASHBRR__DB_PASSWORD:
                 valueFrom:
                   secretKeyRef:
@@ -48,9 +48,9 @@ spec:
                     key: password
               DASHBRR__DB_NAME:
                 valueFrom:
-                    secretKeyRef:
-                      name: *pguser
-                      key: db
+                  secretKeyRef:
+                    name: *pguser
+                    key: db
               DASHBRR__DB_PORT: "5432"
               DASHBRR__DB_PATH: /cache/._  # cache path is derived from DASHBRR__DB_PATH
               DASHBRR__LISTEN_ADDR: 0.0.0.0:8080
