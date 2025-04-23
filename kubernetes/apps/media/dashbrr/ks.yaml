@@ -12,7 +12,7 @@ spec:
     - ../../../../components/gatus/guarded
     - ../../../../components/cnpg
   interval: 1h
-  path: ./kubernetes/apps/media/dashbrr/apps
+  path: ./kubernetes/apps/media/dashbrr/app
   postBuild:
     substitute:
       APP: *app
