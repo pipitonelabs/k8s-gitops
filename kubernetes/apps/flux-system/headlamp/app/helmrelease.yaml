@@ -52,6 +52,11 @@ spec:
           enabled: true
           name: headlamp-secret
       pluginsDir: /build/plugins
+    serviceAccount:
+      create: false
+      name: headlamp-admin
+    clusterRoleBinding:
+      create: false
     volumeMounts:
       - mountPath: /build/plugins
         name: headlamp-plugins
