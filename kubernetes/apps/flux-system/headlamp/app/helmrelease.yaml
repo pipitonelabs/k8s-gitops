@@ -31,6 +31,8 @@ spec:
     remediation:
       retries: 3
   values:
+    podSecurityContext:
+    fsGroup: 1000
     podAnnotations:
       reloader.stakater.com/auto: "true"
     fullnameOverride: headlamp
