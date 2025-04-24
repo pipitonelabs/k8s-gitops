@@ -49,6 +49,30 @@ spec:
     envFrom:
       - secretRef:
           name: headlamp-secret
+    envFrom:
+      - secretRef:
+          name: headlamp-secret
+    env:
+      - name: HEADLAMP_CONFIG_OIDC_CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: headlamp-secret
+            key: HEADLAMP_CONFIG_OIDC_CLIENT_ID
+      - name: HEADLAMP_CONFIG_OIDC_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: headlamp-secret
+            key: HEADLAMP_CONFIG_OIDC_CLIENT_SECRET
+      - name: HEADLAMP_CONFIG_OIDC_IDP_ISSUER_URL
+        valueFrom:
+          secretKeyRef:
+            name: headlamp-secret
+            key: HEADLAMP_CONFIG_OIDC_IDP_ISSUER_URL
+      - name: HEADLAMP_CONFIG_OIDC_SCOPES
+        valueFrom:
+          secretKeyRef:
+            name: headlamp-secret
+            key: HEADLAMP_CONFIG_OIDC_SCOPES
     serviceAccount:
       create: false
       name: headlamp-admin
