@@ -67,6 +67,6 @@ spec:
     persistentVolumeClaim:
       enabled: true
       accessModes:
-        - ReadWriteMany
+        - ReadWriteonce
       size: 1Gi
       storageClassName: ceph-block
