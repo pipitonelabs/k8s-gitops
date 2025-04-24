@@ -59,7 +59,7 @@ spec:
       create: false
     persistentVolumeClaim:
       enabled: true
-      accessModes: ["ReadWriteOnce"]
+      accessModes: ["ReadWriteMany"]
       size: 1Gi
       storageClassName: ceph-block
     volumeMounts:
@@ -67,4 +67,5 @@ spec:
         name: headlamp-plugins
     volumes:
       - name: headlamp-plugins
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: headlamp
