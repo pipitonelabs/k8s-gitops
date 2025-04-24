@@ -59,7 +59,7 @@ spec:
       create: false
     persistentVolumeClaim:
       enabled: true
-      accessModes: ["ReadWriteonce"]
+      accessModes: ["ReadWriteOnce"]
       size: 1Gi
       storageClassName: ceph-block
     volumeMounts:
