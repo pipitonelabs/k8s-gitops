@@ -45,6 +45,9 @@ spec:
           - mountPath: /build/plugins
             name: headlamp-plugins
     config:
+      oidc:
+        secret:
+          create: true
       pluginsDir: /build/plugins
     envFrom:
       - secretRef:
