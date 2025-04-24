@@ -46,6 +46,9 @@ spec:
             name: headlamp-plugins
     config:
       pluginsDir: /build/plugins
+    envFrom:
+      - secretRef:
+          name: headlamp-secret
     serviceAccount:
       create: false
       name: headlamp-admin
