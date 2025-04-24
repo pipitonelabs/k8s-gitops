@@ -69,5 +69,4 @@ spec:
         name: headlamp-plugins
     volumes:
       - name: headlamp-plugins
-        persistentVolumeClaim:
-          claimName: headlamp
+        emptyDir: {}
