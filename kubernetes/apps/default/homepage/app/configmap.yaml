@@ -100,10 +100,10 @@ data:
             - icon: kubernetes-dashboard.png
               description: Helm Chart Search
               href: https://nanne.dev/k8s-at-home-search/
-        - home-cluster:
+        - tslamars:
             - icon: github.png
               description: Renovate Dashboard
-              href: https://github.com/mchestr/home-cluster/issues/2976
+              href: https://github.com/tslamars/k8s-gitops
         - Homepage Icons:
             - icon: si-jpeg
               href: https://github.com/homarr-labs/dashboard-icons/blob/main/ICONS.md
