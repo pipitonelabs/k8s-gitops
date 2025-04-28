@@ -102,7 +102,7 @@ data:
               href: https://nanne.dev/k8s-at-home-search/
         - tslamars:
             - icon: github.png
-              description: Renovate Dashboard
+              description: mars cluster
               href: https://github.com/tslamars/k8s-gitops
         - Homepage Icons:
             - icon: si-jpeg
