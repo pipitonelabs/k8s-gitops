@@ -2,6 +2,12 @@
 
 Collection of useful things I have done in the past to fix stuff...
 
+### Acknowledge / clear crash
+
+```
+ceph crash archive-all
+```
+
 ### Remove OSD
 
 If the Node is already dead, then we gotta do some stuff to clean it up... Taken from [here](https://docs.mirantis.com/container-cloud/latest/operations-guide/tshoot/tshoot-ceph/ceph-manual-osd-remove.html)

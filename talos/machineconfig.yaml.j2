@@ -1,0 +1,210 @@
+---
+version: v1alpha1
+debug: false
+persist: true
+machine:
+  type: {{ ENV.MACHINE_TYPE }}
+  token: op://Kubernetes/talos/MACHINE_TOKEN
+  ca:
+    crt: op://Kubernetes/talos/MACHINE_CA_CRT
+    {% if ENV.MACHINE_TYPE == 'controlplane' %}
+    key: op://Kubernetes/talos/MACHINE_CA_KEY
+    {% endif %}
+  features:
+    rbac: true
+    stableHostname: true
+    {% if ENV.MACHINE_TYPE == 'controlplane' %}
+    kubernetesTalosAPIAccess:
+      enabled: true
+      allowedRoles: ["os:admin"]
+      allowedKubernetesNamespaces: ["actions-runner-system", "system-upgrade"]
+    {% endif %}
+    apidCheckExtKeyUsage: true
+    diskQuotaSupport: true
+    kubePrism:
+      enabled: true
+      port: 7445
+    hostDNS:
+      enabled: true
+      resolveMemberNames: true
+      forwardKubeDNSToHost: false
+  files:
+    - op: create
+      path: /etc/cri/conf.d/20-customization.part
+      content: |
+        [plugins."io.containerd.cri.v1.images"]
+          discard_unpacked_layers = false
+    - op: overwrite
+      path: /etc/nfsmount.conf
+      permissions: 0o644
+      content: |
+        [ NFSMount_Global_Options ]
+        nfsvers=4.1
+        hard=True
+        nconnect=16
+        noatime=True
+        rsize=1048576
+        wsize=1048576
+  install:
+    extraKernelArgs:
+      - -init_on_alloc          # Less security, faster puter
+      - -selinux                # Less security, faster puter
+      - apparmor=0              # Less security, faster puter
+      - init_on_alloc=0         # Less security, faster puter
+      - init_on_free=0          # Less security, faster puter
+      - intel_idle.max_cstate=0 # Better performance
+      - intel_iommu=on          # PCI Passthrough
+      - iommu=pt                # PCI Passthrough
+      - mitigations=off         # Less security, faster puter
+      - security=none           # Less security, faster puter
+      - talos.auditd.disabled=1 # Less security, faster puter
+    image: factory.talos.dev/metal-installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:{{ ENV.TALOS_VERSION }}
+    wipe: false
+  kernel:
+    modules:
+      - name: nbd
+      - name: thunderbolt
+      - name: thunderbolt_net
+  kubelet:
+    image: ghcr.io/siderolabs/kubelet:{{ ENV.KUBERNETES_VERSION }}
+    extraConfig:
+      serializeImagePulls: false
+    extraMounts:
+      - destination: /var/mnt/extra
+        type: bind
+        source: /var/mnt/extra
+        options: ["bind", "rshared", "rw"]
+    defaultRuntimeSeccompProfileEnabled: true
+    nodeIP:
+      validSubnets: ["192.168.10.0/24"]
+    disableManifestsDirectory: true
+  network:
+    interfaces:
+      - interface: bond0
+        bond:
+          deviceSelectors: [{ hardwareAddr: "58:47:ca:7b:*", driver: igc }]
+          mode: 802.3ad
+          xmitHashPolicy: layer3+4
+          lacpRate: fast
+          miimon: 1000
+        dhcp: true
+        mtu: 1500
+        vlans:
+          - { vlanId: 20, dhcp: false, mtu: 1500 }
+          - { vlanId: 30, dhcp: false, mtu: 1500 }
+        vip:
+          ip: 192.168.20.2
+    nameservers: ["192.168.10.1"]
+    disableSearchDomain: true
+  nodeLabels:
+    intel.feature.node.kubernetes.io/gpu: true
+    topology.kubernetes.io/region: k8s
+  sysctls:
+    fs.inotify.max_user_watches: 1048576   # Watchdog
+    fs.inotify.max_user_instances: 8192    # Watchdog
+    net.core.default_qdisc: fq             # 2.5Gb/s
+    net.core.rmem_max: 67108864            # 2.5Gb/s | Cloudflared / QUIC
+    net.core.wmem_max: 67108864            # 2.5Gb/s | Cloudflared / QUIC
+    net.ipv4.tcp_congestion_control: bbr   # 2.5Gb/s
+    net.ipv4.tcp_fastopen: 3               # TCP Fast Open
+    net.ipv4.tcp_rmem: 4096 87380 33554432 # 2.5Gb/s
+    net.ipv4.tcp_wmem: 4096 65536 33554432 # 2.5Gb/s
+    net.ipv4.tcp_window_scaling: 1         # 2.5Gb/s
+    vm.nr_hugepages: "1024"
+  sysfs:
+    {% for i in range(0, 20) %}
+    devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
+    {% endfor %}
+  time:
+    disabled: false
+    servers: ["time.google.com"]
+  udev:
+    rules:
+      - # Thunderbolt
+        ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
+      - # Intel GPU
+        SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660"
+cluster:
+  ca:
+    crt: op://Kubernetes/talos/CLUSTER_CA_CRT
+    {% if ENV.MACHINE_TYPE == 'controlplane' %}
+    key: op://Kubernetes/talos/CLUSTER_CA_KEY
+    {% endif %}
+  clusterName: k8s
+  controlPlane:
+    endpoint: https://k8s.internal:6443
+  discovery:
+    enabled: true
+    registries:
+      kubernetes:
+        disabled: true
+      service:
+        disabled: false
+  id: op://Kubernetes/talos/CLUSTER_ID
+  network:
+    cni:
+      name: none
+    dnsDomain: cluster.local
+    podSubnets: ["10.244.0.0/16"]
+    serviceSubnets: ["10.245.0.0/16"]
+  secret: op://Kubernetes/talos/CLUSTER_SECRET
+  token: op://Kubernetes/talos/CLUSTER_TOKEN
+  {% if ENV.MACHINE_TYPE == 'controlplane' %}
+  aggregatorCA:
+    crt: op://Kubernetes/talos/CLUSTER_AGGREGATORCA_CRT
+    key: op://Kubernetes/talos/CLUSTER_AGGREGATORCA_KEY
+  allowSchedulingOnControlPlanes: true
+  apiServer:
+    image: registry.k8s.io/kube-apiserver:{{ ENV.KUBERNETES_VERSION }}
+    extraArgs:
+      enable-aggregator-routing: true
+    certSANs: ["k8s.internal"]
+    disablePodSecurityPolicy: true
+  controllerManager:
+    image: registry.k8s.io/kube-controller-manager:{{ ENV.KUBERNETES_VERSION }}
+    extraArgs:
+      bind-address: 0.0.0.0
+  coreDNS:
+    disabled: true
+  etcd:
+    advertisedSubnets: ["192.168.10.0/24"]
+    ca:
+      crt: op://Kubernetes/talos/CLUSTER_ETCD_CA_CRT
+      key: op://Kubernetes/talos/CLUSTER_ETCD_CA_KEY
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
+  extraManifests:
+    - # renovate: datasource=github-releases depName=kubernetes-sigs/gateway-api
+      https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/experimental-install.yaml
+    - # renovate: datasource=github-releases depName=prometheus-operator/prometheus-operator
+      https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.82.0/stripped-down-crds.yaml
+    - # renovate: datasource=github-releases depName=k8snetworkplumbingwg/network-attachment-definition-client
+      https://github.com/k8snetworkplumbingwg/network-attachment-definition-client/raw/refs/tags/v1.7.6/artifacts/networks-crd.yaml
+  proxy:
+    disabled: true
+    image: registry.k8s.io/kube-proxy:{{ ENV.KUBERNETES_VERSION }}
+  secretboxEncryptionSecret: op://Kubernetes/talos/CLUSTER_SECRETBOXENCRYPTIONSECRET
+  scheduler:
+    image: registry.k8s.io/kube-scheduler:{{ ENV.KUBERNETES_VERSION }}
+    extraArgs:
+      bind-address: 0.0.0.0
+    config:
+      apiVersion: kubescheduler.config.k8s.io/v1
+      kind: KubeSchedulerConfiguration
+      profiles:
+        - schedulerName: default-scheduler
+          plugins:
+            score:
+              disabled:
+                - name: ImageLocality
+          pluginConfig:
+            - name: PodTopologySpread
+              args:
+                defaultingType: List
+                defaultConstraints:
+                  - maxSkew: 1
+                    topologyKey: kubernetes.io/hostname
+                    whenUnsatisfiable: ScheduleAnyway
+  serviceAccount:
+    key: op://Kubernetes/talos/CLUSTER_SERVICEACCOUNT_KEY
+  {% endif %}
