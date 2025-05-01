@@ -39,12 +39,10 @@ machine:
       permissions: 0o644
       content: |
         [ NFSMount_Global_Options ]
-        nfsvers=4.1
+        nfsvers=4.2
         hard=True
         nconnect=16
         noatime=True
-        rsize=1048576
-        wsize=1048576
   install:
     extraKernelArgs:
       - -init_on_alloc          # Less security, faster puter
@@ -59,7 +57,7 @@ machine:
       - security=none           # Less security, faster puter
       - talos.auditd.disabled=1 # Less security, faster puter
     image: factory.talos.dev/metal-installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:{{ ENV.TALOS_VERSION }}
-    wipe: false
+    wipe: true
   kernel:
     modules:
       - name: nbd
@@ -158,6 +156,8 @@ cluster:
     image: registry.k8s.io/kube-apiserver:{{ ENV.KUBERNETES_VERSION }}
     extraArgs:
       enable-aggregator-routing: true
+      feature-gates: MutatingAdmissionPolicy=true
+      runtime-config: admissionregistration.k8s.io/v1alpha1=true
     certSANs: ["k8s.internal"]
     disablePodSecurityPolicy: true
   controllerManager:

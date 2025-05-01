@@ -20,3 +20,6 @@ terraform.tfstate*
 # Trash
 .DS_Store
 Thumbs.db
+192.168.10.10-machineconfig.yaml
+192.168.10.11-machineconfig.yaml
+192.168.10.12-machineconfig.yaml
