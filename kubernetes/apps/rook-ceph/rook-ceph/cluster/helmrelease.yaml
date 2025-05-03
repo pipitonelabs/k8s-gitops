@@ -72,7 +72,7 @@ spec:
         connections:
           requireMsgr2: true
       storage:
-        useAllNodes: false
+        useAllNodes: true
         useAllDevices: false
         deviceFilter: nvme1n1
         config:
