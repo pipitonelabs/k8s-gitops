@@ -44,7 +44,7 @@ spec:
       #endpointURL: https://5d92d34288d78f2937b65f30517ec598.r2.cloudflarestorage.com
       # Note: serverName version needs to be incremented
       # when recovering from an existing cnpg cluster
-      serverName: &currentCluster outline-v3
+      serverName: &currentCluster outline-v4
       # minio test
       s3Credentials:
         accessKeyId:
@@ -65,12 +65,12 @@ spec:
 
   # Note: previousCluster needs to be set to the name of the previous
   # cluster when recovering from an existing cnpg cluster
-  #bootstrap:
-  #  recovery:
-  #    source: &previousCluster outline-v2
+  bootstrap:
+    recovery:
+      source: &previousCluster outline-v3
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  #externalClusters:
-  #  - name: *previousCluster
-  #    barmanObjectStore:
-  #      <<: *barmanObjectStore
-  #      serverName: *previousCluster
+  externalClusters:
+    - name: *previousCluster
+      barmanObjectStore:
+        <<: *barmanObjectStore
+        serverName: *previousCluster
