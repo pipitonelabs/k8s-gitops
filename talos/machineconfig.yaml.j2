@@ -45,18 +45,19 @@ machine:
         noatime=True
   install:
     extraKernelArgs:
-      - -init_on_alloc          # Less security, faster puter
-      - -selinux                # Less security, faster puter
-      - apparmor=0              # Less security, faster puter
-      - init_on_alloc=0         # Less security, faster puter
-      - init_on_free=0          # Less security, faster puter
-      - intel_idle.max_cstate=0 # Better performance
-      - intel_iommu=on          # PCI Passthrough
-      - iommu=pt                # PCI Passthrough
-      - mitigations=off         # Less security, faster puter
-      - security=none           # Less security, faster puter
-      - talos.auditd.disabled=1 # Less security, faster puter
-    image: factory.talos.dev/metal-installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:{{ ENV.TALOS_VERSION }}
+      - -init_on_alloc           # Less security, faster puter
+      - -init_on_free            # Less security, faster puter
+      - -selinux                 # Less security, faster puter
+      - apparmor=0               # Less security, faster puter
+      - init_on_alloc=0          # Less security, faster puter
+      - init_on_free=0           # Less security, faster puter
+      - intel_idle.max_cstate=0  # Better performance
+      - intel_iommu=on           # PCI Passthrough
+      - iommu=pt                 # PCI Passthrough
+      - mitigations=off          # Less security, faster puter
+      - security=none            # Less security, faster puter
+      - talos.auditd.disabled=1  # Less security, faster puter
+    image: factory.talos.dev/installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:{{ ENV.TALOS_VERSION }}
     wipe: true
   kernel:
     modules:
