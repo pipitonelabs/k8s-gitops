@@ -47,6 +47,7 @@ spec:
               MINIO_API_CORS_ALLOW_HEADERS: "Authorization,Content-Type,Accept,Origin"
               MINIO_API_CORS_EXPOSE_HEADERS: "ETag"
               MINIO_API_CORS_ALLOW_CREDENTIALS: "true"
+              MINIO_AUDIT_LOG: "on"
               MINIO_LOG_LEVEL: "debug"
               #MINIO_IDENTITY_OPENID_CONFIG_URL: https://auth.tslamars.com/.well-known/openid-configuration
               #MINIO_IDENTITY_OPENID_CLIENT_ID: minio
