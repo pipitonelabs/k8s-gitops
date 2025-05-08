@@ -1,7 +1,8 @@
 ---
 machine:
   install:
-    disk: /dev/nvme0n1
+    diskSelector:
+      serial: 24514D121897
   network:
     hostname: m2.k8s.internal
     interfaces:

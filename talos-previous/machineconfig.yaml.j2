@@ -39,14 +39,26 @@ machine:
       permissions: 0o644
       content: |
         [ NFSMount_Global_Options ]
-        nfsvers=4.1
+        nfsvers=4.2
         hard=True
         nconnect=16
         noatime=True
-        rsize=1048576
-        wsize=1048576
   install:
-    image: factory.talos.dev/metal-installer/{{ ENV.TALOS_SCHEMATIC }}:{{ ENV.TALOS_VERSION }}
+    extraKernelArgs:
+      - -init_on_alloc           # Less security, faster puter
+      - -init_on_free            # Less security, faster puter
+      - -selinux                 # Less security, faster puter
+      - apparmor=0               # Less security, faster puter
+      - init_on_alloc=0          # Less security, faster puter
+      - init_on_free=0           # Less security, faster puter
+      - intel_idle.max_cstate=0  # Better performance
+      - intel_iommu=on           # PCI Passthrough
+      - iommu=pt                 # PCI Passthrough
+      - mitigations=off          # Less security, faster puter
+      - security=none            # Less security, faster puter
+      - talos.auditd.disabled=1  # Less security, faster puter
+    image: factory.talos.dev/installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615:{{ ENV.TALOS_VERSION }}
+    wipe: true
   kernel:
     modules:
       - name: nbd
@@ -79,6 +91,8 @@ machine:
         vlans:
           - { vlanId: 20, dhcp: false, mtu: 1500 }
           - { vlanId: 30, dhcp: false, mtu: 1500 }
+        vip:
+          ip: 192.168.20.2
     nameservers: ["192.168.10.1"]
     disableSearchDomain: true
   nodeLabels:
@@ -88,22 +102,21 @@ machine:
     fs.inotify.max_user_watches: 1048576   # Watchdog
     fs.inotify.max_user_instances: 8192    # Watchdog
     net.core.default_qdisc: fq             # 2.5Gb/s
-    net.core.rmem_max: 16777216            # 2.5Gb/s | Cloudflared / QUIC
-    net.core.wmem_max: 16777216            # 2.5Gb/s | Cloudflared / QUIC
+    net.core.rmem_max: 67108864            # 2.5Gb/s | Cloudflared / QUIC
+    net.core.wmem_max: 67108864            # 2.5Gb/s | Cloudflared / QUIC
     net.ipv4.tcp_congestion_control: bbr   # 2.5Gb/s
-    net.ipv4.tcp_fastopen: 3               # Send and accept data in the opening SYN packet
-    net.ipv4.tcp_mtu_probing: 1            # 2.5Gb/s
-    net.ipv4.tcp_rmem: 4096 87380 8388608  # Optimized for 2.5Gb
-    net.ipv4.tcp_wmem: 4096 65536 8388608  # Optimized for 2.5Gb
+    net.ipv4.tcp_fastopen: 3               # TCP Fast Open
+    net.ipv4.tcp_rmem: 4096 87380 33554432 # 2.5Gb/s
+    net.ipv4.tcp_wmem: 4096 65536 33554432 # 2.5Gb/s
     net.ipv4.tcp_window_scaling: 1         # 2.5Gb/s
-    vm.nr_hugepages: 1024                  # PostgreSQL
+    vm.nr_hugepages: "1024"
   sysfs:
     {% for i in range(0, 20) %}
     devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
     {% endfor %}
   time:
     disabled: false
-    servers: ["time.cloudflare.com"]
+    servers: ["time.google.com"]
   udev:
     rules:
       - # Thunderbolt
