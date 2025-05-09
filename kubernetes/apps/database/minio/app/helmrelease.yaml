@@ -54,6 +54,7 @@ spec:
               MINIO_IDENTITY_OPENID_SCOPES: openid, email, profile, minio
               MINIO_IDENTITY_OPENID_CLAIM_NAME: groups
               MINIO_IDENTITY_OPENID_DISPLAY_NAME: Authentik
+              MINIO_IDENTITY_OPENID_CLAIM_PREFIX: "policy="
 
             envFrom:
               - secretRef:
