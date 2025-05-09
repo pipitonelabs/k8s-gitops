@@ -49,11 +49,11 @@ spec:
               MINIO_API_CORS_ALLOW_CREDENTIALS: "true"
               MINIO_AUDIT_LOG: "on"
               MINIO_LOG_LEVEL: "debug"
-              #MINIO_IDENTITY_OPENID_CONFIG_URL: https://auth.tslamars.com/.well-known/openid-configuration
-              #MINIO_IDENTITY_OPENID_CLIENT_ID: minio
-              #MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,groups
-              #MINIO_IDENTITY_OPENID_CLAIM_NAME: groups
-              #MINIO_IDENTITY_OPENID_DISPLAY_NAME: Authelia
+              MINIO_IDENTITY_OPENID_CONFIG_URL: https://sso.tslamars.com/application/o/minio/.well-known/openid-configuration
+              MINIO_IDENTITY_OPENID_REDIRECT_URI: https://minio.tslamars.com/oauth_callback
+              MINIO_IDENTITY_OPENID_SCOPES: openid, email, profile, minio
+              MINIO_IDENTITY_OPENID_CLAIM_NAME: groups
+              MINIO_IDENTITY_OPENID_DISPLAY_NAME: Authentik
 
             envFrom:
               - secretRef:

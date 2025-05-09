@@ -3,6 +3,7 @@ locals {
     "dashbrr",
     "grafana",
     "headlamp",
+    "minio",
     "outline"
   ]
 }
@@ -39,6 +40,14 @@ locals {
       icon_url      = "https://raw.githubusercontent.com/headlamp-k8s/headlamp/refs/heads/main/frontend/src/resources/icon-dark.svg"
       redirect_uri  = "https://headlamp.${var.CLUSTER_DOMAIN}/oidc-callback"
       launch_url    = "https://headlamp.${var.CLUSTER_DOMAIN}/"
+    },
+    minio = {
+      client_id     = module.onepassword_application["minio"].fields["MINIO_OAUTH_CLIENT_ID"]
+      client_secret = module.onepassword_application["minio"].fields["MINIO_OAUTH_CLIENT_SECRET"]
+      group         = "infrastructure"
+      icon_url      = "https://dl.min.io/logo/Minio_logo_light/Minio_logo_light.svg"
+      redirect_uri  = "https://minio.${var.CLUSTER_DOMAIN}/oauth_callback"
+      launch_url    = "https://minio.${var.CLUSTER_DOMAIN}/"
     },
     outline = {
       client_id     = module.onepassword_application["outline"].fields["OUTLINE_OAUTH_CLIENT_ID"]
