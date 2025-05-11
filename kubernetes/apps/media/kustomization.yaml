@@ -8,6 +8,7 @@ resources:
 #  - ./autobrr/ks.yaml
 #  - ./bazarr/ks.yaml
   - ./dashbrr/ks.yaml
+  - ./maintainerr/ks.yaml
   - ./openbooks/ks.yaml
   - ./overseerr/ks.yaml
   - ./pinchflat/ks.yaml
