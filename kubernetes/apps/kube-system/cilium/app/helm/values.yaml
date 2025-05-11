@@ -23,15 +23,14 @@ cni:
 dashboards:
   enabled: true
 devices: bond+
-#devices: "bond+ enp+"
 enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
 envoy:
   rollOutPods: true
   prometheus:
-     serviceMonitor:
-       enabled: true
+    serviceMonitor:
+      enabled: true
 gatewayAPI:
   enabled: true
   enableAlpn: true
@@ -51,7 +50,6 @@ loadBalancer:
   algorithm: maglev
   mode: dsr
 localRedirectPolicy: true
-MTU: 1500
 operator:
   replicas: 2
   rollOutPods: true
