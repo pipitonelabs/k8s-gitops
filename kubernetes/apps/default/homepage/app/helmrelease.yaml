@@ -78,6 +78,10 @@ spec:
             path: /app/config/settings.yaml
           - subPath: widgets.yaml
             path: /app/config/widgets.yaml
-
+    
     serviceAccount:
-      create: true
+      create:
+        enabled: true
+        annotations: {}
+        labels: {}
+      
