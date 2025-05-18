@@ -80,8 +80,7 @@ spec:
             path: /app/config/widgets.yaml
     
     serviceAccount:
-      create:
-        enabled: true
-        annotations: {}
-        labels: {}
+      create: true
+      annotations: {}
+      labels: {}
       
