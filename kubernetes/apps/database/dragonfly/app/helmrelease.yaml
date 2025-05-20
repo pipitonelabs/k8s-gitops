@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -61,7 +61,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-
+        serviceAccount:
+          identifier: *app
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -75,7 +76,6 @@ spec:
           labelSelector:
             matchLabels:
               app.kubernetes.io/name: *app
-
     service:
       app:
         controller: *app
@@ -84,10 +84,8 @@ spec:
             port: *port
           metrics:
             port: 8080
-
     serviceAccount:
       dragonfly-operator: {}
-
     serviceMonitor:
       app:
         serviceName: *app
