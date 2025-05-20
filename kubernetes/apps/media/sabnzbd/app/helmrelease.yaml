@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app sabnzbd
+  name: sabnzbd
 spec:
   interval: 30m
   chartRef:
@@ -62,7 +62,7 @@ spec:
         supplementalGroups: [65536]
     service:
       app:
-        controller: *app
+        controller: app
         ports:
           http:
             port: &port 8080
@@ -84,12 +84,12 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: app
       incomplete:
         type: custom
         volumeSpec:

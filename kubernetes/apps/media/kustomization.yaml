@@ -5,8 +5,6 @@ namespace: media
 components:
   - ../../components/common
 resources:
-#  - ./autobrr/ks.yaml
-#  - ./bazarr/ks.yaml
   - ./dashbrr/ks.yaml
   - ./maintainerr/ks.yaml
   - ./openbooks/ks.yaml

@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app sonarr
+  name: sonarr
 spec:
   interval: 30m
   chartRef:
@@ -80,7 +80,7 @@ spec:
 
     service:
       app:
-        controller: *app
+        controller: app
         ports:
           http:
             port: &port 8989
@@ -93,7 +93,7 @@ spec:
           gethomepage.dev/icon: sonarr.png
           gethomepage.dev/name: Sonarr
           gethomepage.dev/group: Downloads
-          gethomepage.dev/widget.type: *app
+          gethomepage.dev/widget.type: app
           gethomepage.dev/widget.url: http://sonarr.media.svc.cluster.local:8989
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SONARR_API_KEY}}" }}'
         parentRefs:
@@ -102,7 +102,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     defaultPodOptions:
@@ -119,7 +119,7 @@ spec:
         server: mars.internal
         path: /mnt/user/data/media
       config:
-        existingClaim: *app
+        existingClaim: app
       scripts:
         type: configMap
         name: sonarr-configmap

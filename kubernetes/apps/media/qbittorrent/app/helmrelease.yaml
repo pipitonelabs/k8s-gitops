@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app qbittorrent
+  name: qbittorrent
 spec:
   interval: 1h
   chartRef:
@@ -65,7 +65,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: app
       media:
         type: nfs
         server: mars.internal
@@ -86,17 +86,17 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
     service:
       app:
-        controller: *app
-        nameOverride: *app
+        controller: app
+        nameOverride: app
         ports:
           http:
             port: *port
       bittorrent:
-        controller: *app
+        controller: app
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.20.82, ::ffff:192.168.20.82

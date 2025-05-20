@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app openbooks
+  name: openbooks
 spec:
   interval: 30m
   chartRef:
@@ -56,7 +56,7 @@ spec:
               TZ: America/New_York
     service:
       app:
-        controller: *app
+        controller: app
         ports:
           http:
             port: &port 8080
@@ -69,7 +69,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     persistence:
@@ -80,6 +80,6 @@ spec:
         globalMounts:
           - path: /books
       config:
-        existingClaim: *app
+        existingClaim: app
       tmp:
         type: emptyDir

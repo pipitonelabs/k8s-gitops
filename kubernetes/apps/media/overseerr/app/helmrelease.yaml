@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app overseerr
+  name: overseerr
 spec:
   interval: 1h
   chartRef:
@@ -60,7 +60,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: app
         globalMounts:
           - path: /app/config
       config-cache:
@@ -84,11 +84,11 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
     service:
       app:
-        controller: *app
+        controller: app
         ports:
           http:
             port: *port
