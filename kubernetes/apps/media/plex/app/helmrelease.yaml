@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: plex
+  name: &app plex
 spec:
   interval: 1h
   chartRef:
@@ -69,7 +69,7 @@ spec:
         supplementalGroups: [44, 106]
     persistence:
       config:
-        existingClaim: app
+        existingClaim: *app
       config-cache:
         existingClaim: plex-cache
         globalMounts:
@@ -117,12 +117,9 @@ spec:
               - path:
                   type: PathPrefix
                   value: /library/streams
-          - backendRefs:
-              - identifier: app
-                port: *port
     service:
       app:
-        controller: app
+        controller: *app
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.20.128, ::ffff:192.168.20.128
