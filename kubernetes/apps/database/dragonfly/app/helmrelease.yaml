@@ -20,7 +20,7 @@ spec:
     controllers:
       dragonfly-operator:
         serviceAccount:
-          identifier: dragonfly-operator
+          identifier: *app
         strategy: RollingUpdate
         containers:
           app:
@@ -75,10 +75,10 @@ spec:
           whenUnsatisfiable: DoNotSchedule
           labelSelector:
             matchLabels:
-              app.kubernetes.io/name: dragonfly-operator
+              app.kubernetes.io/name: *app
     service:
       app:
-        controller: dragonfly-operator
+        controller: *app
         ports:
           http:
             port: *port
@@ -88,7 +88,7 @@ spec:
       dragonfly-operator: {}
     serviceMonitor:
       app:
-        serviceName: dragonfly-operator
+        serviceName: *app
         endpoints:
           - port: metrics
             scheme: http
