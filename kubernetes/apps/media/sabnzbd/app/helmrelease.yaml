@@ -62,7 +62,7 @@ spec:
         supplementalGroups: [65536]
     service:
       app:
-        controller: app
+        controller: *app
         ports:
           http:
             port: &port 8080
@@ -89,7 +89,7 @@ spec:
 
     persistence:
       config:
-        existingClaim: app
+        existingClaim: *app
       incomplete:
         type: custom
         volumeSpec:
