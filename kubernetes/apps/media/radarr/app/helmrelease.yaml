@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: radarr
+  name: &app radarr
 spec:
   interval: 30m
   chartRef:
@@ -85,7 +85,7 @@ spec:
 
     service:
       app:
-        controller: app
+        controller: *app
         ports:
           http:
             port: &port 7878
@@ -98,7 +98,7 @@ spec:
           gethomepage.dev/icon: radarr.png
           gethomepage.dev/name: Radarr
           gethomepage.dev/group: Downloads
-          gethomepage.dev/widget.type: app
+          gethomepage.dev/widget.type: *app
           gethomepage.dev/widget.url: http://radarr.media.svc.cluster.local:7878
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_RADARR_API_KEY}}" }}'
         parentRefs:
@@ -124,6 +124,6 @@ spec:
         server: mars.internal
         path: /mnt/user/data/media
       config:
-        existingClaim: app
+        existingClaim: *app
       tmp:
         type: emptyDir
