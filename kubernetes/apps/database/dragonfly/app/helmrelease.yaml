@@ -74,10 +74,10 @@ spec:
           whenUnsatisfiable: DoNotSchedule
           labelSelector:
             matchLabels:
-              app.kubernetes.io/name: *app
+              app.kubernetes.io/name: dragonfly-operator
     service:
       app:
-        controller: *app
+        controller: dragonfly-operator
         ports:
           http:
             port: *port
@@ -87,7 +87,7 @@ spec:
       dragonfly-operator: {}
     serviceMonitor:
       app:
-        serviceName: *app
+        serviceName: dragonfly-operator
         endpoints:
           - port: metrics
             scheme: http
