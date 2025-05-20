@@ -19,6 +19,8 @@ spec:
   values:
     controllers:
       dragonfly-operator:
+        serviceAccount:
+          identifier: *app
         strategy: RollingUpdate
         containers:
           app:
@@ -61,8 +63,6 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-        serviceAccount:
-          identifier: *app
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
