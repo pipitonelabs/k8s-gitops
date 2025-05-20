@@ -80,7 +80,6 @@ spec:
           http:
             port: *port
     serviceAccount:
-      create: true
       name: *app
     serviceMonitor:
       app:
