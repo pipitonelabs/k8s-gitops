@@ -20,7 +20,7 @@ spec:
     controllers:
       dragonfly-operator:
         serviceAccount:
-          identifier: *app
+          identifier: app
         strategy: RollingUpdate
         containers:
           app:
