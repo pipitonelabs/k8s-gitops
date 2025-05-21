@@ -61,6 +61,10 @@ spec:
               limits:
                 memory: 64Mi
             restartPolicy: Always
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
         containers:
           app:
             image:
@@ -93,10 +97,9 @@ spec:
                   failureThreshold: 3
               readiness: *probes
             resources: *resources
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+            securityContext: *securityContext
+        serviceAccount:
+          name: *app
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -104,13 +107,9 @@ spec:
         runAsGroup: 568
     service:
       app:
-        controller: *app
         ports:
           http:
             port: *port
-    serviceAccount:
-      create: true
-      name: *app
     serviceMonitor:
       app:
         serviceName: *app

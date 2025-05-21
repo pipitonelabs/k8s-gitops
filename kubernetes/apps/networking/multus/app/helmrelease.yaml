@@ -30,11 +30,9 @@ spec:
           multus:
             image:
               repository: ghcr.io/k8snetworkplumbingwg/multus-cni
-              tag: v4.2.0@sha256:4aa43119b2fac1304a5ab003026845e493af289fba3f8af52a27737667ca666a
-            command:
-              - /thin_entrypoint
+              tag: latest@sha256:e30a3a8130d82b72d8c195b26ce55f318f28ca7f9446ab6e2cae8d8283eeeabb
             args:
-              - --cleanup-config-on-exit=true
+              - --cleanup-config-on-exit
             resources:
               requests:
                 cpu: 10m
@@ -42,6 +40,8 @@ spec:
                 memory: 32Mi
             securityContext:
               privileged: true
+        serviceAccount:
+          name: *app
     defaultPodOptions:
       hostNetwork: true
     persistence:
@@ -55,6 +55,3 @@ spec:
         hostPath: /opt/cni/bin
         globalMounts:
           - path: /host/opt/cni/bin
-    serviceAccount:
-      create: true
-      name: *app

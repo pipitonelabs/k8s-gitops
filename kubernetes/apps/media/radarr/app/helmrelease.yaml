@@ -85,7 +85,6 @@ spec:
 
     service:
       app:
-        controller: *app
         ports:
           http:
             port: &port 7878
@@ -107,7 +106,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     defaultPodOptions:

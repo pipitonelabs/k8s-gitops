@@ -90,6 +90,9 @@ spec:
                 cpu: 100m
               limits:
                 memory: 256Mi
+        serviceAccount:
+          name: *app
+
 
     defaultPodOptions:
       securityContext:
@@ -101,7 +104,6 @@ spec:
 
     service:
       app:
-        controller: gatus
         ports:
           http:
             port: *port
@@ -128,12 +130,8 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
-
-    serviceAccount:
-      create: true
-      name: gatus
 
     persistence:
       config:
