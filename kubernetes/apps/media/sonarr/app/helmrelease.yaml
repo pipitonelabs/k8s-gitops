@@ -80,6 +80,7 @@ spec:
 
     service:
       app:
+        controller: *app
         ports:
           http:
             port: &port 8989
