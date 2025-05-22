@@ -117,9 +117,6 @@ spec:
               - path:
                   type: PathPrefix
                   value: /library/streams
-          - backendRefs:
-              - identifier: app
-                port: *port
     service:
       app:
         controller: *app
