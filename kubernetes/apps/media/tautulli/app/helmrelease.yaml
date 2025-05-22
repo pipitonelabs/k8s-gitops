@@ -61,6 +61,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        controller: *app
         ports:
           http:
             port: *port
@@ -73,7 +74,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
+              - name: *app
                 port: *port
     persistence:
       config:

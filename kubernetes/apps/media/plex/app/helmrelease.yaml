@@ -107,7 +107,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
+              - name: *app
                 port: *port
             filters:
               - type: RequestHeaderModifier
@@ -119,6 +119,7 @@ spec:
                   value: /library/streams
     service:
       app:
+        controller: *app
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.20.128, ::ffff:192.168.20.128
