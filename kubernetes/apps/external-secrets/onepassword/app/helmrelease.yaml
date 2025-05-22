@@ -113,7 +113,7 @@ spec:
           - path: *configDir
     service:
       app:
-        controller: *app
+        #controller: *app
         ports:
           http:
             port: *apiPort
