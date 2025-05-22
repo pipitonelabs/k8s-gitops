@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: onepassword
+  name: &app onepassword
 spec:
   interval: 1h
   chartRef:
