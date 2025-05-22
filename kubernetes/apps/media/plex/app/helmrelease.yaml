@@ -122,6 +122,7 @@ spec:
                 port: *port
     service:
       app:
+        controller: plex
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.20.128, ::ffff:192.168.20.128
