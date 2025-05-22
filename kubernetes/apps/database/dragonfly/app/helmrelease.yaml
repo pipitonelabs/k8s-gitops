@@ -86,7 +86,9 @@ spec:
           metrics:
             port: 8080
     serviceAccount:
-      dragonfly-operator: {}
+      create: true
+      name: dashbrr
+      #dragonfly-operator: {}
     serviceMonitor:
       app:
         serviceName: *app
