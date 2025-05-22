@@ -56,7 +56,6 @@ spec:
               TZ: America/New_York
     service:
       app:
-        controller: *app
         ports:
           http:
             port: &port 8080
@@ -69,7 +68,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     persistence:

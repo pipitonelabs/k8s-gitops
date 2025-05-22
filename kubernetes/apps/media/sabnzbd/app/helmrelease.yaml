@@ -62,7 +62,6 @@ spec:
         supplementalGroups: [65536]
     service:
       app:
-        controller: sabnzbd
         ports:
           http:
             port: &port 8080
@@ -84,7 +83,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     persistence:
