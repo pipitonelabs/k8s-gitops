@@ -64,7 +64,7 @@ spec:
         supplementalGroups: [44]
     service:
       app:
-        controller: pinchflat
+        controller: *app
         ports:
           http:
             port: *port
@@ -77,11 +77,11 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
     persistence:
       config:
-        existingClaim: pinchflat
+        existingClaim: *app
       yt-dlp:
         type: emptyDir
         globalMounts:
