@@ -110,7 +110,8 @@ spec:
               - name: *app
                 port: *port
     serviceAccount:
-      dashbrr: {}
+      create: true
+      name: dashbrr
     persistence:
       cache:
         type: emptyDir
