@@ -9,6 +9,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: app-template
+    namespace: flux-system
   install:
     remediation:
       retries: 3
@@ -34,7 +35,7 @@ spec:
               repository: ghcr.io/notifiarr/notifiarr
               tag: v0.8.3@sha256:1798fc4236e75c5601b747e367f66a3dd25b412fb834552d2517aced36792be1
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/New_York
               DN_UPSTREAMS_0: "[10.0.0.0/8]"
               TMPDIR: /tmp
               DN_RADARR_0_URL: http://radarr.media.svc.cluster.local
@@ -84,18 +85,13 @@ spec:
       app:
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: notifiarr.png
-          gethomepage.dev/name: Notifiarr
-          gethomepage.dev/group: System
         parentRefs:
           - name: internal
             namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - identifier: app
                 port: *port
 
     persistence:
