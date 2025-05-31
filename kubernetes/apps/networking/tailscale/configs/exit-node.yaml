@@ -5,4 +5,4 @@ metadata:
   name: exit-node
 spec:
   exitNode: true
-  hostname: mars-egress
+  hostname: tslamars-egress
