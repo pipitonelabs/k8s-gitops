@@ -87,7 +87,7 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/icon: notifiarr.png
-          gethomepage.dev/name: Status
+          gethomepage.dev/name: Notifiarr
           gethomepage.dev/group: System
         parentRefs:
           - name: internal
