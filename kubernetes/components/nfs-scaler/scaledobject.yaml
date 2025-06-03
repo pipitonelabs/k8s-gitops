@@ -1,9 +1,12 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/keda.sh/scaledobject_v1alpha1.json
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: ${APP}-nfs-scaler
 spec:
+  advanced:
+    restoreToOriginalReplicaCount: true
   cooldownPeriod: 0
   minReplicaCount: 0
   maxReplicaCount: 1
