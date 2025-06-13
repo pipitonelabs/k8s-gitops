@@ -11,8 +11,6 @@ spec:
   ref:
     tag: 4.3.0
   url: oci://ghcr.io/home-operations/charts-mirror/openebs
-  verify:
-    provider: cosign
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -26,19 +24,18 @@ spec:
   install:
     disableHooks: true
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     disableHooks: true
     remediation:
-      strategy: rollback
       retries: 3
   values:
     localpv-provisioner:
       localpv:
         image:
           registry: quay.io/
-        basePath: &basePath /var/mnt/extra/openebs/local
+        basePath: &basePath /var/mnt/local-hostpath
       hostpathClass:
         enabled: true
         name: openebs-hostpath
@@ -67,3 +64,9 @@ spec:
       replicated:
         mayastor:
           enabled: false
+    loki:
+      enabled: false
+    alloy:
+      enabled: false
+    minio:
+      enabled: false
