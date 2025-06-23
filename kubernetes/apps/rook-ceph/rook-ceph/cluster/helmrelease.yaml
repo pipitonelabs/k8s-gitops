@@ -38,6 +38,8 @@ spec:
     toolbox:
       enabled: true
     cephClusterSpec:
+      cleanupPolicy:
+        wipeDevicesFromOtherClusters: true
       cephConfig:
         global:
           bdev_enable_discard: "true" # quote
