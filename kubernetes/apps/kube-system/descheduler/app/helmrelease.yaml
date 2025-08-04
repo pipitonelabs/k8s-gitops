@@ -43,7 +43,8 @@ spec:
               args:
                 evictFailedBarePods: true
                 evictLocalStoragePods: true
-                evictSystemCriticalPods: true
+                evictSystemCriticalPods: false # Changed to false for safety
+                nodeFit: true # Ensure evicted pods can be scheduled elsewhere
             - name: RemoveFailedPods
               args:
                 reasons:
@@ -63,10 +64,19 @@ spec:
                   - requiredDuringSchedulingIgnoredDuringExecution
             - name: RemovePodsViolatingNodeTaints
             - name: RemovePodsViolatingTopologySpreadConstraint
+            - name: LowNodeUtilization # Added strategy
+              args:
+                thresholds:
+                  pods: 20 # Nodes with <20% pod capacity are underutilized
+                targetThresholds:
+                  pods: 50 # Nodes with >50% pod capacity are overutilized
+                useDeviationThresholds: true # Compare nodes based on deviation
+                numberOfNodes: 3 # Ensure all nodes (m0, m1, m2) are considered
           plugins:
             balance:
               enabled:
                 - RemovePodsViolatingTopologySpreadConstraint
+                - LowNodeUtilization # Added to balance plugin
             deschedule:
               enabled:
                 - RemoveFailedPods
