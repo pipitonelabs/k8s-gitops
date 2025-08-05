@@ -15,4 +15,3 @@ http:
   trusted_proxies:
     - !env_var HASS_HTTP_TRUSTED_PROXY_1
     - !env_var HASS_HTTP_TRUSTED_PROXY_2
-    - !env_var HASS_HTTP_TRUSTED_PROXY_3
