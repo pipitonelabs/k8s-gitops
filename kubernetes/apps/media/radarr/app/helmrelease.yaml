@@ -120,8 +120,13 @@ spec:
     persistence:
       media:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        server: unaspro.internal
+        path: /var/nfs/shared/unraid/data/media
+        mountOptions:
+          - vers=3
+#        type: nfs
+#        server: mars.internal
+#        path: /mnt/user/data/media
       config:
         existingClaim: *app
       tmp:
