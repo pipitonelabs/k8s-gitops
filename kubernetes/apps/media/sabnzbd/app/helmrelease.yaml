@@ -101,10 +101,13 @@ spec:
                     storage: 1Mi # Ignored
                 storageClassName: openebs-hostpath
                 volumeMode: Filesystem
+
       media:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        server: unaspro.internal
+        path: /var/nfs/shared/unraid/data/media
+#        server: mars.internal
+#        path: /mnt/user/data/media
       tmpfs:
         type: emptyDir
         advancedMounts:
