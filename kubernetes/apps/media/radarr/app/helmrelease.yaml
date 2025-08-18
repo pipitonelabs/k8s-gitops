@@ -120,7 +120,6 @@ spec:
     persistence:
       media:
         type: nfs
-        type: nfs
         server: mars.internal
         path: /mnt/user/data/media
       config:
