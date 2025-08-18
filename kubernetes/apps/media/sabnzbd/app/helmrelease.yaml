@@ -104,12 +104,8 @@ spec:
 
       media:
         type: nfs
-        server: 10.10.0.20
-        path: /var/nfs/shared/unraid/data/media
-        mountOptions:
-          - vers=3
-#        server: mars.internal
-#        path: /mnt/user/data/media
+        server: mars.internal
+        path: /mnt/user/data/media
       tmpfs:
         type: emptyDir
         advancedMounts:
