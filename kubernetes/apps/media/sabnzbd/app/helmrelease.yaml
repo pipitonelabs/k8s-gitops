@@ -104,7 +104,7 @@ spec:
 
       media:
         type: nfs
-        server: unaspro.internal
+        server: 10.10.0.20
         path: /var/nfs/shared/unraid/data/media
 #        server: mars.internal
 #        path: /mnt/user/data/media
