@@ -18,6 +18,7 @@ data:
     FILE_STORAGE_IMPORT_MAX_SIZE=26214400
     PORT=8080
     REDIS_URL=redis://outline-dragonfly.default.svc.cluster.local:6379
+    REDIS_COLLABORATION_URL=redis://outline-dragonfly.default.svc.cluster.local:6379
     SMTP_HOST=smtp-relay.default.svc.cluster.local
     SMTP_PORT=2525
     SMTP_FROM_EMAIL=outline@tslamars.com
