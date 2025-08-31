@@ -4,6 +4,7 @@ kind: Plan
 metadata:
   name: talos
 spec:
+  # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
   version: ${TALOS_VERSION}
   concurrency: 1
   exclusive: true
