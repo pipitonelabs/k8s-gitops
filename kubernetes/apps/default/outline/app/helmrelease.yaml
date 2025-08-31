@@ -124,6 +124,6 @@ spec:
         type: configMap
         name: outline-env
         globalMounts:
-          - path: /home/node/.env
+          - path: /opt/outline/.env
             subPath: .env
             readOnly: true
