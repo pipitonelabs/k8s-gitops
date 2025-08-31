@@ -58,7 +58,7 @@ spec:
               SMTP_PORT: 2525
               SMTP_FROM_EMAIL: "outline@tslamars.com"
               SMTP_SECURE: false
-              WEB_CONCURRENCY: 10
+              WEB_CONCURRENCY: 1
               EMAIL_ENABLED: "true"
               NODE_TLS_REJECT_UNAUTHORIZED: "0"
               OIDC_DISPLAY_NAME: authentik
@@ -84,9 +84,9 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 50Mi
+                memory: 100Mi
               limits:
-                memory: 1Gi
+                memory: 3Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
