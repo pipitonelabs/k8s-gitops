@@ -88,7 +88,7 @@ spec:
       repository:
         type: nfs
         server: mars.internal
-        path: /mnt/eros/Volsync
+        path: /mnt/user/Volsync
         globalMounts:
           - path: /repository
       tmpfs:
