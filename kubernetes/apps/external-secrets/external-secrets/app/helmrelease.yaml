@@ -25,12 +25,28 @@ spec:
     name: external-secrets
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
-  valuesFrom:
-    - kind: ConfigMap
-      name: external-secrets-values
+  values:
+    image:
+      repository: ghcr.io/external-secrets/external-secrets
+    webhook:
+      image:
+        repository: ghcr.io/external-secrets/external-secrets
+      serviceMonitor:
+        enabled: true
+        interval: 1m
+    certController:
+      image:
+        repository: ghcr.io/external-secrets/external-secrets
+      serviceMonitor:
+        enabled: true
+        interval: 1m
+    serviceMonitor:
+      enabled: true
+      interval: 1m
+    grafanaDashboard:
+      enabled: true
