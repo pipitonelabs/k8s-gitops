@@ -25,12 +25,18 @@ spec:
     name: spegel
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
-  valuesFrom:
-    - kind: ConfigMap
-      name: spegel-values
+  values:
+    grafanaDashboard:
+      enabled: true
+    serviceMonitor:
+      enabled: true
+    spegel:
+      containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+    service:
+      registry:
+        hostPort: 29999
