@@ -117,7 +117,7 @@ spec:
                 name: "repository",
                 nfs: Object.spec.template.spec.volumes.nfs{
                   server: "mars.internal",
-                  path: "/mnt/user/Volsync"
+                  path: "/mnt/user/VolsyncKopia"
                 }
               }
             }
