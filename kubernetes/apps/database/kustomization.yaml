@@ -8,4 +8,4 @@ resources:
   - ./cloudnative-pg/ks.yaml
   - ./dragonfly/ks.yaml
   - ./minio/ks.yaml
-  - ./emqx/ks.yaml
+#  - ./emqx/ks.yaml
