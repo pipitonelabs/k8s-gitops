@@ -88,7 +88,7 @@ spec:
       repository:
         type: nfs
         server: mars.internal
-        path: /mnt/user/Volsync
+        path: /mnt/user/VolsyncKopia
         globalMounts:
           - path: /repository
       tmpfs:
