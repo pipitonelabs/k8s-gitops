@@ -57,9 +57,9 @@ machine:
     extraConfig:
       serializeImagePulls: false
     extraMounts:
-      - destination: /var/openebs/local
+      - destination: /var/mnt/extra
         type: bind
-        source: /var/openebs/local
+        source: /var/mnt/extra
         options: ["bind", "rshared", "rw"]
     defaultRuntimeSeccompProfileEnabled: true
     nodeIP:
@@ -206,14 +206,6 @@ name: enp2s0f1np1
 rings:
   rx: 8160
   tx: 8160
----
-apiVersion: v1alpha1
-kind: UserVolumeConfig
-name: local-hostpath
-provisioning:
-  diskSelector:
-    match: disk.model == "CT1000P3PSSD8" && !system_disk
-  minSize: 1TB
 ---
 apiVersion: v1alpha1
 kind: WatchdogTimerConfig

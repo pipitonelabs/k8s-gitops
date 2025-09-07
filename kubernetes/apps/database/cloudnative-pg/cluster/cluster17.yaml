@@ -53,7 +53,7 @@ spec:
         secretAccessKey:
           name: cloudnative-pg-secret
           key: minio-aws-secret-access-key
-      
+
       # Below here is for r2
       #s3Credentials:
       #  accessKeyId:
