@@ -44,7 +44,7 @@ spec:
       #endpointURL: https://5d92d34288d78f2937b65f30517ec598.r2.cloudflarestorage.com
       # Note: serverName version needs to be incremented
       # when recovering from an existing cnpg cluster
-      serverName: &currentCluster postgres17-v6
+      serverName: &currentCluster postgres17-v7
       # minio test
       s3Credentials:
         accessKeyId:
@@ -67,7 +67,7 @@ spec:
   # cluster when recovering from an existing cnpg cluster
   bootstrap:
     recovery:
-      source: &previousCluster postgres17-v5
+      source: &previousCluster postgres17-v6
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
   externalClusters:
     - name: *previousCluster
