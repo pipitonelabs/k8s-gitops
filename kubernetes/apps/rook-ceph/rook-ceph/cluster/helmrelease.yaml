@@ -31,7 +31,7 @@ spec:
           pathType: PathPrefix
         parentRefs:
           - name: internal
-            namespace: istio-system
+            namespace: kube-system
             sectionName: https
     cephClusterSpec:
       cephConfig:
