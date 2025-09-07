@@ -11,6 +11,7 @@ spec:
   components:
     - ../../../../components/gatus/guarded
     - ../../../../components/volsync
+    - ../../../../components/keda/nfs-scaler
   dependsOn:
     - name: intel-device-plugin-gpu
       namespace: kube-system
