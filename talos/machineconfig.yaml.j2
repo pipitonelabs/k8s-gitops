@@ -100,6 +100,7 @@ machine:
     net.ipv4.tcp_wmem: 4096 65536 8388608  # Optimized for 2.5Gb
     net.ipv4.tcp_window_scaling: 1         # 2.5Gb/s
     vm.nr_hugepages: 1024                  # PostgreSQL
+    user.max_user_namespaces: 11255        # User Namespaces
   sysfs:
     {% for i in range(0, 20) %}
     devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
