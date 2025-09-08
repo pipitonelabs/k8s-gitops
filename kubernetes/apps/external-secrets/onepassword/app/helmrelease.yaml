@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: onepassword
+  name: &app onepassword
 spec:
   interval: 1h
   chartRef:
@@ -11,10 +11,11 @@ spec:
     namespace: flux-system
   install:
     remediation:
-      retries: -1
+      retries: 3
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   values:
     controllers:
@@ -25,8 +26,8 @@ spec:
         containers:
           api:
             image:
-              repository: ghcr.io/1password/connect-api
-              tag: 1.7.4@sha256:7d2132985f2f05b7fe4cfaf76314adeeb5abb745f051685b1c561130ab22ade3
+              repository: docker.io/1password/connect-api
+              tag: 1.7.4@sha256:f97189814239381e6dd88577f2b0b838a64e006a460608455b3127c15b174601
             env:
               XDG_DATA_HOME: &configDir /config
               OP_HTTP_PORT: &apiPort 80
@@ -35,7 +36,7 @@ spec:
               OP_SESSION:
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ .Release.Name }}-secret"
+                    name: onepassword-secret
                     key: 1password-credentials.json
             probes:
               liveness:
@@ -45,9 +46,8 @@ spec:
                   httpGet:
                     path: /heartbeat
                     port: *apiPort
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
                   failureThreshold: 3
               readiness:
                 enabled: true
@@ -56,10 +56,7 @@ spec:
                   httpGet:
                     path: /health
                     port: *apiPort
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  initialDelaySeconds: 15
             resources: &resources
               requests:
                 cpu: 10m
@@ -81,7 +78,7 @@ spec:
               OP_SESSION:
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ .Release.Name }}-secret"
+                    name: onepassword-secret
                     key: 1password-credentials.json
             probes:
               liveness:
@@ -91,9 +88,8 @@ spec:
                   httpGet:
                     path: /heartbeat
                     port: *syncPort
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
                   failureThreshold: 3
               readiness:
                 enabled: true
@@ -102,14 +98,10 @@ spec:
                   httpGet:
                     path: /health
                     port: *syncPort
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  initialDelaySeconds: 15
             resources: *resources
             securityContext: *securityContext
     defaultPodOptions:
-      hostUsers: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -121,6 +113,7 @@ spec:
           - path: *configDir
     service:
       app:
+        controller: *app
         ports:
           http:
             port: *apiPort
