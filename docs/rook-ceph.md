@@ -43,7 +43,7 @@ metadata:
   name: disk-clean-rook
 spec:
   restartPolicy: Never
-  nodeName: <nodename>
+  nodeName: m2
   volumes:
   - name: rook-data-dir
     hostPath:
