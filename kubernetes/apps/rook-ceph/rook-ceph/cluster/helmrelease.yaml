@@ -70,6 +70,8 @@ spec:
         useAllNodes: true
         useAllDevices: false
         deviceFilter: nvme1n1
+        config:
+          osdsPerDevice: "1"
     cephBlockPools:
       - name: ceph-blockpool
         spec:
