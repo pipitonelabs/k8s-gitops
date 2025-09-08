@@ -10,6 +10,15 @@ echo "Scaling down Rook operator..."
 kubectl -n $NAMESPACE scale deployment rook-ceph-operator --replicas=0 || true
 kubectl -n $NAMESPACE get pods | grep rook-ceph-operator || echo "No Rook operator pods found."
 
+echo "Removing finalizers from HelmRelease resources in $NAMESPACE..."
+for hr in $(kubectl -n $NAMESPACE get helmreleases.helm.toolkit.fluxcd.io -o name 2>/dev/null | cut -d'/' -f2); do
+  echo "Patching HelmRelease $hr..."
+  kubectl -n $NAMESPACE patch helmreleases.helm.toolkit.fluxcd.io $hr --type=json -p '[{"op":"replace","path":"/metadata/finalizers","value":[]}]' || true
+done
+
+echo "Deleting HelmRelease resources in $NAMESPACE..."
+kubectl -n $NAMESPACE delete helmreleases.helm.toolkit.fluxcd.io --all || true
+
 echo "Removing finalizers from Ceph resources..."
 for resource in $(kubectl -n $NAMESPACE get cephcluster,cephblockpool,cephfilesystem,cephobjectstore,cephblockpoolradosnamespaces,cephclients,cephfilesystemsubvolumegroup,clientprofiles.csi.ceph.io -o name 2>/dev/null); do
   kind=$(echo $resource | cut -d'/' -f1)
@@ -76,9 +85,6 @@ kubectl -n $NAMESPACE delete pods --all || true
 echo "Removing finalizers from namespace $NAMESPACE..."
 kubectl patch namespace $NAMESPACE --type=json -p '[{"op":"replace","path":"/metadata/finalizers","value":[]}]' || true
 
-echo "Deleting namespace $NAMESPACE..."
-kubectl delete namespace $NAMESPACE --force --grace-period=0 || true
-
 echo "Removing finalizers from Rook CRDs..."
 for crd in $(kubectl get crd -o name 2>/dev/null | grep rook | cut -d'/' -f2); do
   echo "Patching CRD $crd..."
@@ -90,10 +96,23 @@ echo "Cleaning up Rook cluster roles and bindings..."
 kubectl delete clusterrole rook-ceph-cluster-mgmt rook-ceph-global rook-ceph-mgr-cluster rook-ceph-mgr-system rook-ceph-object-store rook-ceph-osd rook-ceph-system || true
 kubectl delete clusterrolebinding rook-ceph-cluster-mgmt rook-ceph-global rook-ceph-mgr-cluster rook-ceph-mgr-system rook-ceph-object-store rook-ceph-osd rook-ceph-system || true
 
+echo "Checking for HelmRelease resources in other namespaces (e.g., flux-system)..."
+for ns in $(kubectl get namespaces -o name | cut -d'/' -f2 | grep -E 'flux-system|default'); do
+  for hr in $(kubectl -n $ns get helmreleases.helm.toolkit.fluxcd.io -o name 2>/dev/null | grep rook | cut -d'/' -f2); do
+    echo "Patching HelmRelease $hr in namespace $ns..."
+    kubectl -n $ns patch helmreleases.helm.toolkit.fluxcd.io $hr --type=json -p '[{"op":"replace","path":"/metadata/finalizers","value":[]}]' || true
+    kubectl -n $ns delete helmreleases.helm.toolkit.fluxcd.io $hr || true
+  done
+done
+
+echo "Deleting namespace $NAMESPACE..."
+kubectl delete namespace $NAMESPACE --force --grace-period=0 || true
+
 echo "Verifying cleanup..."
 kubectl get namespaces | grep $NAMESPACE || echo "Namespace $NAMESPACE deleted."
 kubectl get all --all-namespaces | grep rook || echo "No Rook resources found."
 kubectl get pv | grep rook || echo "No Rook PVs found."
 kubectl get crd | grep rook || echo "No Rook CRDs found."
+kubectl get helmreleases.helm.toolkit.fluxcd.io --all-namespaces | grep rook || echo "No Rook HelmReleases found."
 
 echo "Cleanup complete."
