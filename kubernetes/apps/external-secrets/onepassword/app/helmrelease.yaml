@@ -26,8 +26,8 @@ spec:
         containers:
           api:
             image:
-              repository: ghcr.io/1password/connect-api
-              tag: 1.7.4@sha256:7d2132985f2f05b7fe4cfaf76314adeeb5abb745f051685b1c561130ab22ade3
+              repository: docker.io/1password/connect-api
+              tag: 1.7.4@sha256:f97189814239381e6dd88577f2b0b838a64e006a460608455b3127c15b174601
             env:
               XDG_DATA_HOME: &configDir /config
               OP_HTTP_PORT: &apiPort 80
