@@ -26,12 +26,12 @@ spec:
     route:
       dashboard:
         host:
-          name: rook.turbo.ac
+          name: rook.tslamars.com
           path: /
           pathType: PathPrefix
         parentRefs:
           - name: internal
-            namespace: istio-system
+            namespace: kube-system
             sectionName: https
     cephClusterSpec:
       cephConfig:
