@@ -49,8 +49,11 @@ spec:
                   name: sabnzbd-secret
             resources:
               requests:
-                cpu: 100m
-                memory: 10Gi
+                cpu: 500m  # Increased from 100m for better guaranteed CPU during unpacking/copying
+                memory: 15Gi
+              limits:
+                cpu: 2  # Allow bursting up to 2 vCPU; adjust based on your workload
+                memory: 20Gi  # Allow bursting beyond request to avoid OOM; adjust if needed
 
     defaultPodOptions:
       securityContext:
