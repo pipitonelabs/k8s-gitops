@@ -11,7 +11,7 @@ spec:
   components:
     - ../../../../components/cnpg
     - ../../../../components/gatus/guarded
-    #- ../../../../components/keda/nfs-scaler
+    - ../../../../components/keda/nfs-scaler
   dependsOn:
     - name: rook-ceph-cluster
       namespace: rook-ceph
