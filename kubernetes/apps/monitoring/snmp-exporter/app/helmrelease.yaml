@@ -27,12 +27,6 @@ spec:
           target: 10.69.1.1
           auth:
             - tslamars
-        - name: mars
-          module:
-            - snmp
-          target: mars.internal
-          auth:
-            - tslamars
       path: /snmp
       scrapeTimeout: 10s
       relabelings:
