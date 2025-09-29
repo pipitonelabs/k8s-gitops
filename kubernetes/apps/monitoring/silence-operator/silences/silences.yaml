@@ -21,7 +21,7 @@ spec:
     - name: alertname
       value: CephNodeDiskspaceWarning
     - name: device
-      value: /dev/*
+      value: /dev/nvme.*
       matchType: "=~"
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
@@ -36,8 +36,6 @@ spec:
     - name: horizontalpodautoscaler
       value: keda-hpa-.*
       matchType: "=~"
-    #- name: namespace
-    #  value: volsync-system
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
 apiVersion: observability.giantswarm.io/v1alpha2
