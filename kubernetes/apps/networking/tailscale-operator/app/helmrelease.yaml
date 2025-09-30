@@ -35,3 +35,4 @@ spec:
     operatorConfig:
       podAnnotations:
         secret.reloader.stakater.com/reload: *secret
+  installCRDs: true
