@@ -22,10 +22,12 @@ spec:
     kind: OCIRepository
     name: tailscale-operator
   install:
+    crds: CreateReplace
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
+    crds: CreateReplace
     remediation:
       retries: 3
   values:
@@ -35,4 +37,3 @@ spec:
     operatorConfig:
       podAnnotations:
         secret.reloader.stakater.com/reload: *secret
-  installCRDs: true
