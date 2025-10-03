@@ -108,7 +108,7 @@ spec:
       media:
         type: nfs
         server: unaspro.internal
-        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/unraid/.data/data/media
+        path: /var/nfs/shared/unraid/data/media
         #server: mars.internal
         #path: /mnt/user/data/media
       tmpfs:
