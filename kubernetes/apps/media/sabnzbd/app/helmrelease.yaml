@@ -58,9 +58,12 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 977
+        runAsGroup: 988
+        fsGroup: 988
+        #runAsUser: 1000
+        #runAsGroup: 100
+        #fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [65536]
     service:
@@ -107,8 +110,10 @@ spec:
 
       media:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        server: unaspro.internal
+        path: /var/nfs/shared/unraid/data/media
+        #server: mars.internal
+        #path: /mnt/user/data/media
       tmpfs:
         type: emptyDir
         advancedMounts:
