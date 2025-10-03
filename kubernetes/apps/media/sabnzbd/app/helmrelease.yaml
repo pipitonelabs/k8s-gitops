@@ -107,10 +107,8 @@ spec:
 
       media:
         type: nfs
-        server: unaspro.internal
-        path: /var/nfs/shared/unraid/data/media
-        #server: mars.internal
-        #path: /mnt/user/data/media
+        server: mars.internal
+        path: /mnt/user/data/media
       tmpfs:
         type: emptyDir
         advancedMounts:
