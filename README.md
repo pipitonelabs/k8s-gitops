@@ -109,12 +109,13 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
 
 | Device                    | Count | OS Disk Size | Data Disk Size          | Ram   | Operating System | Purpose                 |
 |---------------------------|-------|--------------|-------------------------|------ |------------------|-------------------------|
-| MS-01 (i9-12900H)         | 3     | 1 TB M.2     | 1 TB M.2                | 64GB  | Talos            | Kubernetes              |
+| MS-01 (i9-12900H)         | 3     | 1xTB M.2     | 1xTB m2 nvme            | 64GB  | Talos            | Kubernetes              |
 | Dell R730XD               | 1     | -            | Random drive sizes      | 128GB | UnRAID OS        | NFS                     |
-| UniFi UNAS Pro            | 1     | -            | 7x16TB HDD              | 8GB   | UniFi OS         | NFS                     |
-| UniFi UDM SE              | 1     | -            | 1x3TB HDD               | -     | UniFi OS         | Router & NVR            |
-| UniFi USW Pro Max 24 PoE  | 1     | -            | -                       | -     | UniFi OS         | 2.5Gb PoE Switch        |
-| UniFi USW Pro Max 16 PoE  | 1     | -            | -                       | -     | UniFi OS         | 2.5Gb PoE Switch        |
+| UniFi UNAS Pro            | 1     | -            | 7x16TB HDD              | 8GB   | UniFi OS         | Backup of backups       |
+| UniFi UCG Fiber           | 1     | -            | 1x2TB m2 nvme           | -     | UniFi OS         | Router & NVR            |
+| UniFi USW Pro Max 24 PoE  | 1     | -            | -                       | -     | UniFi OS         | 1/2.5Gb PoE Switch        |
+| UniFi USW Pro XG 10 PoE   | 1     | -            | -                       | -     | UniFi OS         | 10Gb PoE Switch        |
+| GMKtec M5 Plus            | 1     | 1xTB M.2     | 1xTB M.2                | 64GB  | Proxmox          | Various                 |
 
 ---
 
