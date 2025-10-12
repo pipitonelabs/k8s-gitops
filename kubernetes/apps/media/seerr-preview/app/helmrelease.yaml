@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: fallenbagel/jellyseerr
-              tag: preview-seerr@sha256:4f38f58d68555004d3f487a4c5cbe2823e6a0942d946a25a2d9391d8492240a4
+              tag: preview-seerr@sha256:16177e553f7d1c2bcc967a68819da4ba1841b3bd36a40753e962cdb9072f59ef
             env:
               LOG_LEVEL: info
               PORT: &port 5055
