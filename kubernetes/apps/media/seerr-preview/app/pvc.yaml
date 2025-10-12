@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: seerr-cache
+  name: seerr-preview-cache
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
