@@ -103,9 +103,6 @@ spec:
     route:
       app:
         hostnames: ["minio.tslamars.com"]
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 404"]
         parentRefs:
           - name: internal
             namespace: kube-system
