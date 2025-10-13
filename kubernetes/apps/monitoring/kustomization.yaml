@@ -6,7 +6,7 @@ components:
   - ../../components/common
 resources:
   - ./blackbox-exporter/ks.yaml
-  - ./gatus/ks.yaml
+#  - ./gatus/ks.yaml
   - ./grafana/ks.yaml
   - ./karma/ks.yaml
   - ./keda/ks.yaml
@@ -18,4 +18,3 @@ resources:
   - ./smartctl-exporter/ks.yaml
 #  - ./snmp-exporter/ks.yaml
   - ./unpoller/ks.yaml
- 
