@@ -102,9 +102,6 @@ spec:
 
     route:
       app:
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 401"]
         hostnames: ["minio.tslamars.com"]
         parentRefs:
           - name: internal
