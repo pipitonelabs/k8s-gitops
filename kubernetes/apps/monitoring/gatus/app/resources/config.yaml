@@ -59,4 +59,4 @@ ui:
       link: https://github.com/tslamars/k8s-gitops
 
 web:
-  port: ${CUSTOM_WEB_PORT}
+  port: ${GATUS_WEB_PORT}
