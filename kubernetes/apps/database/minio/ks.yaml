@@ -4,9 +4,6 @@ kind: Kustomization
 metadata:
   name: &app minio
   namespace: &namespace database
-  annotations:
-    gatus.home-operations.com/endpoint: |-
-      conditions: ["[STATUS] == 404"]
 spec:
   commonMetadata:
     labels:
