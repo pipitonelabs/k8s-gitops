@@ -113,9 +113,6 @@ spec:
                 port: *port-console
 
       s3:
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 401"]
         hostnames: ["s3.tslamars.com"]
         parentRefs:
           - name: internal
