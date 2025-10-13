@@ -38,9 +38,14 @@ endpoints:
 metrics: true
 
 storage:
-  type: postgres
-  path: ${DB_URI}
+  type: sqlite
   caching: true
+  path: ${GATUS_CONFIG_PATH}/gatus.db
+
+#storage:
+#  type: postgres
+#  path: ${DB_URI}
+#  caching: true
 
 ui:
   title: Status | Gatus
