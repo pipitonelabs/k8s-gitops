@@ -4,7 +4,7 @@ kind: OCIRepository
 metadata:
   name: cilium
 spec:
-  interval: 5m
+  interval: 15m
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
@@ -17,17 +17,10 @@ kind: HelmRelease
 metadata:
   name: cilium
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: cilium
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+  interval: 1h
   values:
     autoDirectNodeRoutes: true
     bandwidthManager:
@@ -37,7 +30,7 @@ spec:
       datapathMode: netkit
       masquerade: true
       preallocateMaps: true
-      # tproxy: true
+      tproxy: true
     bpfClockProbe: true
     bgpControlPlane:
       enabled: true
@@ -57,14 +50,7 @@ spec:
     endpointRoutes:
       enabled: true
     envoy:
-      rollOutPods: true
-      prometheus:
-        serviceMonitor:
-          enabled: true
-    gatewayAPI:
-      enabled: true
-      enableAlpn: true
-      xffNumTrustedHops: 1
+      enabled: false
     hubble:
       enabled: false
     ipam:
@@ -74,8 +60,6 @@ spec:
     k8sServicePort: 7445
     kubeProxyReplacement: true
     kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
-    l2announcements:
-      enabled: true
     loadBalancer:
       algorithm: maglev
       mode: dsr

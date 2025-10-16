@@ -75,12 +75,15 @@ spec:
         type: emptyDir
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            url: https://{{ .Release.Name }}.tslamars.com/api/v1/status
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
           - requests.tslamars.com
         parentRefs:
-          - name: external
-            namespace: kube-system
+          - name: envoy-external
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:

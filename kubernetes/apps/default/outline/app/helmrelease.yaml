@@ -76,8 +76,8 @@ spec:
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
         parentRefs:
-          - name: internal
-            namespace: kube-system
+          - name: envoy-internal
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:

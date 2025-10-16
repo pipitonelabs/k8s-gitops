@@ -104,8 +104,8 @@ spec:
       app:
         hostnames: ["minio.tslamars.com"]
         parentRefs:
-          - name: internal
-            namespace: kube-system
+          - name: envoy-internal
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:
@@ -115,8 +115,8 @@ spec:
       s3:
         hostnames: ["s3.tslamars.com"]
         parentRefs:
-          - name: internal
-            namespace: kube-system
+          - name: envoy-internal
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:

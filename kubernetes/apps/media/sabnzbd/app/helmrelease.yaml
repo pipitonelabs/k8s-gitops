@@ -72,17 +72,9 @@ spec:
     route:
       app:
         hostnames: ["{{ .Release.Name }}.tslamars.com"]
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sabnzbd.png
-          gethomepage.dev/name: SABnzbd
-          gethomepage.dev/group: Downloads
-          gethomepage.dev/widget.type: sabnzbd
-          gethomepage.dev/widget.url: http://sabnzbd.media.svc.cluster.local:8080
-          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SABNZBD_API_KEY}}" }}'
         parentRefs:
-          - name: internal
-            namespace: kube-system
+          - name: envoy-internal
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:
@@ -107,8 +99,6 @@ spec:
 
       media:
         type: nfs
-        #server: unaspro.internal
-        #path: /var/nfs/shared/unraid/data/media
         server: mars.internal
         path: /mnt/user/data/media
       tmpfs:

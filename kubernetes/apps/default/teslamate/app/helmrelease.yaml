@@ -101,8 +101,8 @@ spec:
           gethomepage.dev/name: TeslaMate
           gethomepage.dev/group: Observability
         parentRefs:
-          - name: internal
-            namespace: kube-system
+          - name: envoy-internal
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:
