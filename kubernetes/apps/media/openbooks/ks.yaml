@@ -20,7 +20,6 @@ spec:
       namespace: volsync-system
   interval: 30m
   components:
-    - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   postBuild:
     substitute:

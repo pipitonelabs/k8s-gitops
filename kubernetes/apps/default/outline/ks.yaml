@@ -19,7 +19,6 @@ spec:
     - name: minio
       namespace: database
   components:
-    - ../../../../components/gatus/guarded
     - ../../../../components/cnpg
     - ../../../../components/dragonfly
     - ../../../../components/volsync
