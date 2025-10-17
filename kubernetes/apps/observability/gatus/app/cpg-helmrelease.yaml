@@ -119,14 +119,9 @@ spec:
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
           - status.tslamars.com
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: gatus.png
-          gethomepage.dev/name: Status
-          gethomepage.dev/group: System
         parentRefs:
-          - name: external
-            namespace: kube-system
+          - name: envoy-external
+            namespace: networking
             sectionName: https
         rules:
           - backendRefs:

@@ -61,8 +61,8 @@ spec:
           - "{{ .Release.Name }}.tslamars.com"
           - hass.tslamars.com
         parentRefs:
-          - name: external
-            namespace: kube-system
+          - name: envoy-external
+            namespace: networking
             sectionName: https
     persistence:
       config:
