@@ -9,5 +9,10 @@ spec:
     kind: OCIRepository
     name: keda
   interval: 1h
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
   values:
     enableServiceLinks: false
+    installCRDs: true
