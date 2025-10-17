@@ -10,7 +10,6 @@ resources:
   - ./csi-driver-nfs/ks.yaml
   - ./descheduler/ks.yaml
   - ./generic-device-plugin/ks.yaml
-  - ./gateway-api-crds/ks.yaml
   - ./intel-gpu-resource-driver/ks.yaml
   - ./irqbalance/ks.yaml
   - ./metrics-server/ks.yaml
