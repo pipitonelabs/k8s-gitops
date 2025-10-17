@@ -11,7 +11,8 @@ resources:
   - ./descheduler/ks.yaml
   - ./generic-device-plugin/ks.yaml
   - ./gateway-api-crds/ks.yaml
-  - ./intel-device-plugin/ks.yaml
+#  - ./intel-device-plugin/ks.yaml
+  - ./intel-gpu-resource-driver/ks.yaml
   - ./irqbalance/ks.yaml
   - ./metrics-server/ks.yaml
   - ./reloader/ks.yaml
