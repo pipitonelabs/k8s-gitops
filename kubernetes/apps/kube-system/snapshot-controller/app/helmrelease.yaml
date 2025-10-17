@@ -9,7 +9,12 @@ spec:
     kind: OCIRepository
     name: snapshot-controller
   interval: 1h
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
   values:
+    installCRDs: true
     controller:
       serviceMonitor:
         create: true
