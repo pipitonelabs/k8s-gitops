@@ -21,7 +21,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: spegel
-  interval: 1h
   values:
     grafanaDashboard:
       enabled: true
