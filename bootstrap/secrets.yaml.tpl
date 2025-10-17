@@ -26,6 +26,14 @@ stringData:
 apiVersion: v1
 kind: Secret
 metadata:
+  name: cloudflare-tunnel-id-secret
+  namespace: network
+stringData:
+  CLOUDFLARE_TUNNEL_ID: op://kubernetes/cloudflare/CLOUDFLARE_TUNNEL_ID
+---
+apiVersion: v1
+kind: Secret
+metadata:
   name: tslamars-com-tls
   namespace: kube-system
   annotations:
