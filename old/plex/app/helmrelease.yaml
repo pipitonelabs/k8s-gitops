@@ -1,14 +1,22 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: plex
+  name: &app plex
 spec:
+  interval: 1h
   chartRef:
     kind: OCIRepository
-    name: plex
-  interval: 1h
+    name: app-template
+    namespace: flux-system
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
   values:
     controllers:
       plex:
@@ -20,9 +28,9 @@ spec:
               repository: ghcr.io/home-operations/plex
               tag: 1.42.2.10156@sha256:9ad8a3506e1d8ebda873a668603c1a2c10e6887969564561be669efd65ae8871
             env:
-              TZ: America/New_York
-              PLEX_ADVERTISE_URL: https://plex.tslamars.com:443,http://192.168.20.128:32400,http://plex.default.svc.cluster.local:32400
+              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.tslamars.com:443,http://192.168.20.128:32400
               PLEX_NO_AUTH_NETWORKS: 10.0.0.0/8
+              TZ: America/New_York
             probes:
               liveness: &probes
                 enabled: true
@@ -41,37 +49,46 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
             resources:
-              claims:
-                - name: gpu
               requests:
                 cpu: 100m
               limits:
-                memory: 16Gi
+                gpu.intel.com/i915: 1
+                memory: 10Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      resourceClaims:
-        - name: gpu
-          resourceClaimTemplateName: plex
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
-        runAsGroup: 1000
+        runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [44, 106]
-    service:
-      app:
-        type: LoadBalancer
-        annotations:
-          lbipam.cilium.io/ips: 192.168.20.128
-        externalTrafficPolicy: Local
-        ports:
-          http:
-            port: *port
+    persistence:
+      config:
+        existingClaim: *app
+      config-cache:
+        existingClaim: plex-cache
+        globalMounts:
+          - path: /config/Library/Application Support/Plex Media Server/Cache
+      config-logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/Library/Application Support/Plex Media Server/Logs
+      media:
+        type: nfs
+        server: mars.internal
+        path: /mnt/user/data/media
+        globalMounts:
+          - path: /media
+            #readOnly: true
+      tmp:
+        type: emptyDir
+      transcode:
+        type: emptyDir
     route:
       app:
         annotations:
@@ -81,18 +98,16 @@ spec:
           - "{{ .Release.Name }}.tslamars.com"
         parentRefs:
           - name: envoy-internal
-            namespace: network
+            namespace: networking
             sectionName: https
         rules:
-          - # Ref: https://forums.plex.tv/t/external-srt-subtitles-are-not-working-w-reverse-proxy/886540
-            backendRefs:
+          - backendRefs:
               - identifier: app
                 port: *port
             filters:
               - type: RequestHeaderModifier
                 requestHeaderModifier:
-                  remove:
-                    - Range
+                  remove: ["Range"]
             matches:
               - path:
                   type: PathPrefix
@@ -100,15 +115,8 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-    persistence:
-      config:
-        existingClaim: "{{ .Release.Name }}"
-      media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
-        globalMounts:
-          - path: /media
-            readOnly: true
-      tmp:
-        type: emptyDir
+    service:
+      app:
+        ports:
+          http:
+            port: *port

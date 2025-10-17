@@ -1,28 +1,37 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: plex
+  name: &app plex
+  namespace: &namespace media
 spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   components:
-    - ../../../../components/nfs-scaler
     - ../../../../components/volsync
+    - ../../../../components/keda/nfs-scaler
   dependsOn:
-    - name: intel-gpu-resource-driver
+    - name: intel-device-plugin-gpu
       namespace: kube-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
   interval: 1h
   path: ./kubernetes/apps/media/plex/app
   postBuild:
     substitute:
-      APP: plex
+      APP: *app
+      GATUS_PATH: /identity
+      VOLSYNC_CACHE_CAPACITY: 25Gi
       VOLSYNC_CAPACITY: 50Gi
   prune: true
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: media
-  wait: false
+  targetNamespace: *namespace
+  timeout: 5m
+  wait: true
