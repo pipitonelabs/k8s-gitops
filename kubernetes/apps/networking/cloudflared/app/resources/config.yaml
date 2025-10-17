@@ -1,8 +1,0 @@
----
-ingress:
-  - hostname: "*.tslamars.com"
-    service: https://envoy-external.networking.svc.cluster.local
-    originRequest:
-      http2Origin: true
-      originServerName: external.tslamars.com
-  - service: http_status:404
