@@ -32,10 +32,10 @@ spec:
               - --cloudflare-proxied
               - --domain-filter=tslamars.com
               - --events
-              - --gateway-name=external
+              - --gateway-name=envoy-external
               - --interval=1m
               - --log-format=text
-              - --log-level=debug
+              - --log-level=info
               - --policy=sync
               - --provider=cloudflare
               - --registry=txt
