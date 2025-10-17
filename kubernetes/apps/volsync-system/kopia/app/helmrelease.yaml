@@ -65,7 +65,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.turbo.ac"
+          - "{{ .Release.Name }}.tslamars.com"
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -95,8 +95,8 @@ spec:
             subPath: repository.config
       repository:
         type: nfs
-        server: expanse.internal
-        path: /mnt/eros/VolsyncKopia
+        server: mars.internal
+        path: /mnt/sharecache/VolsyncKopia
         globalMounts:
           - path: /repository
       tmpfs:
