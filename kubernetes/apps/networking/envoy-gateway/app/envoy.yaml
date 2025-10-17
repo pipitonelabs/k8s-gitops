@@ -174,10 +174,10 @@ metadata:
 spec:
   parentRefs:
     - name: envoy-external
-      namespace: network
+      namespace: networking
       sectionName: http
     - name: envoy-internal
-      namespace: network
+      namespace: networking
       sectionName: http
   rules:
     - filters:
