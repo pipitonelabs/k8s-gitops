@@ -8,8 +8,8 @@ resources:
 #  - ./autobrr/ks.yaml
 #  - ./maintainerr/ks.yaml
 #  - ./openbooks/ks.yaml
-#  - ./overseerr/ks.yaml
-#  - ./plex/ks.yaml
+  - ./overseerr/ks.yaml
+  - ./plex/ks.yaml
 #  - ./prowlarr/ks.yaml
 #  - ./radarr/ks.yaml
 #  - ./recyclarr/ks.yaml
