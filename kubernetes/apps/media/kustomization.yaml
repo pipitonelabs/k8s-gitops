@@ -5,13 +5,13 @@ namespace: media
 
 components:
   - ../../components/alerts
-  
+
 resources:
   - ./namespace.yaml
 #  - ./autobrr/ks.yaml
 #  - ./maintainerr/ks.yaml
 #  - ./openbooks/ks.yaml
-  - ./overseerr/ks.yaml
+#  - ./overseerr/ks.yaml
 #  - ./plex/ks.yaml
 #  - ./prowlarr/ks.yaml
 #  - ./radarr/ks.yaml
