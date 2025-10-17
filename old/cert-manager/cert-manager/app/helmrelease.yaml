@@ -4,7 +4,7 @@ kind: OCIRepository
 metadata:
   name: cert-manager
 spec:
-  interval: 15m
+  interval: 5m
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
@@ -17,10 +17,17 @@ kind: HelmRelease
 metadata:
   name: cert-manager
 spec:
+  interval: 1h
   chartRef:
     kind: OCIRepository
     name: cert-manager
-  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
   values:
     crds:
       enabled: true

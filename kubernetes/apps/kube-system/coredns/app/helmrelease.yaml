@@ -5,17 +5,10 @@ kind: HelmRelease
 metadata:
   name: coredns
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: coredns
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+  interval: 1h
   values:
     fullnameOverride: coredns
     image:
@@ -26,7 +19,7 @@ spec:
       create: true
     service:
       name: kube-dns
-      clusterIP: 10.245.0.10
+      clusterIP: 10.43.0.10
     servers:
       - zones:
           - zone: .
