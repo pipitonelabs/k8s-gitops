@@ -10,16 +10,9 @@ spec:
       app.kubernetes.io/name: *app
   interval: 1h
   path: ./kubernetes/apps/networking/echo-server/app
-  postBuild:
-    substitute:
-      APP: *app
-      GATUS_PATH: /healthz
   prune: true
-  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 5m
-  wait: true
