@@ -71,7 +71,7 @@ spec:
       media:
         type: nfs
         server: mars.internal
-        path: /volume1/media
+        path: /mnt/user/data/media
         globalMounts:
           - readOnly: true
       tmpfs:
