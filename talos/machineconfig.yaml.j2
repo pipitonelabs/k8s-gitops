@@ -68,7 +68,6 @@ machine:
         type: bind
         source: /var/mnt/extra
         options: ["bind", "rshared", "rw"]
-    defaultRuntimeSeccompProfileEnabled: true
     nodeIP:
       validSubnets:
         - 192.168.10.0/24
@@ -158,17 +157,13 @@ cluster:
     key: op://Kubernetes/talos/CLUSTER_AGGREGATORCA_KEY
   allowSchedulingOnControlPlanes: true
   apiServer:
-    image: registry.k8s.io/kube-apiserver:v1.34.0
     extraArgs:
       enable-aggregator-routing: "true"
-      feature-gates: ImageVolume=true,MutatingAdmissionPolicy=true
+      feature-gates: ImageVolume=true,MutatingAdmissionPolicy=true,ResourceHealthStatus=true
       runtime-config: admissionregistration.k8s.io/v1beta1=true
     certSANs:
       - k8s.internal
     disablePodSecurityPolicy: true
-    extraArgs:
-      enable-aggregator-routing: true
-      feature-gates: ImageVolume=true,ResourceHealthStatus=true
     image: registry.k8s.io/kube-apiserver:v1.34.1
   controllerManager:
     extraArgs:
