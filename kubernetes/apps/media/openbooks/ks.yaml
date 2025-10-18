@@ -20,6 +20,7 @@ spec:
       namespace: volsync-system
   interval: 30m
   components:
+    - ../../../../components/nfs-scaler
     - ../../../../components/volsync
   postBuild:
     substitute:

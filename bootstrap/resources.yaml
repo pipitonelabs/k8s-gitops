@@ -27,7 +27,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: tslamars-com-tls
-  namespace: kube-system
+  namespace: networking
   annotations:
     cert-manager.io/alt-names: '*.tslamars.com,tslamars.com'
     cert-manager.io/certificate-name: tslamars-com
