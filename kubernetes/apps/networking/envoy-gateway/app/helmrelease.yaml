@@ -1,5 +1,17 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: envoy-gateway
+spec:
+  interval: 15m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 1.5.3
+  url: oci://mirror.gcr.io/envoyproxy/gateway-helm
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -10,8 +22,6 @@ spec:
     name: envoy-gateway
   interval: 1h
   values:
-    global:
-      imageRegistry: mirror.gcr.io
     config:
       envoyGateway:
         provider:
@@ -19,3 +29,5 @@ spec:
           kubernetes:
             deploy:
               type: GatewayNamespace
+    global:
+      imageRegistry: mirror.gcr.io

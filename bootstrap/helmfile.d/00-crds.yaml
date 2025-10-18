@@ -8,11 +8,6 @@ helmDefaults:
   postRendererArgs: [-c, "yq ea --exit-status 'select(.kind == \"CustomResourceDefinition\")'"]
 
 releases:
-  - name: cloudflare-dns
-    namespace: networking
-    chart: oci://ghcr.io/home-operations/charts-mirror/external-dns
-    version: 1.19.0
-    
   - name: external-secrets
     namespace: external-secrets
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
@@ -23,11 +18,6 @@ releases:
     chart: oci://mirror.gcr.io/envoyproxy/gateway-helm
     version: 1.5.3
 
-  - name: grafana-operator
-    namespace: observability
-    chart: oci://ghcr.io/grafana/helm-charts/grafana-operator
-    version: v5.19.4
-
   - name: keda
     namespace: observability
     chart: oci://ghcr.io/home-operations/charts-mirror/keda
@@ -36,4 +26,4 @@ releases:
   - name: kube-prometheus-stack
     namespace: observability
     chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
-    version: 78.3.0
+    version: 78.3.1

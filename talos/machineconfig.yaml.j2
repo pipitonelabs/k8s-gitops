@@ -1,19 +1,15 @@
 ---
 version: v1alpha1
-debug: false
-persist: true
 machine:
-  type: {{ machinetype }}
-  token: op://Kubernetes/talos/MACHINE_TOKEN
   ca:
     crt: op://Kubernetes/talos/MACHINE_CA_CRT
-    {% if machinetype == 'controlplane' %}
+    {% if ENV.MACHINE_TYPE == 'controlplane' %}
     key: op://Kubernetes/talos/MACHINE_CA_KEY
     {% endif %}
   features:
     rbac: true
     stableHostname: true
-    {% if machinetype == 'controlplane' %}
+    {% if ENV.MACHINE_TYPE == 'controlplane' %}
     kubernetesTalosAPIAccess:
       enabled: true
       allowedRoles: ["os:admin"]
@@ -85,7 +81,7 @@ machine:
     disableSearchDomain: true
   nodeLabels:
     intel.feature.node.kubernetes.io/gpu: true
-    topology.kubernetes.io/zone: {{ 'm' if machinetype == 'controlplane' else 'w' }}
+    topology.kubernetes.io/zone: {{ 'm' if ENV.MACHINE_TYPE == 'controlplane' else 'w' }}
     topology.kubernetes.io/region: k8s
   sysctls:
     fs.inotify.max_user_watches: 1048576   # Watchdog
@@ -116,10 +112,12 @@ machine:
         ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
       - # Intel GPU
         SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660"
+  token: op://Kubernetes/talos/MACHINE_TOKEN
+  type: {{ ENV.MACHINE_TYPE }}
 cluster:
   ca:
     crt: op://Kubernetes/talos/CLUSTER_CA_CRT
-    {% if machinetype == 'controlplane' %}
+    {% if ENV.MACHINE_TYPE == 'controlplane' %}
     key: op://Kubernetes/talos/CLUSTER_CA_KEY
     {% endif %}
   clusterName: k8s
@@ -141,7 +139,7 @@ cluster:
     serviceSubnets: ["10.245.0.0/16"]
   secret: op://Kubernetes/talos/CLUSTER_SECRET
   token: op://Kubernetes/talos/CLUSTER_TOKEN
-  {% if machinetype == 'controlplane' %}
+  {% if ENV.MACHINE_TYPE == 'controlplane' %}
   aggregatorCA:
     crt: op://Kubernetes/talos/CLUSTER_AGGREGATORCA_CRT
     key: op://Kubernetes/talos/CLUSTER_AGGREGATORCA_KEY

@@ -4,38 +4,29 @@ kind: OCIRepository
 metadata:
   name: descheduler
 spec:
-  interval: 5m
+  interval: 15m
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
     tag: 0.33.0
   url: oci://ghcr.io/home-operations/charts-mirror/descheduler
-  verify:
-    provider: cosign
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: descheduler
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: descheduler
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
+  interval: 1h
   values:
-    replicas: 2
     kind: Deployment
     deschedulerPolicyAPIVersion: descheduler/v1alpha2
     deschedulerPolicy:
+      metricsProviders:
+        - source: KubernetesMetrics
       profiles:
         - name: Default
           pluginConfig:
@@ -43,8 +34,19 @@ spec:
               args:
                 evictFailedBarePods: true
                 evictLocalStoragePods: true
-                evictSystemCriticalPods: false # Changed to false for safety
-                nodeFit: true # Ensure evicted pods can be scheduled elsewhere
+                evictSystemCriticalPods: true
+            - name: LowNodeUtilization
+              args:
+                metricsUtilization:
+                  source: KubernetesMetrics
+                thresholds:
+                  cpu: 20
+                  memory: 20
+                  pods: 20
+                targetThresholds:
+                  cpu: 50
+                  memory: 50
+                  pods: 50
             - name: RemoveFailedPods
               args:
                 reasons:
@@ -64,19 +66,11 @@ spec:
                   - requiredDuringSchedulingIgnoredDuringExecution
             - name: RemovePodsViolatingNodeTaints
             - name: RemovePodsViolatingTopologySpreadConstraint
-            - name: LowNodeUtilization # Added strategy
-              args:
-                thresholds:
-                  pods: 20 # Nodes with <20% pod capacity are underutilized
-                targetThresholds:
-                  pods: 50 # Nodes with >50% pod capacity are overutilized
-                useDeviationThresholds: true # Compare nodes based on deviation
-                numberOfNodes: 3 # Ensure all nodes (m0, m1, m2) are considered
           plugins:
             balance:
               enabled:
+                - LowNodeUtilization
                 - RemovePodsViolatingTopologySpreadConstraint
-                - LowNodeUtilization # Added to balance plugin
             deschedule:
               enabled:
                 - RemoveFailedPods
