@@ -49,19 +49,23 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
             resources:
+              claims:
+                - name: gpu
               requests:
-                cpu: 10m
+                cpu: 100m
               limits:
-                gpu.intel.com/i915: 1
-                memory: 8Gi
+                memory: 10Gi
     defaultPodOptions:
+      resourceClaims:
+        - name: gpu
+          resourceClaimTemplateName: plex
       securityContext:
         runAsNonRoot: true
-        runAsUser: 99
-        runAsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [44]
+        supplementalGroups: [44, 106]
     service:
       app:
         controller: *app
@@ -70,6 +74,10 @@ spec:
             port: *port
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            url: https://{{ .Release.Name }}.tslamars.com
+
         hostnames: ["{{ .Release.Name }}.tslamars.com"]
         parentRefs:
           - name: envoy-internal
