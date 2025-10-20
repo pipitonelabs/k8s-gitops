@@ -73,17 +73,17 @@ spec:
           http:
             port: *port
     rawResources:
-      gpu:
-        apiVersion: resource.k8s.io/v1
+      - apiVersion: resource.k8s.io/v1
         kind: ResourceClaimTemplate
+        metadata:
+          name: pinchflat
         spec:
           spec:
-            spec:
-              devices:
-                requests:
-                  - name: gpu
-                    exactly:
-                      deviceClassName: gpu.intel.com
+            devices:
+              requests:
+                - name: gpu
+                  exactly:
+                    deviceClassName: gpu.intel.com
     route:
       app:
         annotations:
