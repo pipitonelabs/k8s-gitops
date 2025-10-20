@@ -101,9 +101,12 @@ spec:
                 port: *port
     persistence:
       config:
-        existingClaim: *app
         type: pvc
-        mountPath: /config
+        existingClaim: *app
+        advancedMounts:
+          pinchflat:  # Controller name
+            app:  # Container name
+              - path: /config  # Mount path inside the container
       yt-dlp:
         type: emptyDir
         globalMounts:
