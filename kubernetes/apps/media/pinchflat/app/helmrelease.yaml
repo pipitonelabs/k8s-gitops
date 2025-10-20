@@ -101,12 +101,14 @@ spec:
                 port: *port
     persistence:
       config:
-        type: pvc
-        existingClaim: *app
+        type: custom
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: pinchflat  # Reference the existing PVC
         advancedMounts:
-          pinchflat:  # Controller name
-            app:  # Container name
-              - path: /config  # Mount path inside the container
+          pinchflat:
+            app:
+              - path: /config
       yt-dlp:
         type: emptyDir
         globalMounts:
@@ -121,4 +123,5 @@ spec:
               - path: /downloads
                 subPath: Library/YouTube
       tmp:
-        type: emptyDir
+        type: emptyDir    
+  
