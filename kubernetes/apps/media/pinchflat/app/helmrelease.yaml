@@ -102,6 +102,8 @@ spec:
     persistence:
       config:
         existingClaim: *app
+        type: pvc
+        mountPath: /config
       yt-dlp:
         type: emptyDir
         globalMounts:
