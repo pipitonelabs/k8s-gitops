@@ -11,17 +11,3 @@ spec:
       - 192.168.10.0/24
       - 192.168.20.0/24
   hostname: tslamars-subnet-router
-  podTemplate:
-    spec:
-      securityContext:
-        sysctls:
-          - name: net.ipv4.ip_forward
-            value: "1"
-          - name: net.ipv6.conf.all.forwarding
-            value: "1"
-      containers:
-        - name: tailscale
-          securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
