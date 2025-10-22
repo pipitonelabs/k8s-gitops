@@ -47,5 +47,5 @@ spec:
     - name: alertname
       value: KubeHpaMaxedOut
     - name: horizontalpodautoscaler
-      value: authentik-worker*
+      value: authentik-*
       matchType: "=~"
