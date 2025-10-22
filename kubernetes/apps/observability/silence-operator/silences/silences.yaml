@@ -41,7 +41,7 @@ spec:
 apiVersion: observability.giantswarm.io/v1alpha2
 kind: Silence
 metadata:
-  name: authentik-worker-hpa-maxed-out
+  name: authentik-hpa-maxed-out
 spec:
   matchers:
     - name: alertname
@@ -49,16 +49,4 @@ spec:
     - name: horizontalpodautoscaler
       value: authentik-worker*
       matchType: "=~"
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
-apiVersion: observability.giantswarm.io/v1alpha2
-kind: Silence
-metadata:
-  name: authentik-server-hpa-maxed-out
-spec:
-  matchers:
-    - name: alertname
-      value: KubeHpaMaxedOut
-    - name: horizontalpodautoscaler
-      value: authentik-server*
-      matchType: "=~"
+
