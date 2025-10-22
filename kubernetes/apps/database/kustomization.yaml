@@ -6,5 +6,5 @@ components:
   - ../../components/namespace
 resources:
   - ./cloudnative-pg/ks.yaml
-  - ./dragonfly/ks.yaml
+#  - ./dragonfly/ks.yaml
   - ./minio/ks.yaml
