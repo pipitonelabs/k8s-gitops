@@ -6,6 +6,6 @@ components:
   - ../../components/namespace
 resources:
   - ./emqx/ks.yaml
-  - ./outline/ks.yaml
+#  - ./outline/ks.yaml
   - ./smtp-relay/ks.yaml
 #  - ./teslamate/ks.yaml
