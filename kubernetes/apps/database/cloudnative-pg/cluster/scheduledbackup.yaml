@@ -12,13 +12,13 @@ spec:
     name: postgres17
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/postgresql.cnpg.io/scheduledbackup_v1.json
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
-  name: outline
-spec:
-  schedule: "@daily"
-  immediate: true
-  backupOwnerReference: self
-  cluster:
-    name: outline
+#apiVersion: postgresql.cnpg.io/v1
+#kind: ScheduledBackup
+#metadata:
+#  name: outline
+#spec:
+#  schedule: "@daily"
+#  immediate: true
+#  backupOwnerReference: self
+#  cluster:
+#    name: outline
