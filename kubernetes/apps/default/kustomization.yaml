@@ -9,4 +9,3 @@ resources:
 #  - ./outline/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./teslamate/ks.yaml
-  - ./thelounge/ks.yaml
