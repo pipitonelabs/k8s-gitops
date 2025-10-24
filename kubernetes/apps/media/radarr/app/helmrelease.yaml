@@ -2,117 +2,94 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app radarr
+  name: radarr
 spec:
-  interval: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
-  maxHistory: 2
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
-  uninstall:
-    keepHistory: false
+  interval: 1h
   values:
     controllers:
       radarr:
-        labels:
-          nfsMount: "true"
-          postgres: "true"
         annotations:
           reloader.stakater.com/auto: "true"
-
-        initContainers:
-          01-init-db:
-            image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: "17"
-            envFrom:
-              - secretRef:
-                  name: radarr-initdb-secret
-
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/radarr
               tag: 6.0.2.10271@sha256:12b8348c57c556d837d28bbc73a8837fb7f402a29aba40385a0513dbd068881b
             env:
-              TZ: America/New_York
-              PUSHOVER_DEBUG: "false"
+              RADARR__APP__INSTANCENAME: Radarr
+              RADARR__APP__THEME: dark
               RADARR__AUTH__METHOD: External
               RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              RADARR__INSTANCENAME: Radarr
-              RADARR__PORT: 7878
               RADARR__LOG__LEVEL: info
-              RADARR__THEME: dark
-              # Postgres Setup
-              RADARR__POSTGRES__HOST:
-                valueFrom:
-                  secretKeyRef:
-                    name: &pguser radarr-pguser-secret
-                    key: host
-              RADARR__POSTGRES__PORT:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
-                    key: port
-              RADARR__POSTGRES__USER:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
-                    key: user
-              RADARR__POSTGRES__PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
-                    key: password
-              RADARR__POSTGRES__MAINDB:
-                valueFrom:
-                  secretKeyRef:
-                    name: *pguser
-                    key: db
-              RADARR__LOG__DBENABLED: "false"
+              RADARR__SERVER__PORT: &port 80
+              RADARR__UPDATE__BRANCH: develop
+              TZ: America/New_York
             envFrom:
               - secretRef:
-                  name: radarr-secret
-
-    service:
-      app:
-        ports:
-          http:
-            port: &port 7878
-
-    route:
-      app:
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: networking
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
-
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                memory: 4Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 100
-        fsGroup: 100
         runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-
+        supplementalGroups: [65536]
     persistence:
+      config:
+        existingClaim: "{{ .Release.Name }}"
+      config-cache:
+        existingClaim: "{{ .Release.Name }}-cache"
+        globalMounts:
+          - path: /config/MediaCover
       media:
         type: nfs
         server: mars.internal
         path: /mnt/user/data/media
-      config:
-        existingClaim: *app
-      tmp:
+      tmpfs:
         type: emptyDir
+        advancedMounts:
+          radarr:
+            app:
+              - path: /config/logs
+                subPath: logs
+              - path: /tmp
+                subPath: tmp
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.tslamars.com"
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+    service:
+      app:
+        ports:
+          http:
+            port: *port
