@@ -54,7 +54,7 @@ spec:
             port: &port 3909
     route:
       app:
-        hostnames: ["garage.${SECRET_EXTERNAL_DOMAIN}"]
+        hostnames: ["garage.tslamars.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking
