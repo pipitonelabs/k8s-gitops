@@ -59,7 +59,7 @@ spec:
             port: 3903
     route:
       app:
-        hostnames: ["s3-test.${SECRET_EXTERNAL_DOMAIN}"]
+        hostnames: ["s3-test.teslamars.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking
