@@ -21,7 +21,6 @@ spec:
   values:
     controllers:
       garage:
-        replicas: 2
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -61,7 +60,7 @@ spec:
             port: 3903
     route:
       app:
-        hostnames: ["s3.tslamars.com"]
+        hostnames: ["s3-test.tslamars.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking
