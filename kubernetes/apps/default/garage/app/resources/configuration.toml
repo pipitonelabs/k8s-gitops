@@ -3,7 +3,7 @@ data_dir = "/data"
 db_engine = "lmdb"
 metadata_auto_snapshot_interval = "6h"
 
-replication_factor = 1
+replication_factor = 2
 compression_level = 2
 
 rpc_bind_addr = "[::]:3901"
