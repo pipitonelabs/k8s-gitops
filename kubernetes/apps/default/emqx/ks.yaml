@@ -2,19 +2,21 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app emqx-operator
+  name: &app emqx
   namespace: &namespace default
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
     - name: onepassword-store
       namespace: external-secrets
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/default/emqx/app
   prune: true
-  retryInterval: 1m
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -32,16 +34,13 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
   dependsOn:
-    - name: emqx-operator
+    - name: emqx
       namespace: *namespace
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/default/emqx/cluster
-  postBuild:
-    substitute:
-      APP: emqx
   prune: true
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
