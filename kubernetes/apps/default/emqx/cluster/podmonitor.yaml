@@ -22,5 +22,6 @@ spec:
           targetLabel: from
         - action: replace
           # fix value, don't modify
-          sourceLabels: ['pod']
-          targetLabel: "instance"
+          sourceLabels:
+            - pod
+          targetLabel: instance
