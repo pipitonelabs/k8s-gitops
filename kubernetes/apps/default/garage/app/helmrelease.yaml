@@ -60,7 +60,7 @@ spec:
             port: 3903
     route:
       app:
-        hostnames: ["s3-test.tslamars.com"]
+        hostnames: ["s3.tslamars.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking
