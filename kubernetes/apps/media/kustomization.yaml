@@ -7,14 +7,14 @@ components:
 resources:
 #  - ./autobrr/ks.yaml
   - ./jellyseerr/ks.yaml
-  - ./maintainerr/ks.yaml
+#  - ./maintainerr/ks.yaml
   - ./openbooks/ks.yaml
 #  - ./overseerr/ks.yaml
 #  - ./pinchflat/ks.yaml
   - ./plex/ks.yaml
-  - ./prowlarr/ks.yaml
-  - ./radarr/ks.yaml
-  - ./recyclarr/ks.yaml
-  - ./sabnzbd/ks.yaml
-  - ./sonarr/ks.yaml
+#  - ./prowlarr/ks.yaml
+#  - ./radarr/ks.yaml
+#  - ./recyclarr/ks.yaml
+#  - ./sabnzbd/ks.yaml
+#  - ./sonarr/ks.yaml
   - ./tautulli/ks.yaml
