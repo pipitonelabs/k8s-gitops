@@ -6,4 +6,4 @@ namespace: volsync-system
 components:
   - ../../components/namespace
 resources:
-  - ./volsync-system/ks.yaml
+  - ./volsync/ks.yaml
