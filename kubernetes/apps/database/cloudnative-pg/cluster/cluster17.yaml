@@ -45,23 +45,23 @@ spec:
       # Note: serverName version needs to be incremented
       # when recovering from an existing cnpg cluster
       serverName: &currentCluster postgres17-v17
-      # minio test
-      #s3Credentials:
-      #  accessKeyId:
-      #    name: cloudnative-pg-secret
-      #    key: minio-aws-access-key-id
-      #  secretAccessKey:
-      #    name: cloudnative-pg-secret
-      #    key: minio-aws-secret-access-key
-
-      # garage
+      # minio
       s3Credentials:
         accessKeyId:
           name: cloudnative-pg-secret
-          key: garage-aws-access-key-id
+          key: minio-aws-access-key-id
         secretAccessKey:
           name: cloudnative-pg-secret
-          key: garage-aws-secret-access-key
+          key: minio-aws-secret-access-key
+
+      # garage
+      #s3Credentials:
+      #  accessKeyId:
+      #    name: cloudnative-pg-secret
+      #    key: garage-aws-access-key-id
+      #  secretAccessKey:
+      #    name: cloudnative-pg-secret
+      #    key: garage-aws-secret-access-key
 
       # Below here is for r2
       #s3Credentials:
