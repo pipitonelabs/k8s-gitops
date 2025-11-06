@@ -118,8 +118,8 @@ This is achieved by defining routes with two specific gateways: `internal` for p
 <details>
   <summary>Click to see my rack</summary>
 
-  <img src="./docs/assets/rack-front" align="center" alt="rack-front"/>
-  <img src="./docs/assets/rack-rear" align="center" alt="rack-rear"/>
+  <img src="./docs/assets/rack-front.jpg" align="center" alt="rack-front"/>
+  <img src="./docs/assets/rack-rear.jpg" align="center" alt="rack-rear"/>
 </details>
 
 ---
