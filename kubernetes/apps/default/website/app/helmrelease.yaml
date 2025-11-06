@@ -6,6 +6,7 @@ metadata:
   name: website
   namespace: default
 spec:
+  interval: 10m
   chartRef:
     kind: OCIRepository
     name: app-template
@@ -46,12 +47,6 @@ spec:
           - name: envoy-external
             namespace: networking
     persistence:
-      config:
-        existingClaim: "{{ .Release.Name }}"
-      config-cache:
-        existingClaim: "{{ .Release.Name }}-config"
-        globalMounts:
-          - path: /opt/bitnami/nginx/conf/server_blocks
       www:
         enabled: true
         type: nfs
@@ -59,3 +54,12 @@ spec:
         path: /mnt/user/Kubernetes/website
         globalMounts:
           - path: /opt/bitnami/nginx/html
+
+      config-cache:
+        enabled: true
+        type: nfs
+        server: mars.internal
+        path: /mnt/user/Kubernetes/website-config
+        globalMounts:
+          - path: /opt/bitnami/nginx/conf/server_blocks
+  
