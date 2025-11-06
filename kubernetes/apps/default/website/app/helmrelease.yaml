@@ -59,7 +59,7 @@ spec:
         enabled: true
         type: nfs
         server: mars.internal
-        path: /mnt/user/Kubernetes/website-config
+        path: /mnt/user/Kubernetes/website/config
         globalMounts:
           - path: /opt/bitnami/nginx/conf/server_blocks
   
