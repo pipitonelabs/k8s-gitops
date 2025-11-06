@@ -10,3 +10,4 @@ resources:
 #  - ./outline/ks.yaml
   - ./smtp-relay/ks.yaml
 #  - ./teslamate/ks.yaml
+  - ./website/ks.yaml
