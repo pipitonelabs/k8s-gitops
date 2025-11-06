@@ -61,7 +61,7 @@ spec:
       app:
         hostnames:
           - "{{ .Release.Name }}.tslamars.com"
-          - tslamars.com
+          - resume.tslamars.com
         parentRefs:
           - name: envoy-external
             namespace: networking
