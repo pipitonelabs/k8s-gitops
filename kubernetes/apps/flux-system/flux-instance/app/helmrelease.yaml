@@ -44,7 +44,7 @@ spec:
         - notification-controller
       sync:
         kind: GitRepository
-        url: https://github.com/tslamars/k8s-gitops
+        url: https://github.com/jpipitone1094/k8s-gitops
         ref: refs/heads/main
         path: ./kubernetes/flux/cluster
         interval: 1h

@@ -50,13 +50,13 @@ storage:
 ui:
   title: Status | Gatus
   header: Status
-  logo: https://raw.githubusercontent.com/tslamars/k8s-gitops/main/docs/assets/mars.png
-  link: https://github.com/tslamars
+  logo: https://raw.githubusercontent.com/jpipitone1094/k8s-gitops/main/docs/assets/mars.png
+  link: https://github.com/jpipitone1094
   buttons:
     - name: Github
-      link: https://github.com/tslamars
+      link: https://github.com/jpipitone1094
     - name: Homelab
-      link: https://github.com/tslamars/k8s-gitops
+      link: https://github.com/jpipitone1094/k8s-gitops
 
 web:
   port: ${GATUS_WEB_PORT}
