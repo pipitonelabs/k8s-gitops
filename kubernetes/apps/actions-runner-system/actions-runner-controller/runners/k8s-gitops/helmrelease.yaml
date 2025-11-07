@@ -22,7 +22,7 @@ spec:
     name: gha-runner-scale-set
   interval: 1h
   values:
-    githubConfigUrl: https://github.com/jpipitone1094/k8s-gitops
+    githubConfigUrl: https://github.com/josephpipitone/k8s-gitops
     githubConfigSecret: k8s-gitops-runner-secret
     minRunners: 1
     maxRunners: 3
