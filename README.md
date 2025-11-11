@@ -90,7 +90,7 @@ I run two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external
 - **Private DNS**: Syncs records to my UCG Fiber via the [ExternalDNS webhook provider for UniFi](https://github.com/kashalls/external-dns-unifi-webhook)
 - **Public DNS**: Syncs records to Cloudflare for external services
 
-This is achieved by defining routes with two specific gateways: `internal` for private DNS and `external` for public DNS. Each ExternalDNS instance watches for routes using its assigned gateway and syncs the appropriate DNS records to the corresponding platform.
+This is achieved by defining routes with two specific gateways: `envoy-internal` for private DNS and `envoy-external` for public DNS. Each ExternalDNS instance watches for routes using its assigned gateway and syncs the appropriate DNS records to the corresponding platform.
 
 ---
 
