@@ -83,25 +83,6 @@ This Git repository contains the following directories under [kubernetes](./kube
 └─📁 flux          # Flux system configuration
 ```
 
-### Cluster layout
-
-This is a high-level look how Flux deploys my applications with dependencies. Below there are 3 Flux kustomizations `postgres`, `postgres-cluster`, and `atuin`. `postgres` is the first app that needs to be running and healthy before `postgres-cluster` and once `postgres-cluster` is healthy `atuin` will be deployed.
-
-```mermaid
-graph TD;
-  id1>Kustomization: flux-system] -->|Creates| id2>Kustomization: cluster-apps];
-  id2>Kustomization: cluster-apps] -->|Creates| id3>Kustomization: postgres];
-  id2>Kustomization: cluster-apps] -->|Creates| id5>Kustomization: postgres-cluster]
-  id2>Kustomization: cluster-apps] -->|Creates| id8>Kustomization: atuin]
-  id3>Kustomization: postgres] -->|Creates| id4(HelmRelease: postgres);
-  id5>Kustomization: postgres-cluster] -->|Depends on| id3>Kustomization: postgres];
-  id5>Kustomization: postgres-cluster] -->|Creates| id10(Cluster: postgres);
-  id8>Kustomization: atuin] -->|Creates| id9(HelmRelease: atuin);
-  id8>Kustomization: atuin] -->|Depends on| id5>Kustomization: postgres-cluster];
-```
-
----
-
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif" alt="🌎" width="20" height="20"> DNS
 
 I run two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) to handle DNS automation:
