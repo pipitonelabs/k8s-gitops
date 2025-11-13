@@ -38,6 +38,8 @@ spec:
             image:
               repository: makeplane/plane-backend
               tag: latest
+            command: ["./bin/takeoff"]
+            args: ["api"]
             env:
               DATABASE_URL:
                 valueFrom:
@@ -50,6 +52,9 @@ spec:
                   secretKeyRef:
                     name: plane-secret
                     key: SECRET_KEY
+              DJANGO_SETTINGS_MODULE: plane.settings.production
+              WEB_BASE_URL: https://plane.tslamars.com
+              ENABLE_OAUTH: "0"
             envFrom:
               - secretRef:
                   name: plane-secret
@@ -66,11 +71,8 @@ spec:
               repository: makeplane/plane-frontend
               tag: latest
             env:
-              SECRET_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: plane-secret
-                    key: SECRET_KEY
+              NEXT_PUBLIC_API_BASE_URL: https://plane.tslamars.com
+              NEXT_PUBLIC_WEB_BASE_URL: https://plane.tslamars.com
             resources:
               requests:
                 cpu: 10m
@@ -83,6 +85,8 @@ spec:
             image:
               repository: makeplane/plane-worker
               tag: latest
+            command: ["./bin/takeoff"]
+            args: ["worker"]
             env:
               DATABASE_URL:
                 valueFrom:
@@ -95,6 +99,9 @@ spec:
                   secretKeyRef:
                     name: plane-secret
                     key: SECRET_KEY
+              DJANGO_SETTINGS_MODULE: plane.settings.production
+              WEB_BASE_URL: https://plane.tslamars.com
+              ENABLE_OAUTH: "0"
             envFrom:
               - secretRef:
                   name: plane-secret
@@ -104,13 +111,13 @@ spec:
                 memory: 100Mi
               limits:
                 memory: 512Mi
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 100
-        fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
+    # defaultPodOptions:
+    #   securityContext:
+    #     runAsNonRoot: true
+    #     runAsUser: 1000
+    #     runAsGroup: 100
+    #     fsGroup: 100
+    #     fsGroupChangePolicy: OnRootMismatch
     service:
       backend:
         controller: plane-backend
