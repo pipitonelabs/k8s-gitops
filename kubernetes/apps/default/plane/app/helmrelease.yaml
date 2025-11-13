@@ -7,8 +7,8 @@ metadata:
 spec:
   interval: 30m
   chartRef:
-    kind: HelmRepository
-    name: makeplane
+    kind: OCIRepository
+    name: app-template
     namespace: flux-system
   maxHistory: 2
   install:
@@ -21,65 +21,127 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    image:
-      tag: latest
-    database:
-      host: plane-rw.database.svc.cluster.local
-      port: 5432
-      name: plane
-      user: plane
-      password: ""  # Set via extraEnv
-    redis:
-      host: plane-dragonfly.default.svc.cluster.local
-      port: 6379
-      password: ""
-    secretKey: ""  # Set via extraEnv
-    web:
-      host: plane.tslamars.com
-      extraEnv:
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: plane-pguser-secret
-              key: password
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: plane-secret
-              key: SECRET_KEY
-    api:
-      extraEnv:
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: plane-pguser-secret
-              key: password
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: plane-secret
-              key: SECRET_KEY
-    worker:
-      extraEnv:
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: plane-pguser-secret
-              key: password
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: plane-secret
-              key: SECRET_KEY
-    migrator:
-      extraEnv:
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: plane-pguser-secret
-              key: password
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: plane-secret
-              key: SECRET_KEY
+    controllers:
+      plane-backend:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "17"
+            envFrom:
+              - secretRef:
+                  name: plane-initdb-secret
+        containers:
+          app:
+            image:
+              repository: makeplane/plane-backend
+              tag: latest
+            env:
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pguser plane-pguser-secret
+                    key: uri
+              REDIS_URL: redis://plane-dragonfly.default.svc.cluster.local:6379
+              SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: plane-secret
+                    key: SECRET_KEY
+            envFrom:
+              - secretRef:
+                  name: plane-secret
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 1Gi
+      plane-frontend:
+        containers:
+          app:
+            image:
+              repository: makeplane/plane-frontend
+              tag: latest
+            env:
+              SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: plane-secret
+                    key: SECRET_KEY
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 256Mi
+      plane-worker:
+        containers:
+          app:
+            image:
+              repository: makeplane/plane-worker
+              tag: latest
+            env:
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: uri
+              REDIS_URL: redis://plane-dragonfly.default.svc.cluster.local:6379
+              SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: plane-secret
+                    key: SECRET_KEY
+            envFrom:
+              - secretRef:
+                  name: plane-secret
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      backend:
+        controller: plane-backend
+        ports:
+          http:
+            port: 8000
+      frontend:
+        controller: plane-frontend
+        ports:
+          http:
+            port: 3000
+    route:
+      app:
+        hostnames:
+          - "plane.tslamars.com"
+        parentRefs:
+          - name: envoy-external
+            namespace: networking
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /api
+            backendRefs:
+              - identifier: backend
+                port: 8000
+          - backendRefs:
+              - identifier: frontend
+                port: 3000
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
