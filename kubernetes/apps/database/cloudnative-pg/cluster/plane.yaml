@@ -1,0 +1,50 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: plane
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  primaryUpdateStrategy: unsupervised
+  primaryUpdateMethod: switchover
+  storage:
+    size: 10Gi
+    storageClass: openebs-hostpath
+  superuserSecret:
+    name: cloudnative-pg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: 128MB
+  nodeMaintenanceWindow:
+    inProgress: false
+    reusePVC: true
+  resources:
+    requests:
+      cpu: 250m
+    limits:
+      memory: 1Gi
+  monitoring:
+    enablePodMonitor: true
+
+  backup:
+    retentionPolicy: 30d
+    barmanObjectStore:
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://plane-pg/
+      endpointURL: https://s3.tslamars.com
+      serverName: plane-v17
+      s3Credentials:
+        accessKeyId:
+          name: cloudnative-pg-secret
+          key: minio-aws-access-key-id
+        secretAccessKey:
+          name: cloudnative-pg-secret
+          key: minio-aws-secret-access-key
