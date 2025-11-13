@@ -94,7 +94,8 @@ spec:
             image:
               repository: makeplane/plane-frontend
               tag: latest
-            command: ["npm", "run", "start"]
+            command: ["npx", "turbo", "run", "start"]
+            workingDir: /app
             env:
               NEXT_PUBLIC_API_BASE_URL: https://plane.tslamars.com
               NEXT_PUBLIC_WEB_BASE_URL: https://plane.tslamars.com
