@@ -97,6 +97,7 @@ spec:
               repository: makeplane/plane-frontend
               tag: latest
             command: ["node", "server.js"]
+            workingDir: /app
             env:
               NEXT_PUBLIC_API_BASE_URL: https://plane.tslamars.com
             resources:
