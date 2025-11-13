@@ -33,6 +33,30 @@ spec:
             envFrom:
               - secretRef:
                   name: plane-initdb-secret
+          02-migrate:
+            image:
+              repository: makeplane/plane-backend
+              tag: latest
+            command: ["./bin/takeoff"]
+            args: ["migrate"]
+            env:
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pguser plane-pguser-secret
+                    key: uri
+              REDIS_URL: redis://plane-dragonfly.default.svc.cluster.local:6379
+              SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: plane-secret
+                    key: SECRET_KEY
+              DJANGO_SETTINGS_MODULE: plane.settings.production
+              WEB_BASE_URL: https://plane.tslamars.com
+              ENABLE_OAUTH: "0"
+            envFrom:
+              - secretRef:
+                  name: plane-secret
         containers:
           app:
             image:
@@ -44,7 +68,7 @@ spec:
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
-                    name: &pguser plane-pguser-secret
+                    name: *pguser
                     key: uri
               REDIS_URL: redis://plane-dragonfly.default.svc.cluster.local:6379
               SECRET_KEY:
@@ -70,6 +94,7 @@ spec:
             image:
               repository: makeplane/plane-frontend
               tag: latest
+            command: ["npm", "run", "start"]
             env:
               NEXT_PUBLIC_API_BASE_URL: https://plane.tslamars.com
               NEXT_PUBLIC_WEB_BASE_URL: https://plane.tslamars.com
