@@ -8,7 +8,7 @@ resources:
 #  - ./emqx/ks.yaml
 #  - ./garage/ks.yaml
 #  - ./outline/ks.yaml
-  - ./plane/ks.yaml
+#  - ./plane/ks.yaml
   - ./smtp-relay/ks.yaml
 #  - ./teslamate/ks.yaml
   - ./nginx/ks.yaml
