@@ -96,10 +96,11 @@ spec:
             image:
               repository: makeplane/plane-frontend
               tag: latest
-            command: ["node", "server.js"]
+            command: ["npm", "run", "start"]
             workingDir: /app
             env:
               NEXT_PUBLIC_API_BASE_URL: https://plane.tslamars.com
+              NEXT_PUBLIC_WEB_BASE_URL: https://plane.tslamars.com
             resources:
               requests:
                 cpu: 10m
