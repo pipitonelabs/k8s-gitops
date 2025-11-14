@@ -4,6 +4,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: plane
+  namespace: default
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:17
@@ -29,6 +30,9 @@ spec:
       memory: 1Gi
   monitoring:
     enablePodMonitor: true
+  secrets:
+    appSecret:
+      name: plane-pguser-secret
 
   backup:
     retentionPolicy: 30d

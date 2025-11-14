@@ -32,7 +32,7 @@ spec:
               tag: "17"
             envFrom:
               - secretRef:
-                  name: plane-initdb-secret
+                  name: plane-pg-secret
           02-migrate:
             image:
               repository: makeplane/plane-backend
@@ -43,7 +43,7 @@ spec:
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
-                    name: &pguser plane-app
+                    name: &pguser plane-pguser-secret
                     key: uri
               REDIS_URL: redis://plane-dragonfly.default.svc.cluster.local:6379
               SECRET_KEY:
