@@ -11,7 +11,7 @@ spec:
   primaryUpdateMethod: switchover
   storage:
     size: 10Gi
-    storageClass: openebs-hostpath
+    storageClass: ceph-block
   superuserSecret:
     name: cloudnative-pg-secret
   enableSuperuserAccess: true
