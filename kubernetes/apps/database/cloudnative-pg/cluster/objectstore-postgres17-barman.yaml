@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/main/docs/src/schemas/barmancloud/objectstore_v1.json
-apiVersion: barmancloud.cnpg.io/v1
+apiVersion: postgresql.cnpg.io/v1
 kind: ObjectStore
 metadata:
   name: postgres17-barman
