@@ -58,25 +58,23 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
     service:
       app:
-        controller: n8n
+        controller: *app
         ports:
           http:
             port: *port
     route:
       app:
         hostnames:
-          - *hostName
+          - n8n.tslamars.com
         parentRefs:
           - name: envoy-internal
-            namespace: network
-            sectionName: https
+            namespace: networking
       webhooks:
         hostnames:
           - n8n-webhook.tslamars.com
         parentRefs:
           - name: envoy-external
-            namespace: network
-            sectionName: https
+            namespace: networking
         rules:
           - matches:
               - path:
