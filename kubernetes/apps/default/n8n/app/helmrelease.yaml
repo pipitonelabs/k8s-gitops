@@ -83,14 +83,6 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             url: https://n8n-webhook.tslamars.com/webhook
-            method: POST
-            body: '{"test": "data"}'
-            headers:
-              Content-Type: application/json
-            expectedStatusCode: 200
-            interval: 30s
-            conditions:
-              - "[STATUS] == 200"
     persistence:
       data:
         existingClaim: n8n
