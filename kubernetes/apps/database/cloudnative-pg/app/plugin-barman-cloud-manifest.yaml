@@ -128,6 +128,18 @@ subjects:
   name: barman-cloud
   namespace: cloudnative-pg
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: barman-cloud
+  namespace: cloudnative-pg
+spec:
+  selector:
+    app: barman-cloud
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
