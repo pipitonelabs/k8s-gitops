@@ -82,7 +82,7 @@ spec:
             backendRefs: [{}]
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://n8n-webhook.tslamars.com/webhook
+            conditions: ["[STATUS] == 404"]
     persistence:
       data:
         existingClaim: n8n
