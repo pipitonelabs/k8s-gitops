@@ -1,0 +1,15 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: plugin-barman-cloud
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: plugin-barman-cloud
+  values:
+    crds:
+      create: true
+    rbac:
+      create: true
