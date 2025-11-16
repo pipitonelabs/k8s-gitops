@@ -80,7 +80,7 @@ metadata:
   name: barman-cloud
 rules:
 - apiGroups:
-  - postgresql.cnpg.io
+  - barmancloud.cnpg.io
   resources:
   - objectstores
   verbs:
@@ -92,7 +92,7 @@ rules:
   - patch
   - delete
 - apiGroups:
-  - postgresql.cnpg.io
+  - barmancloud.cnpg.io
   resources:
   - objectstores/status
   verbs:
