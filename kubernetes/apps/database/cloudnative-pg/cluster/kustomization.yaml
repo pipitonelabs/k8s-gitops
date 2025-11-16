@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./cluster17.yaml
   - ./outline.yaml
-#  - ./plane.yaml
+  #  - ./plane.yaml
   - ./prometheusrule.yaml
   - ./scheduledbackup.yaml
+  - ./objectstore-postgres17-barman.yaml

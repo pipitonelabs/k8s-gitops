@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/main/docs/src/schemas/barmancloud/objectstore_v1.json
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: postgres17-barman
+  namespace: database
+spec:
+  # Moved from spec.backup.retentionPolicy in cluster17.yaml
+  retentionPolicy: "30d"
+  configuration:
+    # Direct translation from spec.backup.barmanObjectStore in cluster17.yaml
+    destinationPath: s3://cloudnative-pg/
+    endpointURL: https://s3.tslamars.com
+
+    data:
+      compression: bzip2
+
+    wal:
+      compression: bzip2
+      maxParallel: 8
+
+    s3Credentials:
+      accessKeyId:
+        name: cloudnative-pg-secret
+        key: minio-aws-access-key-id
+      secretAccessKey:
+        name: cloudnative-pg-secret
+        key: minio-aws-secret-access-key
