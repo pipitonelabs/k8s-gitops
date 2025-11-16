@@ -8,9 +8,9 @@ metadata:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: objectstores.postgresql.cnpg.io
+  name: objectstores.barmancloud.cnpg.io
 spec:
-  group: postgresql.cnpg.io
+  group: barmancloud.cnpg.io
   versions:
   - name: v1
     served: true
@@ -169,3 +169,9 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
+        volumeMounts:
+        - name: plugins
+          mountPath: /plugins
+      volumes:
+      - name: plugins
+        emptyDir: {}
