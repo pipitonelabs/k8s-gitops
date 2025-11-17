@@ -1,0 +1,111 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app wiki
+  namespace: &namespace default
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      wiki:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18
+            envFrom:
+              - secretRef:
+                  name: wiki-initdb-secret
+        containers:
+          app:
+            image:
+              repository: ghcr.io/requarks/wiki
+              tag: 2.5.308@sha256:1eaa2de751c2925871a95a02e0ddbdd5c48bf2e016653b2e4a8f0c646cc4ff83
+            env:
+              TZ: America/New_York
+              DB_TYPE: postgres
+              DB_HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pguser wiki-pguser-secret
+                    key: db.host
+              DB_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: db.port
+              DB__USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: db.user
+              DB_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: db.pass
+              DB_NAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: db.db
+            envFrom:
+              - secretRef:
+                  name: wiki-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 5m
+                memory: 50Mi
+              limits:
+                memory: 500Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 3000
+    route:
+      app:
+        hostnames:
+          - wiki.tslamars.com
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+    persistence:
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          wiki:
+            app:
+              - path: /wiki/data/cache
+                subPath: cache
+              - path: /wiki/data/uploads
+                subPath: uploads
+              - path: /tmp
+                subPath: tmp
