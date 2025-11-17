@@ -57,8 +57,8 @@ spec:
               DB_PASS:
                 valueFrom:
                   secretKeyRef:
-                    name: *pguser
-                    key: password
+                    name: wiki-secret
+                    key: pass
               DB_NAME:
                 valueFrom:
                   secretKeyRef:
