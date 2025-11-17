@@ -58,7 +58,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
-                    key: pass
+                    key: password
               DB_NAME:
                 valueFrom:
                   secretKeyRef:
