@@ -64,9 +64,6 @@ spec:
                   secretKeyRef:
                     name: *pguser
                     key: db.db
-            envFrom:
-              - secretRef:
-                  name: wiki-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
