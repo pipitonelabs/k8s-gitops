@@ -22,6 +22,14 @@ spec:
       n8n:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 17
+            envFrom:
+              - secretRef:
+                  name: n8n-initdb-secret
         containers:
           app:
             image:
@@ -33,6 +41,7 @@ spec:
               EXECUTIONS_DATA_MAX_AGE: 7
               EXECUTIONS_DATA_PRUNE_MAX_COUNT: 50000
               GENERIC_TIMEZONE: "America/New_York"
+              DB_TYPE: postgresdb
               N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: false
               N8N_PROTOCOL: "https"
               N8N_PORT: &port 8080
@@ -44,6 +53,35 @@ spec:
                   secretKeyRef:
                     name: n8n-secret
                     key: N8N_ENCRYPTION_KEY
+              # Postgres Setup
+              DB_POSTGRESDB_HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pguser n8n-pguser-secret
+                    key: host
+              DB_POSTGRESDB_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: port
+              DB_POSTGRESDB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: user
+              DB_POSTGRESDB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: password
+              DB_POSTGRESDB_DATABASE:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: db
+            envFrom:
+              - secretRef:
+                  name: n8n-secret
             resources:
               requests:
                 cpu: 5m
