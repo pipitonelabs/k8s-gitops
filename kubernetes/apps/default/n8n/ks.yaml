@@ -12,8 +12,11 @@ spec:
   dependsOn:
     - name: onepassword-store
       namespace: external-secrets
+    - name: cloudnative-pg-cluster
+      namespace: database
   components:
     - ../../../../components/volsync
+    - ../../../../components/cnpg
   interval: 1h
   path: ./kubernetes/apps/default/n8n/app
   postBuild:
