@@ -43,27 +43,30 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: &pguser wiki-pguser-secret
-                    key: db.host
+                    key: host
               DB_PORT:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
-                    key: db.port
+                    key: port
               DB__USER:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
-                    key: db.user
+                    key: user
               DB_PASS:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
-                    key: db.pass
+                    key: pass
               DB_NAME:
                 valueFrom:
                   secretKeyRef:
                     name: *pguser
-                    key: db.db
+                    key: db
+            envFrom:
+              - secretRef:
+                  name: wiki-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
