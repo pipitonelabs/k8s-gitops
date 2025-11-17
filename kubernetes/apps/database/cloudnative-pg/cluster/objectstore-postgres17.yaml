@@ -3,7 +3,7 @@
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: minio-s3
+  name: minio-s3-postgres17
 spec:
   configuration:
     data:

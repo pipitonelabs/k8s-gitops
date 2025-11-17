@@ -4,6 +4,8 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: plane
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   instances: 2
   imageName: ghcr.io/cloudnative-pg/postgresql:17
@@ -29,48 +31,21 @@ spec:
       memory: 4Gi
   monitoring:
     enablePodMonitor: true
-
-  backup:
-    retentionPolicy: 30d
-    barmanObjectStore: &barmanObjectStore
-      data:
-        compression: bzip2
-      wal:
-        compression: bzip2
-        maxParallel: 8
-      destinationPath: s3://plane-pg/
-      endpointURL: https://s3.tslamars.com
-      # r2 endpoint
-      #endpointURL: https://5d92d34288d78f2937b65f30517ec598.r2.cloudflarestorage.com
-      # Note: serverName version needs to be incremented
-      # when recovering from an existing cnpg cluster
-      #serverName: &currentCluster plane-v1
-      # minio test
-      #s3Credentials:
-      #  accessKeyId:
-      #    name: cloudnative-pg-secret
-      #    key: minio-aws-access-key-id
-      #  secretAccessKey:
-      #    name: cloudnative-pg-secret
-      #    key: minio-aws-secret-access-key
-
-      # Below here is for r2
-      #s3Credentials:
-      #  accessKeyId:
-      #    name: cloudnative-pg-secret
-      #    key: aws-access-key-id
-      #  secretAccessKey:
-      #    name: cloudnative-pg-secret
-      #    key: aws-secret-access-key
-
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
-  #bootstrap:
-  #  recovery:
-  #    source: &previousCluster outline-v15
-  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  #externalClusters:
-  #  - name: *previousCluster
-  #    barmanObjectStore:
-  #      <<: *barmanObjectStore
-  #      serverName: *previousCluster
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: &barmanObjectName minio-s3-plane
+        # current cluster
+        serverName: plane-v2
+  # bootstrap:
+  #   recovery:
+  #     source: source
+  externalClusters:
+    - name: source
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: *barmanObjectName
+          # previous cluster
+          serverName: plane-v1

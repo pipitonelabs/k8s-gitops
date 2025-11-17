@@ -35,7 +35,7 @@ spec:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: &barmanObjectName minio-s3
+        barmanObjectName: &barmanObjectName minio-s3-postgres17
         # current cluster
         serverName: postgres17-v17
   # bootstrap:
