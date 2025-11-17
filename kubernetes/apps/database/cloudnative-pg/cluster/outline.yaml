@@ -4,8 +4,6 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: outline
-  annotations:
-    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:17
