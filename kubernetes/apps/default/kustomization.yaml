@@ -12,4 +12,4 @@ resources:
   - ./smtp-relay/ks.yaml
 #  - ./teslamate/ks.yaml
   - ./nginx/ks.yaml
-  - ./wiki/ks.yaml
+#  - ./wiki/ks.yaml
