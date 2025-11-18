@@ -25,7 +25,7 @@ spec:
           main:
             image:
               repository: ghcr.io/josephpipitone/resume
-              tag: latest
+              tag: v1.0.0@sha256:9580e77eb9442a85ad50d6fdc067194aae68a928
             env:
               TZ: America/New_York
             probes:
