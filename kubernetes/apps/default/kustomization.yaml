@@ -11,6 +11,6 @@ resources:
   - ./outline/ks.yaml
   - ./smtp-relay/ks.yaml
 #  - ./teslamate/ks.yaml
-#  - ./nginx/ks.yaml
+  - ./nginx/ks.yaml
   - ./marsitone/ks.yaml
   - ./wiki/ks.yaml
