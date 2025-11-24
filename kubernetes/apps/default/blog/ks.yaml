@@ -2,11 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: nginx-marsitone
+  name: nginx-blog
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./kubernetes/apps/default/marsitone/app
+  path: ./kubernetes/apps/default/blog/app
   prune: true
   sourceRef:
     kind: GitRepository

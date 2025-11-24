@@ -5,6 +5,7 @@ namespace: default
 components:
   - ../../components/namespace
 resources:
+  - ./blog/ks.yaml
 #  - ./emqx/ks.yaml
 #  - ./garage/ks.yaml
   - ./n8n/ks.yaml

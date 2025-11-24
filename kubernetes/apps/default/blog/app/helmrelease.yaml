@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: marsitone
+  name: blog
   namespace: default
 spec:
   chartRef:
@@ -24,8 +24,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/josephpipitone/marsitone/app
-              tag: v1.0.0@sha256:fab4b69b41075c6237980481da5a3422fccd677e41a983b5dae5f2b09d1a53b6
+              repository: ghcr.io/josephpipitone/blog
+              tag: v1.0.0
             env:
               TZ: America/New_York
             probes:
