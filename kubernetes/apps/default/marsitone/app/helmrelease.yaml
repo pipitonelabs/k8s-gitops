@@ -25,7 +25,7 @@ spec:
           main:
             image:
               repository: ghcr.io/josephpipitone/marsitone
-              tag: v1.0.0@sha256:089ac5423d2f37acba16e84658926659c03a22a61f5bf4e42f508c39daf51ed6
+              tag: v1.0.0@sha256:fab4b69b41075c6237980481da5a3422fccd677e41a983b5dae5f2b09d1a53b6
             env:
               TZ: America/New_York
             probes:
