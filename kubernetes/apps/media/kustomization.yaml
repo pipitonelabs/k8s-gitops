@@ -6,7 +6,7 @@ components:
   - ../../components/namespace
 resources:
 #  - ./autobrr/ks.yaml
-  - ./jellyseerr/ks.yaml
+  - ./seerr/ks.yaml
 #  - ./maintainerr/ks.yaml
   - ./openbooks/ks.yaml
 #  - ./overseerr/ks.yaml
