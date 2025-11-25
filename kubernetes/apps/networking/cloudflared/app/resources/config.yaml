@@ -1,8 +1,8 @@
 ---
 ingress:
-  - hostname: "*.tslamars.com"
+  - hostname: "*.pipitonelabs.com"
     service: https://envoy-external.networking.svc.cluster.local
     originRequest:
       http2Origin: true
-      originServerName: external.tslamars.com
+      originServerName: external.pipitonelabs.com
   - service: http_status:404

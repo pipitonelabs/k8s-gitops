@@ -29,7 +29,7 @@ spec:
               tag: 2.16.0@sha256:2a092f86a51f5718111097b0fced33eaa876b5904a543b7504f92357a4f75635
             env:
               TZ: America/New_York
-              TAUTULLI_HTTP_BASE_URL: https://tautulli.tslamars.com
+              TAUTULLI_HTTP_BASE_URL: https://tautulli.pipitonelabs.com
               TAUTULLI_HTTP_PORT: &port 80
             envFrom:
               - secretRef:
@@ -71,7 +71,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
+          - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
           - name: envoy-internal
             namespace: networking

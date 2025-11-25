@@ -3,13 +3,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: tslamars-com
+  name: pipitonelabs-com
 spec:
-  secretName: tslamars-com-tls
+  secretName: pipitonelabs-com-tls
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
-  commonName: tslamars.com
+  commonName: pipitonelabs.com
   dnsNames:
-    - tslamars.com
-    - "*.tslamars.com"
+    - pipitonelabs.com
+    - "*.pipitonelabs.com"

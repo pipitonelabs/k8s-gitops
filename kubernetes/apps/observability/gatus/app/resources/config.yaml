@@ -6,7 +6,7 @@ connectivity:
 endpoints:
   - name: flux-webhook
     group: external
-    url: https://flux-webhook.tslamars.com
+    url: https://flux-webhook.pipitonelabs.com
     interval: 1m
     client:
       dns-resolver: tcp://1.1.1.1:53
@@ -25,9 +25,9 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
-  - name: "*.tslamars.com"
+  - name: "*.pipitonelabs.com"
     group: certificates
-    url: "tls://external.tslamars.com:443"
+    url: "tls://external.pipitonelabs.com:443"
     interval: 24h
     conditions:
       - "[CONNECTED] == true"
@@ -50,13 +50,13 @@ storage:
 ui:
   title: Status | Gatus
   header: Status
-  logo: https://raw.githubusercontent.com/josephpipitone/k8s-gitops/main/docs/assets/mars.png
-  link: https://github.com/josephpipitone
+  logo: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
+  link: https://github.com/pipitonelabs
   buttons:
     - name: Github
-      link: https://github.com/josephpipitone
+      link: https://github.com/pipitonelabs
     - name: Homelab
-      link: https://github.com/josephpipitone/k8s-gitops
+      link: https://github.com/pipitonelabs/k8s-gitops
 
 web:
   port: ${GATUS_WEB_PORT}

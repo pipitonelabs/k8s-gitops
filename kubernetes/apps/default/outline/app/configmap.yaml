@@ -5,14 +5,14 @@ metadata:
   namespace: default
 data:
   .env: |
-    URL=https://outline.tslamars.com
+    URL=https://outline.pipitonelabs.com
     LOG_LEVEL=debug
     ENABLE_UPDATES=false
     AWS_REGION=main
     AWS_S3_ACL=private
     AWS_S3_FORCE_PATH_STYLE=true
     AWS_S3_UPLOAD_BUCKET_NAME=outline
-    AWS_S3_UPLOAD_BUCKET_URL=https://s3.tslamars.com
+    AWS_S3_UPLOAD_BUCKET_URL=https://s3.pipitonelabs.com
     FILE_STORAGE=s3
     FILE_STORAGE_UPLOAD_MAX_SIZE=26214400
     FILE_STORAGE_IMPORT_MAX_SIZE=26214400
@@ -21,16 +21,16 @@ data:
     REDIS_COLLABORATION_URL=redis://outline-dragonfly.default.svc.cluster.local:6379
     SMTP_HOST=smtp-relay.default.svc.cluster.local
     SMTP_PORT=2525
-    SMTP_FROM_EMAIL=outline@tslamars.com
+    SMTP_FROM_EMAIL=outline@pipitonelabs.com
     SMTP_SECURE=false
     WEB_CONCURRENCY=1
     EMAIL_ENABLED=true
     NODE_TLS_REJECT_UNAUTHORIZED=0
     OIDC_DISPLAY_NAME=authentik
     OIDC_SCOPES=openid profile email
-    OIDC_AUTH_URI=https://sso.tslamars.com/application/o/authorize/
-    OIDC_TOKEN_URI=https://sso.tslamars.com/application/o/token/
-    OIDC_USERINFO_URI=https://sso.tslamars.com/application/o/userinfo/
+    OIDC_AUTH_URI=https://sso.pipitonelabs.com/application/o/authorize/
+    OIDC_TOKEN_URI=https://sso.pipitonelabs.com/application/o/token/
+    OIDC_USERINFO_URI=https://sso.pipitonelabs.com/application/o/userinfo/
     OIDC_USERNAME_CLAIM=preferred_username
-    OIDC_LOGOUT_URI=https://sso.tslamars.com/application/o/outline/end-session/
-    OIDC_REDIRECT_URI=https://outline.tslamars.com/auth/oidc-callback
+    OIDC_LOGOUT_URI=https://sso.pipitonelabs.com/application/o/outline/end-session/
+    OIDC_REDIRECT_URI=https://outline.pipitonelabs.com/auth/oidc-callback

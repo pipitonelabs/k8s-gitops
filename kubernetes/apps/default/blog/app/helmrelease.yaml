@@ -24,7 +24,7 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/josephpipitone/blog
+              repository: ghcr.io/pipitonelabs/blog
               tag: v1.1.3
             env:
               TZ: America/New_York
@@ -60,7 +60,7 @@ spec:
     route:
       app:
         hostnames:
-          - blog.tslamars.com
+          - blog.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

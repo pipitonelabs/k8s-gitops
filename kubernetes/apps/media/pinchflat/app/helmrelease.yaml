@@ -88,9 +88,9 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://{{ .Release.Name }}.tslamars.com
+            url: https://{{ .Release.Name }}.pipitonelabs.com
 
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
+        hostnames: ["{{ .Release.Name }}.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking

@@ -72,9 +72,9 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://{{ .Release.Name }}.tslamars.com/talos_version
+            url: https://{{ .Release.Name }}.pipitonelabs.com/talos_version
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
+          - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
           - name: envoy-external
             namespace: networking

@@ -62,7 +62,7 @@ spec:
             port: &port 8080
     route:
       internal:
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
+        hostnames: ["{{ .Release.Name }}.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking

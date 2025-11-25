@@ -13,5 +13,5 @@ variable "OP_CONNECT_TOKEN" {
 variable "CLUSTER_DOMAIN" {
   type        = string
   description = "Domain for Authentik"
-  default     = "tslamars.com"
+  default     = "pipitonelabs.com"
 }

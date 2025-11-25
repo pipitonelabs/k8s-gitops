@@ -40,9 +40,9 @@ spec:
 
             env:
               MINIO_UPDATE: "off"
-              MINIO_BROWSER_REDIRECT_URL: https://minio.tslamars.com
-              MINIO_SERVER_URL: "https://s3.tslamars.com"
-              MINIO_API_CORS_ALLOW_ORIGIN: "https://outline.tslamars.com"
+              MINIO_BROWSER_REDIRECT_URL: https://minio.pipitonelabs.com
+              MINIO_SERVER_URL: "https://s3.pipitonelabs.com"
+              MINIO_API_CORS_ALLOW_ORIGIN: "https://outline.pipitonelabs.com"
               MINIO_API_CORS_ALLOW_METHODS: "GET,PUT,POST,DELETE"
               MINIO_API_CORS_ALLOW_HEADERS: "Authorization,Content-Type,Accept,Origin"
               MINIO_API_CORS_EXPOSE_HEADERS: "ETag"
@@ -97,7 +97,7 @@ spec:
 
     route:
       app:
-        hostnames: ["minio.tslamars.com"]
+        hostnames: ["minio.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking
@@ -107,7 +107,7 @@ spec:
                 port: *port-console
 
       s3:
-        hostnames: ["s3.tslamars.com"]
+        hostnames: ["s3.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking

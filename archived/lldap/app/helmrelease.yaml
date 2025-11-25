@@ -53,7 +53,7 @@ spec:
             env:
               TZ: America/New_York
               LLDAP_HTTP_PORT: &port 80
-              LLDAP_HTTP_URL: https://lldap.tslamars.com
+              LLDAP_HTTP_URL: https://lldap.pipitonelabs.com
               LLDAP_LDAP_PORT: &ldapPort 389
               LLDAP_LDAP_BASE_DN: dc=home,dc=arpa
               LLDAP_DATABASE_URL:
@@ -89,7 +89,7 @@ spec:
 
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
+        hostnames: ["{{ .Release.Name }}.pipitonelabs.com"]
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: System

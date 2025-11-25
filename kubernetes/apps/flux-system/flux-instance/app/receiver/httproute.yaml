@@ -8,7 +8,7 @@ metadata:
       conditions: ["[STATUS] == 404"]
 spec:
   hostnames:
-    - flux-webhook.tslamars.com
+    - flux-webhook.pipitonelabs.com
   parentRefs:
     - name: envoy-external
       namespace: networking

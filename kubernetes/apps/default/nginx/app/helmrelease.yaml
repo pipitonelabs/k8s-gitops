@@ -24,7 +24,7 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/josephpipitone/resume
+              repository: ghcr.io/pipitonelabs/resume
               tag: v1.0.0@sha256:75bd12c52d2c69f65ea3891ac58838cc9a23c86726aa5e2a19a82ae59e6b418f
             env:
               TZ: America/New_York
@@ -60,8 +60,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - resume.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - resume.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

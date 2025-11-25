@@ -117,8 +117,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - status.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - status.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

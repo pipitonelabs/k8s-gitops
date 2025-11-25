@@ -80,10 +80,10 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://{{ .Release.Name }}.tslamars.com/health
+            url: https://{{ .Release.Name }}.pipitonelabs.com/health
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - status.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - status.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

@@ -54,8 +54,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - hb.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - hb.pipitonelabs.com
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home

@@ -34,7 +34,7 @@ spec:
       route:
         enabled: true
         hostnames:
-          - logs.tslamars.com
+          - logs.pipitonelabs.com
         parentRefs:
           - name: envoy-internal
             namespace: networking

@@ -28,7 +28,7 @@ spec:
               repository: ghcr.io/home-operations/plex
               tag: 1.42.2.10156@sha256:9ad8a3506e1d8ebda873a668603c1a2c10e6887969564561be669efd65ae8871
             env:
-              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.tslamars.com:443,http://192.168.20.128:32400
+              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443,http://192.168.20.128:32400
               PLEX_NO_AUTH_NETWORKS: 10.0.0.0/8
               TZ: America/New_York
             probes:
@@ -95,7 +95,7 @@ spec:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 401"]
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
+          - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
           - name: envoy-internal
             namespace: networking

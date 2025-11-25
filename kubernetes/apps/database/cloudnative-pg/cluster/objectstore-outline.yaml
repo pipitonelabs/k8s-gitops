@@ -9,7 +9,7 @@ spec:
     data:
       compression: bzip2
     destinationPath: s3://outline-pg/
-    endpointURL: https://s3.tslamars.com
+    endpointURL: https://s3.pipitonelabs.com
     s3Credentials:
       accessKeyId:
         name: cloudnative-pg-secret

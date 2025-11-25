@@ -93,7 +93,7 @@ spec:
     route:
       app:
         hostnames:
-          - wiki.tslamars.com
+          - wiki.pipitonelabs.com
         parentRefs:
           - name: envoy-internal
             namespace: networking

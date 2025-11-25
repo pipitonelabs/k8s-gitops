@@ -28,12 +28,12 @@ spec:
         main:
           enabled: true
           hostnames:
-            - am.tslamars.com
+            - am.pipitonelabs.com
           parentRefs:
             - name: envoy-internal
               namespace: networking
       alertmanagerSpec:
-        externalUrl: https://alertmanager.tslamars.com
+        externalUrl: https://alertmanager.pipitonelabs.com
         alertmanagerConfiguration:
           name: alertmanager
           global:
@@ -56,12 +56,12 @@ spec:
         main:
           enabled: true
           hostnames:
-            - prometheus.tslamars.com
+            - prometheus.pipitonelabs.com
           parentRefs:
             - name: envoy-internal
               namespace: networking
       prometheusSpec:
-        externalUrl: https://prometheus.tslamars.com
+        externalUrl: https://prometheus.pipitonelabs.com
         version: v2.55.1 # override 'unsupported Prometheus version' error
         image:
           registry: docker.io

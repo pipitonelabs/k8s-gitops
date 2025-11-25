@@ -10,7 +10,7 @@ locals {
 
 module "onepassword_application" {
   for_each = toset(local.oauth_apps)
-  source   = "github.com/josephpipitone/terraform-1password-item"
+  source   = "github.com/pipitonelabs/terraform-1password-item"
   vault    = "Kubernetes"
   item     = each.key
 }

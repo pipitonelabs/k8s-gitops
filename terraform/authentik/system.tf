@@ -29,8 +29,8 @@ resource "authentik_brand" "default" {
   domain           = "authentik-default"
   default          = false
   branding_title   = "authentik"
-  branding_logo    = "https://raw.githubusercontent.com/josephpipitone/k8s-gitops/main/docs/assets/mars.png"
-  branding_favicon = "https://raw.githubusercontent.com/josephpipitone/k8s-gitops/main/docs/assets/mars.png"
+  branding_logo    = "https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png"
+  branding_favicon = "https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png"
 
   flow_authentication = data.authentik_flow.default-brand-authentication.id
   flow_invalidation   = data.authentik_flow.default-brand-invalidation.id
@@ -41,8 +41,8 @@ resource "authentik_brand" "home" {
   domain           = var.CLUSTER_DOMAIN
   default          = true
   branding_title   = "Home"
-  branding_logo    = "https://raw.githubusercontent.com/josephpipitone/k8s-gitops/main/docs/assets/mars.png"
-  branding_favicon = "https://raw.githubusercontent.com/josephpipitone/k8s-gitops/main/docs/assets/mars.png"
+  branding_logo    = "https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png"
+  branding_favicon = "https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png"
 
   flow_authentication = authentik_flow.authentication.uuid
   flow_invalidation   = authentik_flow.invalidation.uuid

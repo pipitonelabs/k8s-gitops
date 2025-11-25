@@ -58,8 +58,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - hass.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - hass.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

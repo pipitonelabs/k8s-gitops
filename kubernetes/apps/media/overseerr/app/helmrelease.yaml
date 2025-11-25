@@ -77,10 +77,10 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://{{ .Release.Name }}.tslamars.com/api/v1/status
+            url: https://{{ .Release.Name }}.pipitonelabs.com/api/v1/status
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - requests.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - requests.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

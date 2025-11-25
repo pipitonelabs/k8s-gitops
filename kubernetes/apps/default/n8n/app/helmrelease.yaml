@@ -46,7 +46,7 @@ spec:
               N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: false
               N8N_PROTOCOL: "https"
               N8N_PORT: &port 8080
-              N8N_HOST: &hostName n8n.tslamars.com
+              N8N_HOST: &hostName n8n.pipitonelabs.com
               N8N_LOG_LEVEL: info
               N8N_LOG_OUTPUT: console
               N8N_ENCRYPTION_KEY:
@@ -104,13 +104,13 @@ spec:
     route:
       app:
         hostnames:
-          - n8n.tslamars.com
+          - n8n.pipitonelabs.com
         parentRefs:
           - name: envoy-internal
             namespace: networking
       webhooks:
         hostnames:
-          - n8n-webhook.tslamars.com
+          - n8n-webhook.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

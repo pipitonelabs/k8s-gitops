@@ -56,10 +56,10 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://{{ .Release.Name }}.tslamars.com/healthz
+            url: https://{{ .Release.Name }}.pipitonelabs.com/healthz
         hostnames:
-          - "{{ .Release.Name }}.tslamars.com"
-          - echo.tslamars.com
+          - "{{ .Release.Name }}.pipitonelabs.com"
+          - echo.pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking

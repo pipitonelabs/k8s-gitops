@@ -30,7 +30,7 @@ spec:
     route:
       dashboard:
         host:
-          name: rook.tslamars.com
+          name: rook.pipitonelabs.com
           path: /
           pathType: PathPrefix
         parentRefs:

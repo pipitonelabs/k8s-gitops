@@ -126,21 +126,21 @@ data:
               key: {{HOMEPAGE_VAR_CLOUDFLARE_API_TOKEN}}
     - System:
         - Unifi:
-            href: https://udm.tslamars.com
+            href: https://udm.pipitonelabs.com
             icon: unifi.png
             widget:
               type: unifi
-              url: https://udm.tslamars.com
+              url: https://udm.pipitonelabs.com
               username: {{HOMEPAGE_VAR_UNIFI_USERNAME}}
               password: {{HOMEPAGE_VAR_UNIFI_PASSWORD}}
               key: {{HOMEPAGE_VAR_UNIFI_API_KEY}}
     - Storage:
         - Mars:
-            href: https://unraid.tslamars.com
+            href: https://unraid.pipitonelabs.com
             icon: unraid-dsm.png
             widget:
               type: unraid
-              url: https://unraid.tslamars.com:61208
+              url: https://unraid.pipitonelabs.com:61208
               username: {{HOMEPAGE_VAR_UNRAID_USER}}
               password: {{HOMEPAGE_VAR_UNRAID_PASSWORD}}
     - Calendar:

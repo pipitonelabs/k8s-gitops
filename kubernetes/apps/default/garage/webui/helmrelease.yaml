@@ -55,7 +55,7 @@ spec:
             port: &port 3909
     route:
       app:
-        hostnames: ["garage.tslamars.com"]
+        hostnames: ["garage.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal
             namespace: networking

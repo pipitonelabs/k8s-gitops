@@ -30,7 +30,7 @@ spec:
               tag: v1.2.0
             env:
               TZ: America/New_York
-              HOMEPAGE_ALLOWED_HOSTS: "{{ .Release.Name }}.tslamars.com"
+              HOMEPAGE_ALLOWED_HOSTS: "{{ .Release.Name }}.pipitonelabs.com"
             envFrom:
               - secretRef:
                   name: homepage-secret
@@ -50,7 +50,7 @@ spec:
 
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.tslamars.com"]
+        hostnames: ["{{ .Release.Name }}.pipitonelabs.com"]
         parentRefs:
           - name: internal
             namespace: kube-system

@@ -34,7 +34,7 @@ resource "authentik_policy_binding" "application_policy_binding" {
 }
 
 module "onepassword_discord" {
-  source = "github.com/josephpipitone/terraform-1password-item"
+  source = "github.com/pipitonelabs/terraform-1password-item"
   vault  = "Kubernetes"
   item   = "discord"
 }
