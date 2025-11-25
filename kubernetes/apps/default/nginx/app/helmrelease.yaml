@@ -25,7 +25,7 @@ spec:
           main:
             image:
               repository: ghcr.io/pipitonelabs/resume
-              tag: v1.0.0@sha256:75bd12c52d2c69f65ea3891ac58838cc9a23c86726aa5e2a19a82ae59e6b418f
+              tag: v1.0.1@sha256:93ce08520c661abd3fdeaae9f8ea6c194a9fa20834a2d83b12345f0f45d57cc8
             env:
               TZ: America/New_York
             probes:
