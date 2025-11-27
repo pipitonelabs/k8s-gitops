@@ -31,6 +31,12 @@ spec:
             envFrom:
               - secretRef:
                   name: kubero-secret
+            command:
+              - sh
+              - -c
+              - |
+                echo "Starting kubero"
+                exec /app/kubero
             probes:
               liveness:
                 enabled: true
