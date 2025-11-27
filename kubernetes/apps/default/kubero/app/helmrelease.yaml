@@ -24,8 +24,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/kubero-dev/kubero/kubero
-              tag: v3.1.1
+              repository: ghcr.io/kubero-dev/kubero/kubero:v3.1.1
+              #tag: latest
             env:
               TZ: America/New_York
             probes:
