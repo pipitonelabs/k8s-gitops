@@ -74,6 +74,7 @@ spec:
             port: 2000
     persistence:
       config:
+        type: existingClaim
         existingClaim: "{{ .Release.Name }}"
         globalMounts:
           - path: /app/database
