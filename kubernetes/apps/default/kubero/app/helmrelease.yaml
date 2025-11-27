@@ -73,6 +73,9 @@ spec:
           http:
             port: 2000
     persistence:
+      enabled: true  # Chart-level enable
       config:
-        existingClaim: "{{ .Release.Name }}"
         mountPath: /app/database
+        size: 1Gi
+        storageClass: null
+        accessMode: ReadWriteOnce
