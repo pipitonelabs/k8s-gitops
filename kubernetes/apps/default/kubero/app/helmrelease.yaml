@@ -80,6 +80,11 @@ spec:
                   secretKeyRef:
                     name: kubero-secret
                     key: GITHUB_PERSONAL_ACCESS_TOKEN
+              KUBERO_WEBHOOK_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: kubero-secret
+                    key: KUBERO_WEBHOOK_URL
             probes:
               liveness: &probes
                 enabled: true
