@@ -6,4 +6,5 @@ resources:
   - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoapps.yaml
   - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberopipelines.yaml
   - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoes.yaml
+  - ./rbac.yaml
   - ./helmrelease.yaml

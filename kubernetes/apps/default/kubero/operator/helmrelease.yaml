@@ -26,7 +26,7 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         serviceAccount:
-          name: kubero
+          name: kubero-operator
         containers:
           main:
             image:
