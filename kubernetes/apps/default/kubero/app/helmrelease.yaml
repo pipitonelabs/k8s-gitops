@@ -23,8 +23,9 @@ spec:
       kubero:
         annotations:
           reloader.stakater.com/auto: "true"
+        serviceAccount:
+          name: kubero
         pod:
-          serviceAccountName: kubero
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
