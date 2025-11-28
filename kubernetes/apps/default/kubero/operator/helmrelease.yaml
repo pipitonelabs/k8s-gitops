@@ -31,7 +31,7 @@ spec:
           main:
             image:
               repository: ghcr.io/kubero-dev/kubero-operator/kuberoapp
-              tag: v2.3.18
+              tag: v0.2.2
             env:
               KUBERO_NAMESPACE: default
               KUBERO_CONTEXT: ""
