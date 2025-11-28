@@ -2,9 +2,32 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  # CRDs from kubero-operator GitHub repository
+  # CRDs from kubero-operator GitHub repository - ALL required CRDs
+  # Core CRDs
   - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoapps.yaml
   - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberopipelines.yaml
   - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoes.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberobuilds.yaml
+  # Addon CRDs
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoaddonmemcacheds.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoaddonmongodbs.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoaddonmysqls.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoaddonpostgres.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoaddonrabbitmqs.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoaddonredis.yaml
+  # Database CRDs
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberocouchdbs.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoelasticsearches.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberokafkas.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberomemcacheds.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberomongodbs.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberomysqls.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberopostgresqls.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberorabbitmqs.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoredis.yaml
+  # Misc CRDs
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberomails.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoprometheuses.yaml
+  # Local resources
   - ./rbac.yaml
   - ./helmrelease.yaml
