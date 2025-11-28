@@ -30,14 +30,34 @@ spec:
       kubero:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-data:
+            image:
+              repository: busybox
+              tag: latest
+            command: ["sh", "-c", "chown -R 1000:1000 /data"]
+            volumeMounts:
+              - name: data
+                mountPath: /data
+        pod:
+          serviceAccountName: kubero
         containers:
           main:
             image:
               repository: ghcr.io/kubero-dev/kubero/kubero
               tag: v3.1.1
-            envFrom:
-              - secretRef:
-                  name: kubero-secret
+            env:
+              DATABASE_URL: file:/data/database.db
+              KUBERO_WEBHOOK_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: kubero-secret
+                    key: KUBERO_WEBHOOK_SECRET
+              KUBERO_SESSION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: kubero-secret
+                    key: KUBERO_SESSION_KEY
             probes:
               liveness: &probes
                 enabled: true
