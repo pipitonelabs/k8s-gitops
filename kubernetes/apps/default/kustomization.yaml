@@ -8,6 +8,7 @@ resources:
 #  - ./blog/ks.yaml
 #  - ./emqx/ks.yaml
 #  - ./garage/ks.yaml
+  - ./kubero/operator/ks.yaml
   - ./kubero/ks.yaml
   - ./n8n/ks.yaml
   - ./outline/ks.yaml

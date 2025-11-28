@@ -1,0 +1,9 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # CRDs from kubero-operator GitHub repository
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoapps.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberopipelines.yaml
+  - https://raw.githubusercontent.com/kubero-dev/kubero-operator/main/config/crd/bases/application.kubero.dev_kuberoes.yaml
+  - ./helmrelease.yaml

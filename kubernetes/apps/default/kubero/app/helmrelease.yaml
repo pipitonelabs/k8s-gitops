@@ -19,28 +19,17 @@ spec:
     remediation:
       retries: 3
   values:
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
     controllers:
       kubero:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          01-init-data:
-            image:
-              repository: busybox
-              tag: latest
-            command: ["sh", "-c", "chown -R 1000:1000 /data"]
-            volumeMounts:
-              - name: data
-                mountPath: /data
         pod:
           serviceAccountName: kubero
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
         containers:
           main:
             image:
