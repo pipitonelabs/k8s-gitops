@@ -65,6 +65,16 @@ spec:
                   secretKeyRef:
                     name: kubero-secret
                     key: KUBERO_SESSION_SECRET
+              KUBERO_ADMIN_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: kubero-secret
+                    key: KUBERO_ADMIN_USERNAME
+              KUBERO_ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: kubero-secret
+                    key: KUBERO_ADMIN_PASSWORD
             probes:
               liveness: &probes
                 enabled: true
