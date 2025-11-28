@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubero-config
+data:
+  config.yaml: |
+    kubero:
+      context: ""
+      namespace: default
+      port: 2000
+      banner:
+        show: false
+        message: ""
+        bgcolor: "#3b82f6"
+        fontcolor: "#ffffff"
+      clusterissuer: ""
+      console:
+        enabled: true
+      auditLogs:
+        enabled: false
+      buildRegistry:
+        enabled: false
+      registry:
+        enabled: false
+      templates:
+        enabled: true
+        catalogs:
+          - name: "Kubero"
+            description: "Kubero templates"
+            templateBasePath: "https://raw.githubusercontent.com/kubero-dev/kubero/main/services/"
+            index:
+              url: "https://raw.githubusercontent.com/kubero-dev/kubero/main/services/index.yaml"
+              format: "yaml"
+    podSizeList:
+      - name: small
+        description: 'Small (128Mi RAM, 0.1 CPU)'
+        default: true
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 500m
+      - name: medium
+        description: 'Medium (256Mi RAM, 0.25 CPU)'
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 512Mi
+            cpu: 1000m
+      - name: large
+        description: 'Large (512Mi RAM, 0.5 CPU)'
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1Gi
+            cpu: 2000m
