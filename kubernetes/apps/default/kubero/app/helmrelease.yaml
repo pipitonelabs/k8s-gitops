@@ -55,6 +55,8 @@ spec:
             env:
               DATABASE_URL: file:/data/database.db
               PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
+              KUBERO_NAMESPACE: default
+              KUBERO_CONTEXT: ""
               KUBERO_WEBHOOK_SECRET:
                 valueFrom:
                   secretKeyRef:
