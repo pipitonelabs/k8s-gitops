@@ -53,11 +53,11 @@ spec:
                   secretKeyRef:
                     name: kubero-secret
                     key: KUBERO_WEBHOOK_SECRET
-              KUBERO_SESSION_KEY:
+              KUBERO_SESSION_SECRET:
                 valueFrom:
                   secretKeyRef:
                     name: kubero-secret
-                    key: KUBERO_SESSION_KEY
+                    key: KUBERO_SESSION_SECRET
             probes:
               liveness: &probes
                 enabled: true
