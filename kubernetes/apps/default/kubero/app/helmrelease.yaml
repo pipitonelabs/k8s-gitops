@@ -85,11 +85,7 @@ spec:
                   secretKeyRef:
                     name: kubero-secret
                     key: KUBERO_WEBHOOK_URL
-              KUBERO_CONSOLE_ENABLED:
-                valueFrom:
-                  secretKeyRef:
-                    name: kubero-secret
-                    key: KUBERO_CONSOLE_ENABLED
+              KUBERO_CONSOLE_ENABLED: "true"
             probes:
               liveness: &probes
                 enabled: true
