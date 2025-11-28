@@ -60,11 +60,11 @@ spec:
                   secretKeyRef:
                     name: kubero-secret
                     key: KUBERO_WEBHOOK_SECRET
-              KUBERO_SESSION_SECRET:
+              KUBERO_SESSION_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: kubero-secret
-                    key: KUBERO_SESSION_SECRET
+                    key: KUBERO_SESSION_KEY
               KUBERO_ADMIN_USERNAME:
                 valueFrom:
                   secretKeyRef:
