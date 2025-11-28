@@ -31,6 +31,22 @@ spec:
             runAsGroup: 1000
             fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          01-init-data:
+            image:
+              repository: busybox
+              tag: latest
+            command:
+              - sh
+              - -c
+              - |
+                mkdir -p /data
+                touch /data/database.db
+                chmod 755 /data
+                chmod 644 /data/database.db
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
         containers:
           main:
             image:
@@ -38,6 +54,7 @@ spec:
               tag: v3.1.1
             env:
               DATABASE_URL: file:/data/database.db
+              PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
               KUBERO_WEBHOOK_SECRET:
                 valueFrom:
                   secretKeyRef:
@@ -83,5 +100,7 @@ spec:
         existingClaim: kubero
         advancedMounts:
           kubero:
+            01-init-data:
+              - path: /data
             main:
               - path: /data

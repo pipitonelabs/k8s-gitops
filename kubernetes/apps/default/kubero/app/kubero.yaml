@@ -1,10 +1,9 @@
 ---
-apiVersion: kubero.dev/v1
+apiVersion: application.kubero.dev/v1alpha1
 kind: Kubero
 metadata:
   name: kubero
 spec:
-  # Minimal spec, adjust as needed
   domain: kubero.pipitonelabs.com
   buildpacks: []
   pipelines: []
