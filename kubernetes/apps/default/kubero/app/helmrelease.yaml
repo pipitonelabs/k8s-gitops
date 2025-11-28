@@ -75,11 +75,11 @@ spec:
                   secretKeyRef:
                     name: kubero-secret
                     key: KUBERO_ADMIN_PASSWORD
-              KUBERO_GITHUB_TOKEN:
+              GITHUB_PERSONAL_ACCESS_TOKEN:
                 valueFrom:
                   secretKeyRef:
                     name: kubero-secret
-                    key: KUBERO_GITHUB_TOKEN
+                    key: GITHUB_PERSONAL_ACCESS_TOKEN
             probes:
               liveness: &probes
                 enabled: true
