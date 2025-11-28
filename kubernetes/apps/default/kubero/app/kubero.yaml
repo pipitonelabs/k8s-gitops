@@ -1,9 +1,0 @@
----
-apiVersion: application.kubero.dev/v1alpha1
-kind: Kubero
-metadata:
-  name: kubero
-spec:
-  domain: kubero.pipitonelabs.com
-  buildpacks: []
-  pipelines: []
