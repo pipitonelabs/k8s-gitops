@@ -72,7 +72,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: 8080
+                    port: 2000
                   periodSeconds: 30
                   timeoutSeconds: 10
                   failureThreshold: 6
@@ -88,7 +88,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: 8080
+            port: 2000
     route:
       app:
         hostnames: ["kubero.pipitonelabs.com"]
