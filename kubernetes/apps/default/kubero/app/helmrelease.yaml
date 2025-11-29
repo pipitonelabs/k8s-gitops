@@ -130,7 +130,7 @@ spec:
       config:
         enabled: true
         type: configMap
-        name: kubero-config
+        name: kubero
         globalMounts:
           - path: /app/server/config/kubero.yaml
             subPath: kubero

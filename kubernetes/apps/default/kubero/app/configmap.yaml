@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubero-config
+  name: kubero
 data:
   config: |
     kubero:
