@@ -24,8 +24,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/pipitonelabs/blog
-              tag: v1.1.4
+              repository: ghcr.io/pipitonelabs/blogv2
+              tag: v1.0.1
             env:
               TZ: America/New_York
             probes:
