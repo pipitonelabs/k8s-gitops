@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubero
+  name: kubero-config
 data:
-  kubero: |
+  config: |
     kubero:
       readonly: false
       banner:
