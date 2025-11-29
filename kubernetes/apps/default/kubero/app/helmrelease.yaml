@@ -53,6 +53,8 @@ spec:
               repository: ghcr.io/kubero-dev/kubero/kubero
               tag: v3.1.1
             env:
+              KUBERO_CONFIG_NAME: kubero
+              KUBERO_CONFIG_KEY: kubero
               DATABASE_URL: file:/data/database.db
               PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
               KUBERO_NAMESPACE: default

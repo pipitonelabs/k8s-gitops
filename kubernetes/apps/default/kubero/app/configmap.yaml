@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: kubero
 data:
-  config.yaml: |
+  kubero: |
     kubero:
       readonly: false
       banner:
@@ -35,6 +35,8 @@ data:
         size: 1Gi
         limit: 1000
     clusterissuer: ""
+    registry:
+      enabled: false
     templates:
       enabled: true
       catalogs:
