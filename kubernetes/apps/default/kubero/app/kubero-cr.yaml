@@ -1,0 +1,123 @@
+---
+apiVersion: application.kubero.dev/v1alpha1
+kind: Kubero
+metadata:
+  name: kubero
+  namespace: default
+spec:
+  kubero:
+    readonly: false
+    banner:
+      show: false
+      message: "Welcome to Kubero!"
+      bgcolor: "#3b82f6"
+      fontcolor: "#ffffff"
+    auth:
+      github:
+        enabled: false
+        id: ""
+        callbackUrl: ""
+        org: ""
+      oauth2:
+        enabled: false
+        name: ""
+        id: ""
+        authUrl: ""
+        tokenUrl: ""
+        secret: ""
+        callbackUrl: ""
+        scope: ""
+    auditLogs:
+      enabled: false
+      storageClassName: ""
+      accessModes:
+        - ReadWriteOnce
+      size: 1Gi
+      limit: 1000
+  clusterissuer: ""
+  registry:
+    enabled: false
+  templates:
+    enabled: true
+    catalogs:
+      - name: "Kubero"
+        description: "Kubero templates"
+        templateBasePath: "https://raw.githubusercontent.com/kubero-dev/kubero/main/services/"
+        index:
+          url: "https://raw.githubusercontent.com/kubero-dev/templates/main/index.json"
+          format: "json"
+      - name: "Kubero Frameworks"
+        description: "Kubero frameworks"
+        templateBasePath: "https://raw.githubusercontent.com/kubero-dev/kubero/main/services/"
+        index:
+          url: "https://raw.githubusercontent.com/kubero-dev/templates/main/index-frameworks.json"
+          format: "json"
+  buildpacks:
+    - name: NodeJS
+      language: JavaScript
+      fetch:
+        repository: ghcr.io/kubero-dev/fetch
+        tag: main
+      build:
+        repository: node
+        tag: latest
+        command: "npm install"
+      run:
+        repository: node
+        tag: latest
+        command: "node index.js"
+    - name: Python
+      language: Python
+      fetch:
+        repository: ghcr.io/kubero-dev/fetch
+        tag: main
+      build:
+        repository: python
+        tag: latest
+        command: "pip install -r requirements.txt"
+      run:
+        repository: python
+        tag: latest
+        command: "python app.py"
+    - name: GoLang
+      language: Go
+      fetch:
+        repository: ghcr.io/kubero-dev/fetch
+        tag: main
+      build:
+        repository: golang
+        tag: latest
+        command: "go build -o app"
+      run:
+        repository: golang
+        tag: latest
+        command: "./app"
+  podSizeList:
+    - name: small
+      description: 'Small (CPU: 0.25, Memory: 0.5Gi)'
+      default: true
+      resources:
+        requests:
+          memory: 0.5Gi
+          cpu: 250m
+        limits:
+          memory: 1Gi
+          cpu: 500m
+    - name: medium
+      description: 'Medium (CPU: 0.5, Memory: 1Gi)'
+      resources:
+        requests:
+          memory: 1Gi
+          cpu: 500m
+        limits:
+          memory: 2Gi
+          cpu: 1000m
+    - name: large
+      description: 'Large (CPU: 1, Memory: 2Gi)'
+      resources:
+        requests:
+          memory: 2Gi
+          cpu: 1000m
+        limits:
+          memory: 4Gi
+          cpu: 2000m

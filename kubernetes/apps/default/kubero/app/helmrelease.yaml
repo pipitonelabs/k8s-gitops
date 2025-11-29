@@ -127,10 +127,3 @@ spec:
               - path: /data
             main:
               - path: /data
-      config:
-        enabled: true
-        type: configMap
-        name: kubero
-        globalMounts:
-          - path: /app/server/config/kubero.yaml
-            subPath: kubero
