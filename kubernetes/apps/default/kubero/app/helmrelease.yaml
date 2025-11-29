@@ -128,9 +128,9 @@ spec:
             main:
               - path: /data
       config:
+        enabled: true
         type: configMap
         name: kubero-config
-        mountPath: /app/server/config
-        items:
-          - key: kubero
-            path: kubero.yaml
+        globalMounts:
+          - path: /app/server/config/kubero.yaml
+            subPath: kubero
