@@ -60,7 +60,8 @@ spec:
     route:
       app:
         hostnames:
-          - blog.pipitonelabs.com
+          - www.pipitonelabs.com
+          - pipitonelabs.com
         parentRefs:
           - name: envoy-external
             namespace: networking
