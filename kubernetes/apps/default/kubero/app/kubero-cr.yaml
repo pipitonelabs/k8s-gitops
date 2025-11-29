@@ -2,7 +2,7 @@
 apiVersion: application.kubero.dev/v1alpha1
 kind: Kubero
 metadata:
-  name: kubero
+  name: kuberoes
   namespace: default
 spec:
   kubero:
