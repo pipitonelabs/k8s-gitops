@@ -21,11 +21,19 @@ spec:
         type: deployment
         replicas: 2
         strategy: Recreate
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+            seccompProfile:
+              type: RuntimeDefault
         containers:
           main:
             image:
               repository: ghcr.io/pipitonelabs/pipitonelabs.com
-              tag: v1.0.18
+              tag: v1.0.19
             env:
               TZ: America/New_York
             probes:
