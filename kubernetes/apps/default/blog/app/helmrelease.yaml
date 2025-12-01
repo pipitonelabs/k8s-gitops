@@ -25,7 +25,7 @@ spec:
           main:
             image:
               repository: ghcr.io/pipitonelabs/pipitonelabs.com
-              tag: v1.0.7
+              tag: v1.0.8
             env:
               TZ: America/New_York
             probes:
