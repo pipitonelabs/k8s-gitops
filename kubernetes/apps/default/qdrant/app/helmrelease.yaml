@@ -28,7 +28,6 @@ spec:
             image:
               repository: qdrant/qdrant
               tag: v1.16.0@sha256:1005201498cf927d835383d0f918b17d8c9da7db58550f169f694455e42d78f4
-            command: ["/qdrant/qdrant"]
             env:
               QDRANT__SERVICE__HTTP_PORT: &http-port 6333
               QDRANT__SERVICE__GRPC_PORT: &grpc-port 6334
@@ -61,9 +60,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
@@ -90,3 +89,6 @@ spec:
           qdrant:
             app:
               - path: /qdrant
+                subPath: storage
+              - path: /qdrant/snapshots
+                subPath: snapshots
