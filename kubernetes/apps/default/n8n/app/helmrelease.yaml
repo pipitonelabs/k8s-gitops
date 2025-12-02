@@ -1,5 +1,4 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -46,16 +45,19 @@ spec:
               N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: false
               N8N_PROTOCOL: "https"
               N8N_PORT: &port 8080
-              N8N_HOST: &hostName n8n.pipitonelabs.com
-              WEBHOOK_URL: https://n8n-webhook.pipitonelabs.com
+              N8N_HOST: n8n.pipitonelabs.com
               N8N_LOG_LEVEL: info
               N8N_LOG_OUTPUT: console
+              WEBHOOK_URL: https://n8n-webhook.pipitonelabs.com/
+              N8N_PROXY_HOPS: "1"
+              N8N_RUNNERS_ENABLED: "true"
+              N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+              N8N_GIT_NODE_DISABLE_BARE_REPOS: "true"
               N8N_ENCRYPTION_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: n8n-secret
                     key: N8N_ENCRYPTION_KEY
-              # Postgres Setup
               DB_POSTGRESDB_HOST:
                 valueFrom:
                   secretKeyRef:
@@ -115,14 +117,6 @@ spec:
         parentRefs:
           - name: envoy-external
             namespace: networking
-        rules:
-          - matches:
-              - path:
-                  value: /webhook
-            backendRefs: [{}]
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 404"]
     persistence:
       data:
         existingClaim: n8n
