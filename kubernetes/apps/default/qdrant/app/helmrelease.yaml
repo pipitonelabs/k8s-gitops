@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: qdrant/qdrant
-              tag: v1.16.1-unprivileged
+              tag: v1.16.1
             env:
               QDRANT__SERVICE__HTTP_PORT: &http-port 6333
               QDRANT__SERVICE__GRPC_PORT: &grpc-port 6334
@@ -54,9 +54,9 @@ spec:
                 memory: 1Gi
         pod:
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
             fsGroupChangePolicy: "OnRootMismatch"
     service:
       app:
@@ -85,3 +85,7 @@ spec:
                 subPath: storage
               - path: /qdrant/snapshots
                 subPath: snapshots
+      config-cache:
+        existingClaim: "qdrant-data"
+        globalMounts:
+          - path: /qdrant/snapshots
