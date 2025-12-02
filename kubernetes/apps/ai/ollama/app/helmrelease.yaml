@@ -57,7 +57,7 @@ spec:
     defaultPodOptions:
       resourceClaims:
         - name: gpu
-          resourceClaimTemplateName: ollama-gpu
+          resourceClaimTemplateName: ollama
     service:
       app:
         ports:
@@ -68,7 +68,7 @@ spec:
         apiVersion: resource.k8s.io/v1
         kind: ResourceClaimTemplate
         metadata:
-          name: ollama-gpu
+          name: ollama
         spec:
           spec:
             spec:
