@@ -68,7 +68,6 @@ spec:
             port: *grpc-port
     route:
       app:
-        kind: TLSRoute
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
