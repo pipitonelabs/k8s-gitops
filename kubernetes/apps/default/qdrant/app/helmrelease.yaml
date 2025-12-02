@@ -45,7 +45,7 @@ spec:
                 containerPort: *grpc-port
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities:
                 drop: ["ALL"]
             resources:
@@ -53,18 +53,10 @@ spec:
                 cpu: 100m
               limits:
                 memory: 1Gi
-            volumeMounts:
-              - name: workdir
-                mountPath: /workdir
         pod:
           annotations:
             prometheus.io/scrape: "true"
             prometheus.io/port: "6333"
-          volumes:
-            - name: workdir
-              emptyDir: {}
-          securityContext:
-            workingDir: /workdir
 
     defaultPodOptions:
       securityContext:
