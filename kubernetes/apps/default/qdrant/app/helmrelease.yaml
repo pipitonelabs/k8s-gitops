@@ -23,6 +23,27 @@ spec:
       qdrant:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          debug-perms:
+            image:
+              repository: busybox
+              tag: latest
+            command:
+              - sh
+              - -c
+              - |
+                echo "Current user: $(id)"
+                echo "Permissions on /qdrant/storage:"
+                ls -la /qdrant/storage || echo "Directory not accessible"
+                echo "Permissions on /qdrant/snapshots:"
+                ls -la /qdrant/snapshots || echo "Directory not accessible"
+            volumeMounts:
+              - name: data
+                mountPath: /qdrant/storage
+                subPath: storage
+              - name: data
+                mountPath: /qdrant/snapshots
+                subPath: snapshots
         containers:
           app:
             image:
@@ -60,9 +81,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
