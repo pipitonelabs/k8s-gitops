@@ -68,8 +68,7 @@ spec:
             port: *grpc-port
     route:
       app:
-        annotations:
-          internal-dns.alpha.kubernetes.io/target: internal.pipitonelabs.com
+        kind: TLSRoute
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
