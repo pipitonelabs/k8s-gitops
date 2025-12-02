@@ -13,7 +13,6 @@ spec:
       namespace: external-secrets
   components:
     - ../../../../components/volsync
-    - ../../../../components/cnpg
   interval: 1h
   path: ./kubernetes/apps/ai/qdrant/app
   postBuild:
