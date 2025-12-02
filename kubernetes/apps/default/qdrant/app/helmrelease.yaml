@@ -44,7 +44,7 @@ spec:
                 containerPort: *grpc-port
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities:
                 drop: ["ALL"]
             resources:
