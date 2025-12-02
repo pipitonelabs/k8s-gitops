@@ -45,7 +45,7 @@ spec:
                 containerPort: *grpc-port
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true   # Kept true – strict security preserved
+              readOnlyRootFilesystem: true
               capabilities:
                 drop: ["ALL"]
             resources:
@@ -55,14 +55,7 @@ spec:
                 memory: 1Gi
             args:
               - --workdir
-              - /workdir
-
-        extraContainerVolumes:
-          qdrant:
-            app:
-              - name: workdir
-                emptyDir: {}
-                mountPath: /workdir
+              - /tmp
 
         pod:
           annotations:
@@ -78,3 +71,32 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *http-port
+          grpc:
+            port: *grpc-port
+
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.pipitonelabs.com"
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+
+    persistence:
+      data:
+        enabled: true
+        existingClaim: qdrant
+        advancedMounts:
+          qdrant:
+            app:
+              - path: /qdrant/storage
+                subPath: storage
+              - path: /qdrant/snapshots
+                subPath: snapshots
