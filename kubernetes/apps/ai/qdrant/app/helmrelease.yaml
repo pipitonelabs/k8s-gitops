@@ -75,13 +75,19 @@ spec:
             port: *grpc-port
     route:
       app:
-        annotations:
-          internal-dns.alpha.kubernetes.io/target: internal.pipitonelabs.com
         hostnames:
-          - "{{ .Release.Name }}.pipitonelabs.com"
+          - "qdrant.pipitonelabs.com"
         parentRefs:
           - name: envoy-internal
             namespace: networking
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: qdrant
+                port: *http-port
 
     persistence:
       data:
