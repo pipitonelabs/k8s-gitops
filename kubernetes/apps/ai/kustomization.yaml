@@ -5,4 +5,5 @@ namespace: ai
 components:
   - ../../components/namespace
 resources:
+  - ./ollama/ks.yaml
   - ./qdrant/ks.yaml
