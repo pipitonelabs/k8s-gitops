@@ -23,27 +23,6 @@ spec:
       qdrant:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          debug-perms:
-            image:
-              repository: busybox
-              tag: latest
-            command:
-              - sh
-              - -c
-              - |
-                echo "Current user: $(id)"
-                echo "Permissions on /qdrant/storage:"
-                ls -la /qdrant/storage || echo "Directory not accessible"
-                echo "Permissions on /qdrant/snapshots:"
-                ls -la /qdrant/snapshots || echo "Directory not accessible"
-            volumeMounts:
-              - name: data
-                mountPath: /qdrant/storage
-                subPath: storage
-              - name: data
-                mountPath: /qdrant/snapshots
-                subPath: snapshots
         containers:
           app:
             image:
@@ -109,7 +88,4 @@ spec:
         advancedMounts:
           qdrant:
             app:
-              - path: /qdrant/storage
-                subPath: storage
-              - path: /qdrant/snapshots
-                subPath: snapshots
+              - path: /qdrant
