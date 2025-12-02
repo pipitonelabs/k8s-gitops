@@ -10,13 +10,7 @@ spec:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+  interval: 1h
   values:
     controllers:
       ollama:
@@ -73,6 +67,8 @@ spec:
       gpu:
         apiVersion: resource.k8s.io/v1
         kind: ResourceClaimTemplate
+        metadata:
+          name: ollama-gpu
         spec:
           spec:
             spec:
