@@ -87,10 +87,10 @@ spec:
         advancedMounts:
           ollama:
             app:
-            - path: *modelPath
-              subPath: models
-            - path: /root/.ollama
-              subPath: config
+              - path: *modelPath
+                subPath: models
+              - path: /root/.ollama
+                subPath: config
       dri:
         type: hostPath
         hostPath: /dev/dri
