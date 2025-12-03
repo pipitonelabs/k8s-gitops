@@ -81,13 +81,15 @@ spec:
           - name: envoy-internal
             namespace: networking
     persistence:
-      ollama:
+      data:
         existingClaim: "{{ .Release.Name }}"
-        globalMounts:
+        advancedMounts:
+          ollama:
           - path: *modelPath
             subPath: models
           - path: /root/.ollama
             subPath: config
+
       dri:
         type: hostPath
         hostPath: /dev/dri
