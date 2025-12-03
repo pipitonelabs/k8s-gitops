@@ -12,6 +12,10 @@ spec:
     - ../../../../components/volsync
   interval: 1h
   path: "./kubernetes/apps/ai/ollama/app"
+  postBuild:
+    substitute:
+      APP: *app
+      VOLSYNC_CAPACITY: 25Gi
   prune: true
   sourceRef:
     kind: GitRepository
