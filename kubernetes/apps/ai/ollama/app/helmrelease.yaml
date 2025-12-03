@@ -39,9 +39,9 @@ spec:
               claims:
                 - name: gpu
               requests:
-                cpu: 200m
+                cpu: 100m
               limits:
-                memory: 24Gi
+                memory: 5Gi
         pod:
           affinity:
             podAntiAffinity:
