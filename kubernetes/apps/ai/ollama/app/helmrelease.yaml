@@ -82,14 +82,15 @@ spec:
             namespace: networking
     persistence:
       data:
+        enabled: true
         existingClaim: "{{ .Release.Name }}"
         advancedMounts:
           ollama:
-          - path: *modelPath
-            subPath: models
-          - path: /root/.ollama
-            subPath: config
-
+            app:
+            - path: *modelPath
+              subPath: models
+            - path: /root/.ollama
+              subPath: config
       dri:
         type: hostPath
         hostPath: /dev/dri
