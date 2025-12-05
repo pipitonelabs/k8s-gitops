@@ -61,6 +61,14 @@ spec:
                         values:
                           - "{{ .Release.Name }}"
     defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
       resourceClaims:
         - name: gpu
           resourceClaimTemplateName: ollama
