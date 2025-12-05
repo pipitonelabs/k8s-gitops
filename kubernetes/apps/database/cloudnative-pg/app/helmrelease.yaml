@@ -24,6 +24,7 @@ spec:
   install:
     remediation:
       retries: 3
+      strategy: uninstall
   upgrade:
     cleanupOnFail: true
     remediation:
