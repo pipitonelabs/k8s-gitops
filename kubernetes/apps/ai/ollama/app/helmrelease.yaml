@@ -89,7 +89,7 @@ spec:
             namespace: networking
     persistence:
       data:
-        existingClaim: "ollama-data"
+        existingClaim: "ollama"
         advancedMounts:
           ollama:
             app:
