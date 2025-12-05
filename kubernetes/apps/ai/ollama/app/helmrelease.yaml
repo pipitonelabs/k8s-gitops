@@ -31,7 +31,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - mkdir -p /llm/ollama && cd /llm/ollama && init-ollama && exec ./ollama serve
+              - mkdir -p /models/ollama && cd /models/ollama && init-ollama && exec ./ollama serve
             securityContext:
               privileged: true
             env:
