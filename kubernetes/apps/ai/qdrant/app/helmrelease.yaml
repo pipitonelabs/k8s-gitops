@@ -91,7 +91,7 @@ spec:
 
     persistence:
       data:
-        existingClaim: qdrant
+        existingClaim: qdrant-data
         advancedMounts:
           qdrant:
             app:

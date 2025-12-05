@@ -89,7 +89,7 @@ spec:
             namespace: networking
     persistence:
       data:
-        existingClaim: "{{ .Release.Name }}"
+        existingClaim: "ollama-data"
         advancedMounts:
           ollama:
             app:
