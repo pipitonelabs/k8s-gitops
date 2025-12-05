@@ -7,7 +7,7 @@ components:
 resources:
 #  - ./autobrr/ks.yaml
 #  - ./audiobookshelf/ks.yaml
-#  - ./seerr/ks.yaml
+  - ./seerr/ks.yaml
 #  - ./maintainerr/ks.yaml
   - ./openbooks/ks.yaml
 #  - ./overseerr/ks.yaml
