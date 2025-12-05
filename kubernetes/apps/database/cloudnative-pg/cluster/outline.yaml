@@ -33,7 +33,7 @@ spec:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: &barmanObjectName minio-s3-outline
+        barmanObjectName: &barmanObjectName garage-s3-outline
         # current cluster
         serverName: outline-v16
   # bootstrap:

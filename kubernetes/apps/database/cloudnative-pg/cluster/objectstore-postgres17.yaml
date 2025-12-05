@@ -3,7 +3,7 @@
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: minio-s3-postgres17
+  name: garage-s3-postgres17
 spec:
   configuration:
     data:
@@ -13,10 +13,12 @@ spec:
     s3Credentials:
       accessKeyId:
         name: cloudnative-pg-secret
-        key: minio-aws-access-key-id
+        key: garage-aws-access-key-id
+        #key: minio-aws-access-key-id
       secretAccessKey:
         name: cloudnative-pg-secret
-        key: minio-aws-secret-access-key
+        key: garage-aws-secret-access-key
+        #key: minio-aws-secret-access-key
     wal:
       compression: bzip2
       maxParallel: 4
