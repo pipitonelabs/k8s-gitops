@@ -14,13 +14,13 @@ spec:
       namespace: external-secrets
   components:
     - ../../../../components/nfs-scaler
+    - ../../../../components/volsync
   interval: 1h
   path: ./kubernetes/apps/default/garage/app
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 5Gi
-
+      VOLSYNC_CAPACITY: 10Gi
   prune: true
   retryInterval: 2m
   sourceRef:
