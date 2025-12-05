@@ -10,13 +10,6 @@ spec:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
   values:
     controllers:
       ollama:
@@ -61,14 +54,6 @@ spec:
                         values:
                           - "{{ .Release.Name }}"
     defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
       resourceClaims:
         - name: gpu
           resourceClaimTemplateName: ollama
@@ -97,7 +82,8 @@ spec:
             namespace: networking
     persistence:
       data:
-        existingClaim: "ollama"
+        enabled: true
+        existingClaim: "{{ .Release.Name }}"
         advancedMounts:
           ollama:
             app:
