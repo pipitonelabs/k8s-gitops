@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state"
-    key    = "authentik/authentik.tfstate"
-    region = "main" # Region validation will be skipped
+    bucket  = "terraform-state"
+    key     = "authentik/authentik.tfstate"
+    region  = "main" # Region validation will be skipped
     profile = "minio"
 
     endpoints = {
