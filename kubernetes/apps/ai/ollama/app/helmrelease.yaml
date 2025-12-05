@@ -89,7 +89,6 @@ spec:
             namespace: networking
     persistence:
       data:
-        enabled: true
         existingClaim: "{{ .Release.Name }}"
         advancedMounts:
           ollama:
