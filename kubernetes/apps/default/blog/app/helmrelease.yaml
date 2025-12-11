@@ -20,7 +20,7 @@ spec:
       main:
         type: deployment
         replicas: 2
-        strategy: Recreate
+        strategy: RollingUpdate
         pod:
           securityContext:
             runAsNonRoot: true
@@ -29,6 +29,14 @@ spec:
             fsGroup: 1001
             seccompProfile:
               type: RuntimeDefault
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: ScheduleAnyway
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: blog
+                  app.kubernetes.io/instance: blog
         containers:
           main:
             image:
@@ -61,10 +69,11 @@ spec:
                   failureThreshold: 3
             resources:
               requests:
-                cpu: 10m
-                memory: 96Mi
+                cpu: 5m
+                memory: 48Mi
               limits:
-                memory: 256Mi
+                cpu: 100m
+                memory: 128Mi
     route:
       app:
         hostnames:
