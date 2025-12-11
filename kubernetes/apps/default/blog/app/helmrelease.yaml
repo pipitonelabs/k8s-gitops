@@ -33,7 +33,7 @@ spec:
           main:
             image:
               repository: ghcr.io/pipitonelabs/pipitonelabs.com
-              tag: v1.1.2
+              tag: v1.2.0
             env:
               TZ: America/New_York
             probes:
