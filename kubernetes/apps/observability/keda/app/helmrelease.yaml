@@ -16,3 +16,19 @@ spec:
   values:
     enableServiceLinks: false
     installCRDs: true
+    operator:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          cpu: 100m
+          memory: 500Mi
+    metricsApiServer:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          cpu: 100m
+          memory: 500Mi

@@ -53,6 +53,21 @@ spec:
         modules:
           - name: pg_autoscaler
             enabled: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+      mon:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
       network:
         connections:
           requireMsgr2: true
@@ -60,6 +75,14 @@ spec:
         useAllNodes: true
         useAllDevices: false
         deviceFilter: nvme1n1
+      osd:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1Gi
+          limits:
+            cpu: 500m
+            memory: 2Gi
     cephBlockPools:
       - name: ceph-blockpool
         spec:

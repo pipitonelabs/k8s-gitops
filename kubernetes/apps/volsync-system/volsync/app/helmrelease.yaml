@@ -27,3 +27,11 @@ spec:
       runAsNonRoot: true
       runAsUser: 1000
       runAsGroup: 1000
+    controller:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          cpu: 100m
+          memory: 512Mi
