@@ -52,6 +52,22 @@ Create additional files/folders within memory-bank/ when they help organize:
 - Testing strategies
 - Deployment procedures
 
+## Commit Message Conventions
+
+All commit messages must follow conventional commits format to enable automated changelog generation and semantic versioning:
+
+- `fix(appname): description` - for bug fixes affecting a specific app/component
+- `feat(appname): description` - for new features or enhancements
+- `ci: description` - for CI/CD pipeline changes
+- `docs: description` - for documentation updates
+- `refactor: description` - for code refactoring without functional changes
+- `chore: description` - for maintenance tasks, dependency updates, etc.
+
+Examples:
+- `fix(rook-ceph): reduce mgr resource requests to prevent over-provisioning`
+- `feat(ai): add Ollama LLM inference support`
+- `ci: update GitHub Actions workflow for automated testing`
+
 ## Core workflows
 
 ### Memory Bank Initialization
@@ -145,7 +161,7 @@ When starting a task that matches a documented task in `tasks.md`, I should ment
 
 If the task was repetitive and might be needed again, I should suggest: "Would you like me to add this task to the memory bank for future reference?"
 
-In the end of the task, when it seems to be completed, I will update `context.md` accordingly. If the change seems significant, I will suggest to the user: "Would you like me to update memory bank to reflect these changes?" I will not suggest updates for minor changes.
+In the end of the task, when it seems to be completed, I will update `context.md` accordingly. If the change seems significant, I will suggest to the user: "Would you like me to update the memory bank to reflect these changes?" I will not suggest updates for minor changes.
 
 ## Context Window Management
 
