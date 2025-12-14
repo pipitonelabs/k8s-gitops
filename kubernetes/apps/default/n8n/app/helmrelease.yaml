@@ -46,10 +46,9 @@ spec:
               N8N_PROTOCOL: "https"
               N8N_PORT: &port 8080
               N8N_HOST: n8n.pipitonelabs.com
-              N8N_OAUTH_CALLBACK_URL: "https://n8n.pipitonelabs.com/rest/oauth2-credential/callback"
               N8N_LOG_LEVEL: info
               N8N_LOG_OUTPUT: console
-              WEBHOOK_URL: https://n8n-webhook.pipitonelabs.com/
+              WEBHOOK_URL: https://n8n.pipitonelabs.com/
               N8N_PROXY_HOPS: "1"
               N8N_RUNNERS_ENABLED: "true"
               N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
@@ -110,7 +109,7 @@ spec:
         hostnames:
           - n8n.pipitonelabs.com
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: networking
       webhooks:
         hostnames:
