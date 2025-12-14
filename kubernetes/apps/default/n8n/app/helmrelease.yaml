@@ -46,6 +46,7 @@ spec:
               N8N_PROTOCOL: "https"
               N8N_PORT: &port 8080
               N8N_HOST: n8n.pipitonelabs.com
+              N8N_OAUTH_CALLBACK_URL: "https://n8n.pipitonelabs.com/rest/oauth2-credential/callback"
               N8N_LOG_LEVEL: info
               N8N_LOG_OUTPUT: console
               WEBHOOK_URL: https://n8n-webhook.pipitonelabs.com/
