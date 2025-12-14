@@ -110,7 +110,7 @@ spec:
         hostnames:
           - n8n.pipitonelabs.com
         parentRefs:
-          - name: envoy-internal
+          - name: envoy-external
             namespace: networking
       webhooks:
         hostnames:
