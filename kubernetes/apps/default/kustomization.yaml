@@ -7,7 +7,7 @@ components:
 resources:
   - ./blog/ks.yaml
 #  - ./emqx/ks.yaml
-#  - ./garage/ks.yaml
+  - ./garage/ks.yaml
   - ./n8n/ks.yaml
   - ./outline/ks.yaml
   - ./smtp-relay/ks.yaml
