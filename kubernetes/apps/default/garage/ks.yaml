@@ -20,8 +20,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_STATUS: "403"
-      GATUS_SUBDOMAIN: s3
       VOLSYNC_CAPACITY: 10Gi
   prune: true
   retryInterval: 2m
