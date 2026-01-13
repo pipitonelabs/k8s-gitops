@@ -75,7 +75,7 @@ machine:
     interfaces:
       - interface: bond0
         bond:
-          deviceSelectors: 
+          deviceSelectors:
             - hardwareAddr: 58:47:ca:7b:*
               driver: igc
           lacpRate: fast
@@ -226,3 +226,9 @@ apiVersion: v1alpha1
 kind: WatchdogTimerConfig
 device: /dev/watchdog0
 timeout: 5m
+---
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"
+cgroupRankingExpression: "0.0"
+sampleInterval: "5s"
