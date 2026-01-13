@@ -18,8 +18,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_STATUS: "403"
-      GATUS_SUBDOMAIN: s3
   prune: true
   retryInterval: 1m
   sourceRef:
