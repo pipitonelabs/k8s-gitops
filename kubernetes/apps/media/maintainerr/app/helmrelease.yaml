@@ -43,9 +43,9 @@ spec:
             resources:
               requests:
                 cpu: 5m
-                memory: 128Mi
+                memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 1Gi
     persistence:
       data:
         existingClaim: "{{ .Release.Name }}"
