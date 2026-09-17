@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.ticino_reporter_rate_check(
 ) RETURNS boolean
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path TO ''
 AS $$
 DECLARE
   v_window timestamptz := to_timestamp(

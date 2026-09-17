@@ -232,10 +232,10 @@ BEGIN NEW.updated_at = now(); RETURN NEW; END;
 $fn$;
 
 CREATE OR REPLACE FUNCTION public.set_ticino_user_secrets_updated_at()
-RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $fn$
+RETURNS trigger LANGUAGE plpgsql SET search_path TO '' AS $fn$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;
 $fn$;
-REVOKE EXECUTE ON FUNCTION public.set_ticino_user_secrets_updated_at()
+REVOKE ALL ON FUNCTION public.set_ticino_user_secrets_updated_at()
     FROM PUBLIC, anon, authenticated;
 
 DROP TRIGGER IF EXISTS prop_firm_payouts_updated_at ON public.prop_firm_payouts;
