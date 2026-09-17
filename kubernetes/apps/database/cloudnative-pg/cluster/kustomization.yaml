@@ -28,6 +28,7 @@ configMapGenerator:
       # rollout is verified; this bootstrap entry does not do that for you.
       - ./sql/0006_drop_ticino_compat.sql
       - ./sql/0007_harden_security_advisor.sql
+      - ./sql/0008_drop_leftover_analysis_indexes.sql
       - ./sql/seed.sql
 generatorOptions:
   disableNameSuffixHash: true

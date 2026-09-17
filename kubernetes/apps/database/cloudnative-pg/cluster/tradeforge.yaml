@@ -100,6 +100,8 @@ spec:
           - name: tradeforge-bootstrap-sql
             key: 0007_harden_security_advisor.sql
           - name: tradeforge-bootstrap-sql
+            key: 0008_drop_leftover_analysis_indexes.sql
+          - name: tradeforge-bootstrap-sql
             key: seed.sql
   nodeMaintenanceWindow:
     inProgress: false
