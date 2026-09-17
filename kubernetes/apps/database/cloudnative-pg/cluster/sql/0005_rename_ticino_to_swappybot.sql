@@ -107,7 +107,7 @@ CREATE OR REPLACE FUNCTION public.swappybot_reporter_rate_check(
 RETURNS boolean
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path TO 'public'
+SET search_path TO ''
 AS $function$
 DECLARE
   v_window timestamptz := to_timestamp(
@@ -127,6 +127,14 @@ BEGIN
   RETURN v_count <= p_limit;
 END;
 $function$;
+
+-- CREATE FUNCTION grants EXECUTE to PUBLIC by default. The original
+-- ticino_reporter_rate_check had that revoked; this is a new function name
+-- so the revoke must be repeated here.
+REVOKE ALL ON FUNCTION public.swappybot_reporter_rate_check(text, integer, integer)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.swappybot_reporter_rate_check(text, integer, integer)
+  TO service_role;
 
 -- ─── 7. VIEWS (new names) ───────────────────────────────────────────────────
 -- Dropped and recreated rather than renamed: a view's output column names are
@@ -210,10 +218,15 @@ CREATE OR REPLACE FUNCTION public.ticino_reporter_rate_check(
 RETURNS boolean
 LANGUAGE sql
 SECURITY DEFINER
-SET search_path TO 'public'
+SET search_path TO ''
 AS $function$
   SELECT public.swappybot_reporter_rate_check(p_key, p_limit, p_window_seconds);
 $function$;
+
+REVOKE ALL ON FUNCTION public.ticino_reporter_rate_check(text, integer, integer)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.ticino_reporter_rate_check(text, integer, integer)
+  TO service_role;
 
 -- Compat grants mirror what the renamed objects carried before this migration.
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.ticino_trades          TO authenticated, service_role;

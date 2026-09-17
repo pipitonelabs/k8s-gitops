@@ -94,6 +94,11 @@ spec:
           # you're confident no other consumer still reads the old names.
           - name: tradeforge-bootstrap-sql
             key: 0006_drop_ticino_compat.sql
+          # Applied to the live cluster by hand; listed so a rebuilt cluster
+          # revokes PUBLIC execute on SECURITY DEFINER functions and drops
+          # leftover public.sim_locks.
+          - name: tradeforge-bootstrap-sql
+            key: 0007_harden_security_advisor.sql
           - name: tradeforge-bootstrap-sql
             key: seed.sql
   nodeMaintenanceWindow:

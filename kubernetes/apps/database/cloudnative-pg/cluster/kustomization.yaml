@@ -27,6 +27,7 @@ configMapGenerator:
       # one. Apply 0006 to the live cluster by hand once the reporter/web
       # rollout is verified; this bootstrap entry does not do that for you.
       - ./sql/0006_drop_ticino_compat.sql
+      - ./sql/0007_harden_security_advisor.sql
       - ./sql/seed.sql
 generatorOptions:
   disableNameSuffixHash: true
