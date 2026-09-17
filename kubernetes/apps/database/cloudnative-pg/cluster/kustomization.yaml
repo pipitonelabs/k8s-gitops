@@ -29,6 +29,7 @@ configMapGenerator:
       - ./sql/0006_drop_ticino_compat.sql
       - ./sql/0007_harden_security_advisor.sql
       - ./sql/0008_drop_leftover_analysis_indexes.sql
+      - ./sql/0009_drop_tmp_july_analysis.sql
       - ./sql/seed.sql
 generatorOptions:
   disableNameSuffixHash: true
