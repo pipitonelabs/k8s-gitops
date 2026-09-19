@@ -1,0 +1,147 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app reactive-resume
+  namespace: &namespace default
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      reactive-resume:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          # Creates the "reactiveresume" database and role on the shared
+          # postgres17 cluster using the superuser creds from the cnpg
+          # component's initdb secret.
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "18"
+            envFrom:
+              - secretRef:
+                  name: reactiveresume-initdb-secret
+        containers:
+          app:
+            image:
+              repository: ghcr.io/reactive-resume/reactive-resume
+              tag: v5.3.1@sha256:2f5205f30121c2ce8247baf80dbc105516033f5cd42dba872fc6f459622169d9
+            env:
+              APP_URL: https://rxresume.pipitonelabs.com
+              PORT: "3000"
+              # Storage: Garage's internal S3 API. Reads are proxied by the app
+              # via authenticated server-side GETs, so this endpoint is never
+              # browser-facing and the bucket needs no anonymous-read grant.
+              S3_ENDPOINT: http://garage.default.svc.cluster.local:3900
+              S3_BUCKET: reactive-resume
+              S3_REGION: us-east-1
+              S3_FORCE_PATH_STYLE: "true"
+              # Mail via the in-cluster relay (unauthenticated, so no SMTP_USER/PASS).
+              SMTP_HOST: smtp-relay.default.svc.cluster.local
+              SMTP_PORT: "2525"
+              SMTP_SECURE: "false"
+              SMTP_FROM: "Reactive Resume <reactive-resume@pipitonelabs.com>"
+              # Auth: email signups left on so the first account can be created.
+              FLAG_DISABLE_EMAIL_AUTH: "false"
+              FLAG_DISABLE_SIGNUPS: "false"
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: reactiveresume-pguser-secret
+                    key: uri
+            envFrom:
+              - secretRef:
+                  name: reactive-resume-secret
+            probes:
+              # NOT /api/health: that route checks Postgres + S3 under a
+              # hardcoded 1500ms budget and returns 503 on any latency, which
+              # would pin the pod NotReady. Probing / is safe -- the server runs
+              # DB migrations to completion before it opens the listener, so an
+              # answered request means migrations finished and the DB was reachable.
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 3000
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: reactive-resume
+        ports:
+          http:
+            port: *port
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+    route:
+      app:
+        hostnames:
+          - rxresume.pipitonelabs.com
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
