@@ -5,7 +5,7 @@ description: Scaffold a new application in this Flux homelab following the repo'
 
 # Scaffold a new app
 
-Create manifests under `kubernetes/apps/<namespace>/<app-name>/` matching the established pattern. Do this on a feature branch (`git checkout -b feature/add-<app>`), 2-space YAML, and open a PR — never commit to main.
+Create manifests under `kubernetes/apps/<namespace>/<app-name>/` matching the established pattern. Do this on a feature branch (`git checkout -b feature/add-<app>`), 2-space YAML, and open a PR — never commit to main. Do not merge the PR unless the user explicitly asks to merge it.
 
 ## Directory layout
 
