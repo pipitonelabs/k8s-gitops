@@ -27,7 +27,7 @@ spec:
             command: ["/bin/sh", "-c", "echo 1 > /proc/sys/net/ipv4/ip_forward"]
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities:
                 drop: ["ALL"]
                 add: ["NET_ADMIN"]
