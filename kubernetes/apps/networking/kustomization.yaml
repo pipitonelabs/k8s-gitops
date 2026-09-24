@@ -11,5 +11,6 @@ resources:
   - ./envoy-gateway/ks.yaml
   - ./external-dns/ks.yaml
 #  - ./multus/ks.yaml
-  - ./ocserv/ks.yaml
+#  - ./ocserv/ks.yaml
+  - ./sing-box/ks.yaml
   - ./tailscale-operator/ks.yaml
