@@ -1,8 +1,9 @@
 ---
 # yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
-# Single public route fronting the whole stack. The SPA + supabase-js see one
+# Internal-only route fronting the whole stack. The SPA + supabase-js see one
 # origin; paths fan out to the backends (mirrors Supabase's gateway layout).
-# external-dns auto-creates the Cloudflare record (envoy-external) for this host.
+# TLS via the shared *.pipitonelabs.com wildcard cert on envoy-internal;
+# external-dns auto-creates the internal DNS record for this host.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -10,7 +11,7 @@ metadata:
 spec:
   hostnames: ["tradeforge.pipitonelabs.com"]
   parentRefs:
-    - name: envoy-external
+    - name: envoy-internal
       namespace: networking
   rules:
     # PostgREST serves at root; strip the /rest/v1 prefix.
