@@ -9,3 +9,4 @@ resources:
   - ./helmrelease-reporter.yaml
   - ./helmrelease-web.yaml
   - ./httproute.yaml
+  - ./httproute-reporter.yaml
