@@ -3,8 +3,15 @@
 # Public route for the trade reporter only. Sierra Chart's SwappyBotReporter.cpp
 # study runs off-LAN and POSTs here; this must stay on envoy-external even
 # though the rest of the stack (httproute.yaml) moved to envoy-internal.
-# Same hostname as the internal route, split by path — external-dns still
-# creates the Cloudflare record because a route on envoy-external references it.
+#
+# Deliberately a SEPARATE hostname from tradeforge.pipitonelabs.com, not a
+# path split on the same one. Sharing a hostname across an internal and an
+# external route depends on whatever resolver the client happens to use
+# (split-horizon DNS, a VPN's DNS override, etc.) picking the right gateway,
+# which isn't guaranteed — that's what broke the reporter after the internal
+# cutover: a resolver serving the internal answer sent trade POSTs to the
+# internal gateway's catch-all (SPA), which rejects POST with a 405. A
+# dedicated hostname makes this unambiguous regardless of client network.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -14,9 +21,9 @@ metadata:
     # the reporter's POST-only path and reports Unhealthy. Point it at the
     # reporter's actual health endpoint instead.
     gatus.home-operations.com/endpoint: |-
-      url: https://tradeforge.pipitonelabs.com/health
+      url: https://tradeforge-reporter.pipitonelabs.com/health
 spec:
-  hostnames: ["tradeforge.pipitonelabs.com"]
+  hostnames: ["tradeforge-reporter.pipitonelabs.com"]
   parentRefs:
     - name: envoy-external
       namespace: networking
