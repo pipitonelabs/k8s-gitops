@@ -66,6 +66,7 @@ spec:
               - --annotation-prefix=external-dns.alpha.kubernetes.io/
               - --domain-filter=pipitonelabs.com
               - --events
+              - --gateway-name=envoy-internal
               - --interval=1m
               - --log-format=text
               - --log-level=info
