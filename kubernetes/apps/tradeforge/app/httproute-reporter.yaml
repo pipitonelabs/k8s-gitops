@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+# Public route for the trade reporter only. Sierra Chart's SwappyBotReporter.cpp
+# study runs off-LAN and POSTs here; this must stay on envoy-external even
+# though the rest of the stack (httproute.yaml) moved to envoy-internal.
+# Same hostname as the internal route, split by path — external-dns still
+# creates the Cloudflare record because a route on envoy-external references it.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: tradeforge-reporter
+spec:
+  hostnames: ["tradeforge.pipitonelabs.com"]
+  parentRefs:
+    - name: envoy-external
+      namespace: networking
+  rules:
+    # Reporter handles any non-/health path as a trade POST; no rewrite needed.
+    - matches:
+        - path: { type: PathPrefix, value: /functions/v1/swappybot-reporter }
+      backendRefs:
+        - name: tradeforge-reporter
+          port: 8000

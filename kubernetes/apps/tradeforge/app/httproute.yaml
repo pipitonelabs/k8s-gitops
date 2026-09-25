@@ -1,9 +1,10 @@
 ---
 # yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
-# Internal-only route fronting the whole stack. The SPA + supabase-js see one
-# origin; paths fan out to the backends (mirrors Supabase's gateway layout).
+# Internal-only route for the SPA + supabase-js paths (web/rest/realtime).
 # TLS via the shared *.pipitonelabs.com wildcard cert on envoy-internal;
 # external-dns auto-creates the internal DNS record for this host.
+# The reporter path (Sierra Chart -> swappybot-reporter) stays public; see
+# httproute-reporter.yaml on envoy-external, same hostname, split by path.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -35,12 +36,6 @@ spec:
       backendRefs:
         - name: tradeforge-realtime
           port: 4000
-    # Reporter handles any non-/health path as a trade POST; no rewrite needed.
-    - matches:
-        - path: { type: PathPrefix, value: /functions/v1/swappybot-reporter }
-      backendRefs:
-        - name: tradeforge-reporter
-          port: 8000
     # Everything else -> the SPA.
     - matches:
         - path: { type: PathPrefix, value: / }
