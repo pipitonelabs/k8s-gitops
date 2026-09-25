@@ -9,6 +9,12 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: tradeforge-reporter
+  annotations:
+    # gatus-sidecar auto-discovers this route; without an override it GETs
+    # the reporter's POST-only path and reports Unhealthy. Point it at the
+    # reporter's actual health endpoint instead.
+    gatus.home-operations.com/endpoint: |-
+      url: https://tradeforge.pipitonelabs.com/health
 spec:
   hostnames: ["tradeforge.pipitonelabs.com"]
   parentRefs:
@@ -18,6 +24,11 @@ spec:
     # Reporter handles any non-/health path as a trade POST; no rewrite needed.
     - matches:
         - path: { type: PathPrefix, value: /functions/v1/swappybot-reporter }
+      backendRefs:
+        - name: tradeforge-reporter
+          port: 8000
+    - matches:
+        - path: { type: Exact, value: /health }
       backendRefs:
         - name: tradeforge-reporter
           port: 8000
