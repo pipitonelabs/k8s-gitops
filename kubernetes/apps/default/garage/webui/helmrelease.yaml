@@ -55,6 +55,9 @@ spec:
             port: &port 3909
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: default
         hostnames: ["garage.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal

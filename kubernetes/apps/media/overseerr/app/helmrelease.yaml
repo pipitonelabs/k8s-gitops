@@ -78,6 +78,7 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             url: https://{{ .Release.Name }}.pipitonelabs.com/api/v1/status
+            group: media
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
           - requests.pipitonelabs.com

@@ -6,6 +6,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |-
       conditions: ["[STATUS] == 404"]
+      group: external
 spec:
   hostnames:
     - flux-webhook.pipitonelabs.com

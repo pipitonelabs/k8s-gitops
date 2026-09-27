@@ -15,6 +15,7 @@ metadata:
     # gatus-sidecar's unauthenticated GET correctly gets 401, not 200.
     gatus.home-operations.com/endpoint: |-
       conditions: ["[STATUS] == 401"]
+      group: networking
 spec:
   hostnames: ["singbox-api.pipitonelabs.com"]
   parentRefs:

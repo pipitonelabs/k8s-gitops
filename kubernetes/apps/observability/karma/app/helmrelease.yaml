@@ -58,6 +58,9 @@ spec:
         runAsGroup: 568
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: observability
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:

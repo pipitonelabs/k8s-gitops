@@ -57,6 +57,7 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             url: https://{{ .Release.Name }}.pipitonelabs.com/healthz
+            group: networking
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
           - echo.pipitonelabs.com

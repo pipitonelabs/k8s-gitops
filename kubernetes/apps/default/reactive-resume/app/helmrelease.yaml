@@ -136,6 +136,9 @@ spec:
           - path: /tmp
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: default
         hostnames:
           - rxresume.pipitonelabs.com
         parentRefs:

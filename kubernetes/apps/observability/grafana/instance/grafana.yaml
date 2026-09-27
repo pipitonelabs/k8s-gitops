@@ -78,6 +78,10 @@ spec:
           protocol: TCP
           targetPort: 3000
   httpRoute:
+    metadata:
+      annotations:
+        gatus.home-operations.com/endpoint: |-
+          group: observability
     spec:
       hostnames:
         - grafana.pipitonelabs.com

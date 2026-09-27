@@ -76,6 +76,9 @@ spec:
                 memory: 256Mi
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: default
         hostnames:
           - blog.pipitonelabs.com
         parentRefs:
