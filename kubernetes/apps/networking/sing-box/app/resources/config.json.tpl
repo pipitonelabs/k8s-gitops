@@ -35,5 +35,11 @@
       "type": "direct",
       "tag": "direct"
     }
-  ]
+  ],
+  "experimental": {
+    "clash_api": {
+      "external_controller": "0.0.0.0:9090",
+      "secret": "${CLASH_SECRET}"
+    }
+  }
 }
