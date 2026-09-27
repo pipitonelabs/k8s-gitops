@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+# Internal-only route — sing-box's Clash API dashboard is an admin panel and
+# must not be reachable from the public internet. TLS via the shared
+# *.pipitonelabs.com wildcard cert on envoy-internal; external-dns auto-creates
+# the internal DNS record.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sing-box-dashboard
+spec:
+  hostnames: ["singbox.pipitonelabs.com"]
+  parentRefs:
+    - name: envoy-internal
+      namespace: networking
+  rules:
+    - backendRefs:
+        - name: sing-box-dashboard
+          port: 80
