@@ -95,6 +95,7 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             url: https://{{ .Release.Name }}.pipitonelabs.com/health
+            group: observability
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
           - status.pipitonelabs.com

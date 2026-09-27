@@ -22,6 +22,7 @@ metadata:
     # reporter's actual health endpoint instead.
     gatus.home-operations.com/endpoint: |-
       url: https://tradeforge-reporter.pipitonelabs.com/health
+      group: tradeforge
 spec:
   hostnames: ["tradeforge-reporter.pipitonelabs.com"]
   parentRefs:

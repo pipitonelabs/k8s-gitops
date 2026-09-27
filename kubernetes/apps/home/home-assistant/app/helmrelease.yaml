@@ -57,6 +57,9 @@ spec:
             port: 8123
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: home
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
           - hass.pipitonelabs.com

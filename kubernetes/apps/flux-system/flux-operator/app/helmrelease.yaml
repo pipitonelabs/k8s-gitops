@@ -27,6 +27,9 @@ spec:
     web:
       httpRoute:
         enabled: true
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: flux-system
         hostnames:
           - flux.pipitonelabs.com
         parentRefs:

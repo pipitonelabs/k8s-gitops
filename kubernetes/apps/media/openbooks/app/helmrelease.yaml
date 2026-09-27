@@ -62,6 +62,9 @@ spec:
             port: &port 8080
     route:
       internal:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: media
         hostnames: ["{{ .Release.Name }}.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal

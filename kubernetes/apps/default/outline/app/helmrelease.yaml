@@ -91,6 +91,9 @@ spec:
             port: &port 8080
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: default
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:

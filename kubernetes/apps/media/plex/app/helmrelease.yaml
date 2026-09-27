@@ -91,6 +91,7 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             url: https://{{ .Release.Name }}.pipitonelabs.com/identity
+            group: media
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:

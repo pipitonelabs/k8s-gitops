@@ -62,6 +62,7 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 403"]
+            group: default
         hostnames: ["s3.pipitonelabs.com"]
         parentRefs:
           - name: envoy-internal
