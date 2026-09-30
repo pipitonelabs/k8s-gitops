@@ -63,6 +63,7 @@ machine:
       featureGates:
         ImageVolume: true
         ResourceHealthStatus: true
+      imageMaximumGCAge: 168h
       serializeImagePulls: false
     image: ghcr.io/siderolabs/kubelet:v1.36.0
     extraMounts:
