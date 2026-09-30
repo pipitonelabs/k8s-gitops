@@ -1,3 +1,7 @@
+> **Stale.** This is the upstream cluster-template README (Taskfile, talhelper, SOPS) and no longer matches this repo.
+> For the current procedure see [rebuild-cluster.md](rebuild-cluster.md), [bootstrap-talos.md](bootstrap-talos.md) and
+> [bootstrap-apps.md](bootstrap-apps.md).
+
 # ⛵ Cluster Template
 
 Welcome to my opinionated and extensible template for deploying a single Kubernetes cluster. The goal of this project is to make it easier for people interested in using Kubernetes to deploy a cluster at home on bare-metal or VMs. This template closely mirrors my personal [home-ops](https://github.com/onedr0p/home-ops) repository.
