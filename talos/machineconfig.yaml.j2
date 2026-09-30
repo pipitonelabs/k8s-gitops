@@ -63,6 +63,8 @@ machine:
       featureGates:
         ImageVolume: true
         ResourceHealthStatus: true
+      imageGCHighThresholdPercent: 60
+      imageGCLowThresholdPercent: 50
       imageMaximumGCAge: 168h
       serializeImagePulls: false
     image: ghcr.io/siderolabs/kubelet:v1.37.1
