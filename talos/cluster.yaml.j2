@@ -1,0 +1,174 @@
+---
+# Shared by every node. Layered with networking.yaml.j2, <role>.yaml.j2 and nodes/<ip>.yaml.j2
+# by `talosctl machineconfig patch` (see talos/mod.just: render-config).
+version: v1alpha1
+machine:
+  ca:
+    crt: op://Kubernetes/talos/MACHINE_CA_CRT
+  features:
+    apidCheckExtKeyUsage: true
+    diskQuotaSupport: true
+    rbac: true
+  # Kept in the legacy v1alpha1 document: it has no typed equivalent for extraMounts, and a typed
+  # KubeletConfig cannot be combined with machine.kubelet.
+  kubelet:
+    # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
+    image: ghcr.io/siderolabs/kubelet:v1.37.1
+    defaultRuntimeSeccompProfileEnabled: true
+    disableManifestsDirectory: true
+    extraConfig:
+      allowedUnsafeSysctls:
+        - net.ipv4.ip_forward
+      featureGates:
+        ImageVolume: true
+        ResourceHealthStatus: true
+      imageGCHighThresholdPercent: 60
+      imageGCLowThresholdPercent: 50
+      imageMaximumGCAge: 168h
+      serializeImagePulls: false
+    extraMounts:
+      - destination: /var/mnt/extra
+        type: bind
+        source: /var/mnt/extra
+        options: ["bind", "rshared", "rw"]
+  token: op://Kubernetes/talos/MACHINE_TOKEN
+cluster:
+  ca:
+    crt: op://Kubernetes/talos/CLUSTER_CA_CRT
+  clusterName: k8s
+  controlPlane:
+    endpoint: https://k8s.internal:6443
+  token: op://Kubernetes/talos/CLUSTER_TOKEN
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+  - address: 192.168.10.1
+searchDomains:
+  disableDefault: true
+hostDNS:
+  enabled: true
+  forwardKubeDNSToHost: false
+  resolveMemberNames: true
+---
+apiVersion: v1alpha1
+kind: TimeSyncConfig
+ntp:
+  servers:
+    - time.cloudflare.com
+---
+apiVersion: v1alpha1
+kind: DiscoveryServiceConfig
+name: default
+endpoint: https://discovery.talos.dev/
+---
+apiVersion: v1alpha1
+kind: DiscoveryIdentityConfig
+clusterID: op://Kubernetes/talos/CLUSTER_ID
+clusterSecret: op://Kubernetes/talos/CLUSTER_SECRET
+---
+# The schematic ID is computed from talos/schematic.yaml.j2 at render time (just talos schematic-id)
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
+  image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.14.0
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nbd
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: thunderbolt
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: thunderbolt_net
+---
+apiVersion: v1alpha1
+kind: SysctlConfig
+params:
+  fs.inotify.max_user_watches: "1048576"   # Watchdog
+  fs.inotify.max_user_instances: "8192"    # Watchdog
+  net.core.default_qdisc: fq               # 2.5Gb/s
+  net.core.rmem_max: "16777216"            # 2.5Gb/s | Cloudflared / QUIC
+  net.core.wmem_max: "16777216"            # 2.5Gb/s | Cloudflared / QUIC
+  net.ipv4.tcp_congestion_control: bbr     # 2.5Gb/s
+  net.ipv4.tcp_fastopen: "3"               # Send and accept data in the opening SYN packet
+  net.ipv4.tcp_mtu_probing: "1"            # 2.5Gb/s
+  net.ipv4.tcp_rmem: 4096 87380 8388608    # Optimized for 2.5Gb
+  net.ipv4.tcp_wmem: 4096 65536 8388608    # Optimized for 2.5Gb
+  net.ipv4.tcp_window_scaling: "1"         # 2.5Gb/s
+  vm.nr_hugepages: "1024"                  # PostgreSQL
+  sunrpc.tcp_slot_table_entries: "64"      # 2.5Gb/s | NFS
+  sunrpc.tcp_max_slot_table_entries: "64"  # 2.5Gb/s | NFS
+  user.max_user_namespaces: "11255"        # User Namespaces
+---
+apiVersion: v1alpha1
+kind: SysfsConfig
+params:
+  {% for i in range(0, 20) %}
+  devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
+  {% endfor %}
+---
+apiVersion: v1alpha1
+kind: UdevRulesConfig
+rules:
+  # Thunderbolt
+  - ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
+---
+apiVersion: v1alpha1
+kind: EtcFileConfig
+name: nfsmount.conf
+mode: 0o644
+contents: |
+  [ NFSMount_Global_Options ]
+  nfsvers=4.1
+  hard=True
+  nconnect=8
+  noatime=True
+  rsize=1048576
+  wsize=1048576
+---
+apiVersion: v1alpha1
+kind: CRICustomizationConfig
+name: containerd
+content: |
+  [plugins."io.containerd.cri.v1.images"]
+    discard_unpacked_layers = false
+  [plugins."io.containerd.cri.v1.runtime"]
+    cdi_spec_dirs = ["/var/cdi/static", "/var/cdi/dynamic"]
+    device_ownership_from_security_context = true
+---
+apiVersion: v1alpha1
+kind: WatchdogTimerConfig
+device: /dev/watchdog0
+timeout: 5m
+---
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"
+cgroupRankingExpression: "0.0"
+sampleInterval: "5s"
+---
+apiVersion: v1alpha1
+kind: KubePrismConfig
+port: 7445
+---
+apiVersion: v1alpha1
+kind: KubeNetworkConfig
+dnsDomain: cluster.local
+podSubnets:
+  - 10.244.0.0/16
+serviceSubnets:
+  - 10.245.0.0/16
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+nodeIP:
+  validSubnets:
+    - 192.168.10.0/24
+labels:
+  node.kubernetes.io/gpu: "true"
+  topology.kubernetes.io/region: k8s

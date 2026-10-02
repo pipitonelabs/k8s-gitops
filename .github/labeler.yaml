@@ -11,8 +11,9 @@ area/kubernetes:
 area/talos:
   - changed-files:
       - any-glob-to-any-file: talos/**/*
-area/taskfile:
+area/just:
   - changed-files:
       - any-glob-to-any-file:
-          - .taskfiles/**/*
-          - Taskfile.yaml
+          - .justfile
+          - "**/*.just"
+          - .workstation/**/*
