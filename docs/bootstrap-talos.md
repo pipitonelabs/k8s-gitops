@@ -20,7 +20,7 @@ and the layers are merged with `talosctl machineconfig patch`. Nothing with a se
 | `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2`, API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
 | `worker.yaml.j2` | worker nodes | Zone label |
 | `nodes/<hardware>/<ip>.yaml.j2` | one node | Machine type, hostname, install disk serial (bare metal). The directory name is the node's hardware class |
-| `schematic.yaml.j2` | factory image | Kernel args and system extensions for the bare-metal image |
+| `schematics/baremetal.yaml.j2`, `schematics/proxmox.yaml.j2` | factory image | System extensions (and kernel args) for each hardware class. The IDs are computed at render time |
 | `secrets.yaml.j2` | talosconfig only | Secrets bundle rebuilt from 1Password, used by `generate-talosconfig` |
 
 The layering logic lives in `talos/mod.just` (`render-config`). Nodes are addressed by IP everywhere
@@ -42,7 +42,7 @@ rest of the kubelet stays legacy.
 ### Image and versions
 
 The installer image is `factory.talos.dev/metal-installer/<schematic-id>:<version>`. The schematic ID is
-**computed at render time** by POSTing `talos/schematic.yaml.j2` to the factory (`just talos schematic-id`);
+**computed at render time** by POSTing `talos/schematics/<hardware>.yaml.j2` to the factory (`just talos schematic-id <hardware>`);
 the version is written in `cluster.yaml.j2`.
 
 **Versions are driven by tuppr, not by this repo.** tuppr upgrades Talos and Kubernetes
@@ -55,9 +55,9 @@ They carry `# renovate:` comments, but Renovate's custom manager does not match 
 bumps them automatically.
 
 > **Open question: schematic drift.** The running nodes have extensions `i915`, `intel-ucode`, `mei`,
-> `nfsrahead`, `thunderbolt` (schematic `7af7f1f3...`). `schematic.yaml.j2` also lists `intel-ice-firmware`, so
+> `nfsrahead`, `thunderbolt` (schematic `7af7f1f3...`). `schematics/baremetal.yaml.j2` also lists `intel-ice-firmware`, so
 > the computed schematic is `10884449...` and a fresh install or `just talos upgrade-node` would add that
-> extension. Decide whether it is wanted; if not, remove it from `schematic.yaml.j2`. Rendered configs embed the
+> extension. Decide whether it is wanted; if not, remove it from `schematics/baremetal.yaml.j2`. Rendered configs embed the
 > computed image, so this matters the next time the image is used.
 
 ## Fresh install
@@ -146,7 +146,8 @@ Things that must be true first:
 - Cilium's `devices` includes `eth+` (the VM NIC is `eth0`), or the agent fails and the node never goes Ready.
 - The node's address is a BGP neighbor on the router (`docs/bgp-config.conf` lists `.13` and `.14`), or
   LoadBalancer services with `externalTrafficPolicy: Local` are unreachable when their pod lands there.
-- The installer image in `hardware/proxmox.yaml.j2` matches `just installer-image` in talos-vm-workers.
+- `just talos schematic-id proxmox` here prints the same ID as `tofu output schematic_id` in talos-vm-workers
+  (`talos/schematics/proxmox.yaml.j2` is a copy of that repo's `schematic.yaml`; keep them in sync).
 
 Workers use the existing Rook/Ceph storage as clients and get no OSD. **No worker has been joined with this
 procedure yet.**

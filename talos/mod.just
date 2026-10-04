@@ -15,7 +15,7 @@ apply-node node *args:
 
 [doc('Render the full machine config for a node to stdout (contains secrets)')]
 render-config node:
-    export SCHEMATIC="$(just talos schematic-id)"
+    export SCHEMATIC="$(just talos schematic-id "$(just talos hardware {{ node }})")"
     talosctl machineconfig patch <(just template "{{ source_directory() }}/cluster.yaml.j2") \
         -p @<(just template "{{ source_directory() }}/hardware/$(just talos hardware {{ node }}).yaml.j2") \
         -p @<(just template "{{ source_directory() }}/$(just talos machine-type {{ node }}).yaml.j2") \
@@ -47,14 +47,14 @@ generate-talosconfig:
 kubeconfig:
     talosctl kubeconfig -n "$(talosctl config info -o yaml | yq -r -e '.endpoints[0]')" -f --force-context-name k8s "{{ justfile_directory() }}/kubernetes"
 
-[doc('Print the Talos factory schematic ID for talos/schematic.yaml.j2')]
-schematic-id:
-    just template "{{ source_directory() }}/schematic.yaml.j2" \
+[doc('Print the Talos factory schematic ID for talos/schematics/<hardware>.yaml.j2 (baremetal or proxmox)')]
+schematic-id hardware='baremetal':
+    just template "{{ source_directory() }}/schematics/{{ hardware }}.yaml.j2" \
         | curl -sX POST --data-binary @- https://factory.talos.dev/schematics | jq -r '.id'
 
 [doc('Download the bare-metal Talos ISO for a version, e.g. v1.14.0 (VMs get their image from talos-vm-workers)')]
 download-image version:
-    schematic="$(just talos schematic-id)"
+    schematic="$(just talos schematic-id baremetal)"
     curl -fL --remove-on-error --retry 5 --retry-delay 5 --retry-all-errors --progress-bar \
         -o "{{ source_directory() }}/talos-{{ version }}-${schematic:0:8}.iso" \
         "https://factory.talos.dev/image/${schematic}/{{ version }}/metal-amd64.iso"
@@ -123,5 +123,5 @@ machine-type node:
 
 [private]
 machine-image node:
-    export SCHEMATIC="$(just talos schematic-id)"
+    export SCHEMATIC="$(just talos schematic-id "$(just talos hardware {{ node }})")"
     just template "{{ source_directory() }}/hardware/$(just talos hardware {{ node }}).yaml.j2" | yq -r -e 'select(.kind == "UnattendedInstallConfig") | .installer.image'

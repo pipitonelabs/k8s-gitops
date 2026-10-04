@@ -1,0 +1,14 @@
+---
+# Image Factory schematic for the Proxmox worker VMs. The VMs themselves are created from the same
+# schematic by github.com/pipitonelabs/talos-vm-workers (its schematic.yaml), so keep the two in sync:
+# `just talos schematic-id proxmox` here and `tofu output schematic_id` there must print the same ID.
+#
+# No kernel arguments are needed for NIC naming: the nocloud platform already boots with
+# net.ifnames=0, so the VM NIC is always eth0.
+customization:
+  systemExtensions:
+    officialExtensions:
+      # NFS read-ahead tuning for nodes that mount NFS volumes
+      - siderolabs/nfsrahead
+      # Lets Proxmox shut the VM down cleanly and show its addresses
+      - siderolabs/qemu-guest-agent
