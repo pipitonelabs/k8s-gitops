@@ -1,0 +1,18 @@
+---
+# Proxmox VMs created by github.com/pipitonelabs/talos-vm-workers (Talos nocloud image).
+# The NIC is eth0 and gets its address, gateway and DNS from the cloud-init drive, so no link is
+# configured here. The VM has a virtual i6300esb watchdog, so the shared WatchdogTimerConfig works.
+#
+# The installer must stay on the nocloud platform and the VM schematic, or an upgrade would drop the
+# guest agent and stop reading the cloud-init drive. The ID comes from `just installer-image` in
+# talos-vm-workers; update it here if that repo's schematic.yaml changes.
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
+  image: factory.talos.dev/nocloud-installer/29d123fd0e746fccd5ff52d37c0cdbd2d653e10ae29c39276b6edb9ffbd56cf4:v1.14.0
+# The image is already installed on the VM's only disk (scsi0), so this is only read on an upgrade.
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/sda"
+  wipe: false

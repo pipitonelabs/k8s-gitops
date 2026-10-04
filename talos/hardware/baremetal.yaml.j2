@@ -1,0 +1,85 @@
+---
+# Bare-metal nodes (m0, m1, m2): Intel iGPU, two bonded igc NICs, thunderbolt, 20 CPU threads.
+# The schematic ID is computed from talos/schematic.yaml.j2 at render time (just talos schematic-id).
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
+  image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.14.0
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: thunderbolt
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: thunderbolt_net
+---
+apiVersion: v1alpha1
+kind: SysctlConfig
+params:
+  vm.nr_hugepages: "1024"                  # PostgreSQL
+---
+apiVersion: v1alpha1
+kind: SysfsConfig
+params:
+  {% for i in range(0, 20) %}
+  devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
+  {% endfor %}
+---
+apiVersion: v1alpha1
+kind: UdevRulesConfig
+rules:
+  # Thunderbolt
+  - ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  node.kubernetes.io/gpu: "true"
+---
+# bond0 (LACP over the two igc NICs) with VLANs 20 and 30. The VIP is in controlplane.yaml.j2.
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - enp87s0
+  - enp89s0
+bondMode: 802.3ad
+lacpRate: slow
+miimon: 1000
+xmitHashPolicy: layer3+4
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: DHCPv4Config
+name: bond0
+clientIdentifier: mac
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.20
+vlanID: 20
+parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.30
+vlanID: 30
+parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: EthernetConfig
+name: enp2s0f0np0
+rings:
+  rx: 8160
+  tx: 8160
+---
+apiVersion: v1alpha1
+kind: EthernetConfig
+name: enp2s0f1np1
+rings:
+  rx: 8160
+  tx: 8160

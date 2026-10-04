@@ -14,11 +14,13 @@ and the layers are merged with `talosctl machineconfig patch`. Nothing with a se
 
 | File | Applies to | Contents |
 |---|---|---|
-| `cluster.yaml.j2` | every node | Shared settings: CA/tokens, resolver, NTP, discovery, installer image, kernel modules, sysctls, sysfs, udev, NFS mount options, containerd customisation, kubelet, Kube network/prism/node config |
-| `networking.yaml.j2` | every node | `bond0` (LACP over `enp87s0` + `enp89s0`), VLANs 20 and 30, DHCP on the bond, NIC ring sizes |
+| `cluster.yaml.j2` | every node | Shared settings that do not depend on the machine: CA/tokens, resolver, NTP, discovery, sysctls, NFS mount options, containerd customisation, kubelet, watchdog, Kube network/prism/node config |
+| `hardware/baremetal.yaml.j2` | m0, m1, m2 | Installer image (metal, computed schematic), `bond0` (LACP over `enp87s0` + `enp89s0`), VLANs 20 and 30, NIC ring sizes, thunderbolt, CPU frequency tuning, hugepages, GPU label |
+| `hardware/proxmox.yaml.j2` | Proxmox VMs | Installer image (nocloud, the VM schematic). No link config: the NIC is `eth0` and gets its address from the cloud-init drive |
 | `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2`, API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
-| `nodes/<ip>.yaml.j2` | one node | Machine type, hostname, install disk serial |
-| `schematic.yaml.j2` | factory image | Kernel args and system extensions for the Talos Image Factory |
+| `worker.yaml.j2` | worker nodes | Zone label |
+| `nodes/<hardware>/<ip>.yaml.j2` | one node | Machine type, hostname, install disk serial (bare metal). The directory name is the node's hardware class |
+| `schematic.yaml.j2` | factory image | Kernel args and system extensions for the bare-metal image |
 | `secrets.yaml.j2` | talosconfig only | Secrets bundle rebuilt from 1Password, used by `generate-talosconfig` |
 
 The layering logic lives in `talos/mod.just` (`render-config`). Nodes are addressed by IP everywhere
@@ -76,7 +78,7 @@ just talos download-image v1.14.0       # writes talos/talos-v1.14.0-<schematic>
 
 Write the ISO to USB, boot each node from it, and leave it in maintenance mode (the API listens on port 50000
 without client authentication until a config is applied). It installs to the disk whose serial matches
-`nodes/<ip>.yaml.j2`:
+`nodes/baremetal/<ip>.yaml.j2`:
 
 | Node | Install disk serial |
 |---|---|
@@ -118,6 +120,36 @@ installed by [bootstrap-apps.md](bootstrap-apps.md). Check with:
 talosctl -n 192.168.10.10 health --server=false      # etcd up, API up
 kubectl get nodes                                     # NotReady is expected here
 ```
+
+## Adding a worker VM
+
+Worker VMs are created by [talos-vm-workers](https://github.com/pipitonelabs/talos-vm-workers) (OpenTofu,
+Proxmox). Each VM boots the Talos `nocloud` image at a static address and waits in maintenance mode. This
+repo only supplies its machine config.
+
+1. In talos-vm-workers, add the node to `nodes` and `just apply`. `just wait <name>` blocks until it answers.
+2. Here, add `talos/nodes/proxmox/<ip>.yaml.j2` (machine type `worker` and a hostname), then check it:
+
+   ```bash
+   just talos validate-node 192.168.10.13
+   ```
+
+3. Join it:
+
+   ```bash
+   just talos apply-node 192.168.10.13 --insecure
+   kubectl get nodes -w
+   ```
+
+Things that must be true first:
+
+- Cilium's `devices` includes `eth+` (the VM NIC is `eth0`), or the agent fails and the node never goes Ready.
+- The node's address is a BGP neighbor on the router (`docs/bgp-config.conf` lists `.13` and `.14`), or
+  LoadBalancer services with `externalTrafficPolicy: Local` are unreachable when their pod lands there.
+- The installer image in `hardware/proxmox.yaml.j2` matches `just installer-image` in talos-vm-workers.
+
+Workers use the existing Rook/Ceph storage as clients and get no OSD. **No worker has been joined with this
+procedure yet.**
 
 ## Changing the config on a running cluster
 

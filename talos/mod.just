@@ -17,9 +17,9 @@ apply-node node *args:
 render-config node:
     export SCHEMATIC="$(just talos schematic-id)"
     talosctl machineconfig patch <(just template "{{ source_directory() }}/cluster.yaml.j2") \
-        -p @<(just template "{{ source_directory() }}/networking.yaml.j2") \
+        -p @<(just template "{{ source_directory() }}/hardware/$(just talos hardware {{ node }}).yaml.j2") \
         -p @<(just template "{{ source_directory() }}/$(just talos machine-type {{ node }}).yaml.j2") \
-        -p @<(just template "{{ source_directory() }}/nodes/{{ node }}.yaml.j2")
+        -p @<(just template "$(just talos node-file {{ node }})")
 
 [doc('Show what applying the config would change on a node (dry run, secrets not redacted)')]
 diff-node node:
@@ -27,7 +27,9 @@ diff-node node:
 
 [doc('Validate the rendered config for a node')]
 validate-node node:
-    just talos render-config {{ node }} | talosctl validate --mode metal --config /dev/stdin
+    mode="metal"
+    [[ "$(just talos hardware {{ node }})" == "baremetal" ]] || mode="cloud"
+    just talos render-config {{ node }} | talosctl validate --mode "$mode" --config /dev/stdin
 
 [doc('Regenerate talosconfig from the 1Password secrets (needed on a fresh workstation or rebuild)')]
 generate-talosconfig:
@@ -37,7 +39,7 @@ generate-talosconfig:
     talosctl gen config k8s https://k8s.internal:6443 --with-secrets "$secrets" \
         --output-types talosconfig --output "{{ source_directory() }}/talosconfig" --force
     nodes="$(just talos node-ips)"
-    talosctl config endpoint $nodes
+    talosctl config endpoint $(just talos controlplane-ips)
     talosctl config node $nodes
     just log info "Generated talosconfig" "path" "{{ source_directory() }}/talosconfig" "nodes" "${nodes// /,}"
 
@@ -50,7 +52,7 @@ schematic-id:
     just template "{{ source_directory() }}/schematic.yaml.j2" \
         | curl -sX POST --data-binary @- https://factory.talos.dev/schematics | jq -r '.id'
 
-[doc('Download the Talos ISO for a version, e.g. v1.14.0')]
+[doc('Download the bare-metal Talos ISO for a version, e.g. v1.14.0 (VMs get their image from talos-vm-workers)')]
 download-image version:
     schematic="$(just talos schematic-id)"
     curl -fL --remove-on-error --retry 5 --retry-delay 5 --retry-all-errors --progress-bar \
@@ -61,7 +63,7 @@ download-image version:
 [confirm('Upgrade node ' + node + ' [y|N] ?')]
 [doc('Upgrade Talos on a node using the installer image from the rendered config')]
 upgrade-node node *args:
-    talosctl -n {{ node }} upgrade -i "$(just talos machine-image)" --timeout=10m {{ args }}
+    talosctl -n {{ node }} upgrade -i "$(just talos machine-image {{ node }})" --timeout=10m {{ args }}
 
 [confirm('Upgrade Kubernetes to ' + version + ' [y|N] ?')]
 [doc('Upgrade Kubernetes on the cluster')]
@@ -93,16 +95,33 @@ reset-node node *args:
 reset-cluster:
     talosctl -n "$(just talos node-ips | tr ' ' ',')" reset --graceful=false
 
-# Node IPs come from the files in talos/nodes/ (talosconfig may hold hostnames, or not exist yet)
+# Node IPs come from the files in talos/nodes/<hardware>/ (talosconfig may hold hostnames, or not exist yet)
 [private]
 node-ips:
-    for f in "{{ source_directory() }}"/nodes/*.yaml.j2; do basename "$f" .yaml.j2; done | paste -sd' ' -
+    for f in "{{ source_directory() }}"/nodes/*/*.yaml.j2; do basename "$f" .yaml.j2; done | sort -V | paste -sd' ' -
+
+[private]
+controlplane-ips:
+    for n in $(just talos node-ips); do
+        if [[ "$(just talos machine-type "$n")" == "controlplane" ]]; then echo "$n"; fi
+    done | paste -sd' ' -
+
+[private]
+node-file node:
+    files=("{{ source_directory() }}"/nodes/*/"{{ node }}".yaml.j2)
+    [[ -f "${files[0]}" ]] || { echo "No node file for {{ node }} under talos/nodes/" >&2; exit 1; }
+    echo "${files[0]}"
+
+# The hardware class is the directory the node file lives in: baremetal or proxmox
+[private]
+hardware node:
+    basename "$(dirname "$(just talos node-file {{ node }})")"
 
 [private]
 machine-type node:
-    just template "{{ source_directory() }}/nodes/{{ node }}.yaml.j2" | yq -r -e 'select(.machine) | .machine.type'
+    just template "$(just talos node-file {{ node }})" | yq -r -e 'select(.machine) | .machine.type'
 
 [private]
-machine-image:
+machine-image node:
     export SCHEMATIC="$(just talos schematic-id)"
-    just template "{{ source_directory() }}/cluster.yaml.j2" | yq -r -e 'select(.kind == "UnattendedInstallConfig") | .installer.image'
+    just template "{{ source_directory() }}/hardware/$(just talos hardware {{ node }}).yaml.j2" | yq -r -e 'select(.kind == "UnattendedInstallConfig") | .installer.image'
