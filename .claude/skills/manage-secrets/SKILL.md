@@ -48,5 +48,5 @@ The HelmRelease consumes it via `envFrom: [{ secretRef: { name: <app>-secret } }
 - **Never modify unrelated 1Password fields.** Editing a field or item beyond the exact ask has caused problems here — if a change would touch anything not explicitly requested, stop and confirm (see repo memory `feedback_scope_of_changes`).
 - **Non-secret config stays inline** on the HelmRelease (URLs, ports, flags); only true secrets go through ESO.
 - **DB credentials** for CNPG-backed apps come from the operator-generated `<app>-pguser-secret` (via the `cnpg` component), not a hand-written ExternalSecret — reference that secret directly.
-- After changing an ExternalSecret, `task kubernetes:sync-secrets` forces a refresh; `reloader` restarts the consuming pods automatically.
+- After changing an ExternalSecret, `just kube sync es` forces a refresh; `reloader` restarts the consuming pods automatically.
 - Never print secret values to logs or the terminal.
