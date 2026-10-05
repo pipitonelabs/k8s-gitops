@@ -103,9 +103,14 @@ spec:
         connections:
           requireMsgr2: true
       storage:
-        useAllNodes: true
+        # Explicit list so worker nodes (Ceph clients only) never get an OSD-prepare job
+        useAllNodes: false
         useAllDevices: false
         deviceFilter: nvme1n1
+        nodes:
+          - name: m0
+          - name: m1
+          - name: m2
       osd:
         resources:
           requests:
