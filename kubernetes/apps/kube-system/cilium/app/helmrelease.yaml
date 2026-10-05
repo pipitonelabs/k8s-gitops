@@ -42,7 +42,10 @@ spec:
       name: main
     cni:
       exclusive: false
-    devices: bond+
+    # bond+ is the bare-metal nodes; eth+ is the Proxmox worker VMs (Talos nocloud names the NIC eth0)
+    devices:
+      - bond+
+      - eth+
     enableIPv4BIGTCP: true
     endpointRoutes:
       enabled: true

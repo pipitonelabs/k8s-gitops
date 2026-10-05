@@ -22,17 +22,6 @@ cluster:
     key: op://Kubernetes/talos/CLUSTER_SERVICEACCOUNT_KEY
 ---
 apiVersion: v1alpha1
-kind: Layer2VIPConfig
-name: 192.168.20.2
-link: bond0
----
-apiVersion: v1alpha1
-kind: KubeNodeConfig
-labels:
-  node-role.kubernetes.io/control-plane: ""
-  topology.kubernetes.io/zone: m
----
-apiVersion: v1alpha1
 kind: KubeTalosAPIAccessConfig
 allowedRoles:
   - os:admin
@@ -49,6 +38,38 @@ certExtraSANs:
 extraArgs:
   enable-aggregator-routing: "true"
   feature-gates: ImageVolume=true,ResourceHealthStatus=true
+---
+# With typed documents Talos no longer fills in these API server defaults: without KubeAuthorizerConfig the
+# kube-apiserver refuses to start ("at least one authorization mode must be defined"). They are the same values
+# `talosctl gen config` writes.
+apiVersion: v1alpha1
+kind: KubeAuditPolicyConfig
+configuration:
+  apiVersion: audit.k8s.io/v1
+  kind: Policy
+  rules:
+    - level: Metadata
+---
+apiVersion: v1alpha1
+kind: KubeAuthenticationConfig
+configuration:
+  anonymous:
+    conditions:
+      - path: /livez
+      - path: /readyz
+      - path: /healthz
+    enabled: true
+  jwt: []
+---
+apiVersion: v1alpha1
+kind: KubeAuthorizerConfig
+name: node
+type: Node
+---
+apiVersion: v1alpha1
+kind: KubeAuthorizerConfig
+name: rbac
+type: RBAC
 ---
 apiVersion: v1alpha1
 kind: KubeControllerManagerConfig
@@ -101,3 +122,16 @@ config:
         - identity: {}
       resources:
         - secrets
+---
+# No `taints:` here on purpose: a typed KubeNodeConfig adds no control-plane taint, and these nodes run workloads.
+# The control-plane label is listed explicitly because Talos only keeps labels that are in the config.
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  node-role.kubernetes.io/control-plane: ""
+  topology.kubernetes.io/zone: m
+---
+apiVersion: v1alpha1
+kind: Layer2VIPConfig
+name: 192.168.20.2
+link: bond0

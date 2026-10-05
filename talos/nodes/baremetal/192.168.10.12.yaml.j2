@@ -3,12 +3,12 @@ machine:
   type: controlplane
 ---
 apiVersion: v1alpha1
-kind: HostnameConfig
-hostname: m1.k8s.internal
----
-apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 provisioning:
   diskSelector:
-    match: disk.serial == "25014D60E51E"
+    match: disk.serial == "24514D121897"
   wipe: false
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: m2.k8s.internal

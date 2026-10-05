@@ -6,6 +6,7 @@ set shell := ['bash', '-euo', 'pipefail', '-c']
 
 controller := `talosctl config info -o yaml 2>/dev/null | yq -r -e '.endpoints[0]' 2>/dev/null || true`
 nodes := `just talos node-ips`
+controlplanes := `just talos controlplane-ips`
 
 [private]
 default:
@@ -64,7 +65,7 @@ kubeconfig lb="vip":
 [private]
 ready:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
-    for n in {{ nodes }}; do
+    for n in {{ controlplanes }}; do
         until [[ "$(curl -ks -o /dev/null -w '%{http_code}' --connect-timeout 2 "https://${n}:6443/readyz")" =~ ^(200|401)$ ]]; do
             just log info "Waiting for kube-apiserver. Retrying in 5 seconds..." "stage" "{{ recipe_name() }}" "node" "$n"
             sleep 5

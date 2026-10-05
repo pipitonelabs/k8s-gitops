@@ -1,6 +1,7 @@
 ---
-# Shared by every node. Layered with networking.yaml.j2, <role>.yaml.j2 and nodes/<ip>.yaml.j2
-# by `talosctl machineconfig patch` (see talos/mod.just: render-config).
+# Shared by every node. Layered with hardware/<class>.yaml.j2, <role>.yaml.j2 and
+# nodes/<class>/<ip>.yaml.j2 by `talosctl machineconfig patch` (see talos/mod.just: render-config).
+# Nothing in this file may depend on the kind of machine; that belongs in hardware/.
 version: v1alpha1
 machine:
   ca:
@@ -9,8 +10,8 @@ machine:
     apidCheckExtKeyUsage: true
     diskQuotaSupport: true
     rbac: true
-  # Kept in the legacy v1alpha1 document: it has no typed equivalent for extraMounts, and a typed
-  # KubeletConfig cannot be combined with machine.kubelet.
+  # Kept in the legacy v1alpha1 document: the typed KubeletConfig has no extraMounts (Talos 1.14), and the
+  # two cannot be combined. The node IP is in KubeNodeConfig below.
   kubelet:
     # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
     image: ghcr.io/siderolabs/kubelet:v1.37.1
@@ -41,17 +42,6 @@ cluster:
   token: op://Kubernetes/talos/CLUSTER_TOKEN
 ---
 apiVersion: v1alpha1
-kind: ResolverConfig
-nameservers:
-  - address: 192.168.10.1
-searchDomains:
-  disableDefault: true
-hostDNS:
-  enabled: true
-  forwardKubeDNSToHost: false
-  resolveMemberNames: true
----
-apiVersion: v1alpha1
 kind: TimeSyncConfig
 ntp:
   servers:
@@ -67,24 +57,9 @@ kind: DiscoveryIdentityConfig
 clusterID: op://Kubernetes/talos/CLUSTER_ID
 clusterSecret: op://Kubernetes/talos/CLUSTER_SECRET
 ---
-# The schematic ID is computed from talos/schematic.yaml.j2 at render time (just talos schematic-id)
-apiVersion: v1alpha1
-kind: UnattendedInstallConfig
-installer:
-  # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
-  image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.14.0
----
 apiVersion: v1alpha1
 kind: KernelModuleConfig
 name: nbd
----
-apiVersion: v1alpha1
-kind: KernelModuleConfig
-name: thunderbolt
----
-apiVersion: v1alpha1
-kind: KernelModuleConfig
-name: thunderbolt_net
 ---
 apiVersion: v1alpha1
 kind: SysctlConfig
@@ -100,23 +75,9 @@ params:
   net.ipv4.tcp_rmem: 4096 87380 8388608    # Optimized for 2.5Gb
   net.ipv4.tcp_wmem: 4096 65536 8388608    # Optimized for 2.5Gb
   net.ipv4.tcp_window_scaling: "1"         # 2.5Gb/s
-  vm.nr_hugepages: "1024"                  # PostgreSQL
   sunrpc.tcp_slot_table_entries: "64"      # 2.5Gb/s | NFS
   sunrpc.tcp_max_slot_table_entries: "64"  # 2.5Gb/s | NFS
   user.max_user_namespaces: "11255"        # User Namespaces
----
-apiVersion: v1alpha1
-kind: SysfsConfig
-params:
-  {% for i in range(0, 20) %}
-  devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
-  {% endfor %}
----
-apiVersion: v1alpha1
-kind: UdevRulesConfig
-rules:
-  # Thunderbolt
-  - ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
 ---
 apiVersion: v1alpha1
 kind: EtcFileConfig
@@ -156,6 +117,7 @@ apiVersion: v1alpha1
 kind: KubePrismConfig
 port: 7445
 ---
+# No KubeFlannelCNIConfig anywhere means no CNI: Cilium is installed by Flux/bootstrap.
 apiVersion: v1alpha1
 kind: KubeNetworkConfig
 dnsDomain: cluster.local
@@ -170,5 +132,15 @@ nodeIP:
   validSubnets:
     - 192.168.10.0/24
 labels:
-  node.kubernetes.io/gpu: "true"
   topology.kubernetes.io/region: k8s
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+  - address: 192.168.10.1
+searchDomains:
+  disableDefault: true
+hostDNS:
+  enabled: true
+  forwardKubeDNSToHost: false
+  resolveMemberNames: true

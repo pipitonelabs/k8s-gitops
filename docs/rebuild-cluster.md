@@ -89,7 +89,7 @@ The rebuild needs these items to exist and be correct. The first four are needed
 
 ### Disks
 
-Each node installs Talos to the disk matched by serial (see `talos/nodes/<ip>.yaml.j2`) and gives
+Each node installs Talos to the disk matched by serial (see `talos/nodes/baremetal/<ip>.yaml.j2`) and gives
 Rook/Ceph the whole `nvme1n1` (`deviceFilter: nvme1n1`). **Ceph OSDs need clean disks.** On a rebuild over an
 old cluster, wipe `nvme1n1` and `/var/lib/rook` first; see [rook-ceph.md](rook-ceph.md) ("Clean Rook Directory
 on Storage Device") and `tools/wipe-rook.yaml`.
@@ -225,6 +225,4 @@ Apps that need a database (outline, authentik, tradeforge, budget, supabase-stud
 - No end-to-end rebuild has been rehearsed. Do one on spare hardware or VMs, at least through steps 1-4.
 - CNPG recovery is manual and depends on Garage; consider a scripted recovery or an S3 target outside the
   cluster for the barman archives.
-- `talos/schematic.yaml.j2` lists `intel-ice-firmware`, but the running nodes were installed without it (see
-  [bootstrap-talos.md](bootstrap-talos.md)). A fresh install would therefore not match today's nodes.
 - Keep a copy of the 1Password vault backup somewhere that does not depend on the cluster.

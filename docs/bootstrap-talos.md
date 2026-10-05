@@ -14,11 +14,13 @@ and the layers are merged with `talosctl machineconfig patch`. Nothing with a se
 
 | File | Applies to | Contents |
 |---|---|---|
-| `cluster.yaml.j2` | every node | Shared settings: CA/tokens, resolver, NTP, discovery, installer image, kernel modules, sysctls, sysfs, udev, NFS mount options, containerd customisation, kubelet, Kube network/prism/node config |
-| `networking.yaml.j2` | every node | `bond0` (LACP over `enp87s0` + `enp89s0`), VLANs 20 and 30, DHCP on the bond, NIC ring sizes |
-| `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2`, API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
-| `nodes/<ip>.yaml.j2` | one node | Machine type, hostname, install disk serial |
-| `schematic.yaml.j2` | factory image | Kernel args and system extensions for the Talos Image Factory |
+| `cluster.yaml.j2` | every node | Shared settings that do not depend on the machine: CA/tokens, resolver (nameservers, hostDNS), NTP, discovery, sysctls, NFS mount options, containerd customisation, kubelet, node IP and region label, pod/service subnets (`KubeNetworkConfig`; no CNI document means no CNI), watchdog, prism |
+| `hardware/baremetal.yaml.j2` | m0, m1, m2 | Installer image (metal, computed schematic), `LinkAliasConfig` (`net%d` for every `igc` NIC, giving `net0`/`net1`; the SFP+ ports are `i40e`), `bond0` (LACP over `net0` and `net1`), VLANs 20 and 30, NIC ring sizes, thunderbolt, CPU frequency tuning, hugepages, GPU label |
+| `hardware/proxmox.yaml.j2` | Proxmox VMs | Installer image (nocloud, the VM schematic). No link config: the NIC is `eth0` and gets its address from the cloud-init drive |
+| `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2` (on `bond0`), control-plane and zone labels (no taint, so workloads run here), API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
+| `worker.yaml.j2` | worker nodes | Zone label |
+| `nodes/<hardware>/<ip>.yaml.j2` | one node | Machine type, hostname (`HostnameConfig`), install disk serial (bare metal). The directory name is the node's hardware class |
+| `schematics/baremetal.yaml.j2`, `schematics/proxmox.yaml.j2` | factory image | System extensions (and kernel args) for each hardware class. The IDs are computed at render time |
 | `secrets.yaml.j2` | talosconfig only | Secrets bundle rebuilt from 1Password, used by `generate-talosconfig` |
 
 The layering logic lives in `talos/mod.just` (`render-config`). Nodes are addressed by IP everywhere
@@ -30,17 +32,27 @@ just talos validate-node 192.168.10.10     # talosctl validate --mode metal
 just talos diff-node 192.168.10.10         # dry run against the live node (secrets NOT redacted in the output)
 ```
 
-Things deliberately still in the legacy `v1alpha1` document because there is no typed equivalent:
-`machine.kubelet` (including `extraMounts` for `/var/mnt/extra`, which openebs-hostpath needs, and
-`disableManifestsDirectory`), CA/token fields, etcd settings, and `machine.features` (`rbac`,
-`apidCheckExtKeyUsage`, `diskQuotaSupport`). A typed `KubeletConfig` cannot be combined with `machine.kubelet`,
-and `KubeNodeConfig` cannot be combined with `machine.kubelet.nodeIP`, so node IP and labels are typed while the
-rest of the kubelet stays legacy.
+Everything is a typed document except what has no typed equivalent in Talos 1.14, which stays in the legacy
+`v1alpha1` document: CA/token fields, etcd settings, `machine.features` (`rbac`, `apidCheckExtKeyUsage`,
+`diskQuotaSupport`), `cluster.clusterName`/`controlPlane.endpoint`, and `machine.kubelet`. The kubelet stays legacy
+because the typed `KubeletConfig` has no `extraMounts` (needed for `/var/mnt/extra`, which openebs-hostpath uses) and
+the two cannot be combined; the node IP moved to `KubeNodeConfig`.
+
+Things that are easy to get wrong with typed documents:
+
+- **No CNI:** there is no `cni: none` key. Talos only installs a CNI if a `KubeFlannelCNIConfig` document exists, so
+  leaving it out is how Cilium stays the only CNI. A legacy `cluster.network` block next to `KubeNetworkConfig` is
+  rejected.
+- **Control-plane taint and labels:** a typed `KubeNodeConfig` without `taints` adds no control-plane taint, so
+  `allowSchedulingOnControlPlanes` is not needed (and is rejected). Talos removes any label it owns that is missing
+  from `KubeNodeConfig`, so the control-plane, GPU, region and zone labels are all listed explicitly.
+- **Interface selection:** `LinkAliasConfig` with `name: net%d` and `link.driver == "igc"` gives every matching NIC a
+  sequential alias (`net0`, `net1`, by hardware address). An alias does not rename the interface.
 
 ### Image and versions
 
 The installer image is `factory.talos.dev/metal-installer/<schematic-id>:<version>`. The schematic ID is
-**computed at render time** by POSTing `talos/schematic.yaml.j2` to the factory (`just talos schematic-id`);
+**computed at render time** by POSTing `talos/schematics/<hardware>.yaml.j2` to the factory (`just talos schematic-id <hardware>`);
 the version is written in `cluster.yaml.j2`.
 
 **Versions are driven by tuppr, not by this repo.** tuppr upgrades Talos and Kubernetes
@@ -52,11 +64,11 @@ kube-controller-manager / kube-scheduler / kube-proxy images in `cluster.yaml.j2
 They carry `# renovate:` comments, but Renovate's custom manager does not match `.yaml.j2` files yet, so nothing
 bumps them automatically.
 
-> **Open question: schematic drift.** The running nodes have extensions `i915`, `intel-ucode`, `mei`,
-> `nfsrahead`, `thunderbolt` (schematic `7af7f1f3...`). `schematic.yaml.j2` also lists `intel-ice-firmware`, so
-> the computed schematic is `10884449...` and a fresh install or `just talos upgrade-node` would add that
-> extension. Decide whether it is wanted; if not, remove it from `schematic.yaml.j2`. Rendered configs embed the
-> computed image, so this matters the next time the image is used.
+> **Schematic.** `schematics/baremetal.yaml.j2` computes schematic `7af7f1f3...`, the one the running nodes use:
+> extensions `i915`, `intel-ucode`, `mei`, `nfsrahead`, `thunderbolt` and no extra kernel arguments. The extension order
+> matters (the Image Factory hashes the list in order), so keep it as is. `intel-ice-firmware` is left out on purpose:
+> the nodes use `i40e` and `igc` NICs, not the `ice` driver. Security-lowering kernel arguments (`mitigations=off`,
+> `apparmor=0`, `-selinux`, `init_on_*`, auditd off) were considered and not used.
 
 ## Fresh install
 
@@ -76,7 +88,7 @@ just talos download-image v1.14.0       # writes talos/talos-v1.14.0-<schematic>
 
 Write the ISO to USB, boot each node from it, and leave it in maintenance mode (the API listens on port 50000
 without client authentication until a config is applied). It installs to the disk whose serial matches
-`nodes/<ip>.yaml.j2`:
+`nodes/baremetal/<ip>.yaml.j2`:
 
 | Node | Install disk serial |
 |---|---|
@@ -119,6 +131,37 @@ talosctl -n 192.168.10.10 health --server=false      # etcd up, API up
 kubectl get nodes                                     # NotReady is expected here
 ```
 
+## Adding a worker VM
+
+Worker VMs are created by [talos-vm-workers](https://github.com/pipitonelabs/talos-vm-workers) (OpenTofu,
+Proxmox). Each VM boots the Talos `nocloud` image at a static address and waits in maintenance mode. This
+repo only supplies its machine config.
+
+1. In talos-vm-workers, add the node to `nodes` and `just apply`. `just wait <name>` blocks until it answers.
+2. Here, add `talos/nodes/proxmox/<ip>.yaml.j2` (machine type `worker` and a hostname), then check it:
+
+   ```bash
+   just talos validate-node 192.168.10.13
+   ```
+
+3. Join it:
+
+   ```bash
+   just talos apply-node 192.168.10.13 --insecure
+   kubectl get nodes -w
+   ```
+
+Things that must be true first:
+
+- Cilium's `devices` includes `eth+` (the VM NIC is `eth0`), or the agent fails and the node never goes Ready.
+- The node's address is a BGP neighbor on the router (`docs/bgp-config.conf` lists `.13` and `.14`), or
+  LoadBalancer services with `externalTrafficPolicy: Local` are unreachable when their pod lands there.
+- `just talos schematic-id proxmox` here prints the same ID as `tofu output schematic_id` in talos-vm-workers
+  (`talos/schematics/proxmox.yaml.j2` is a copy of that repo's `schematic.yaml`; keep them in sync).
+
+Workers use the existing Rook/Ceph storage as clients and get no OSD. **No worker has been joined with this
+procedure yet.**
+
 ## Changing the config on a running cluster
 
 1. Edit the template, then `just talos diff-node <ip>` for each node and read the diff.
@@ -135,21 +178,31 @@ kubectl get nodes                                     # NotReady is expected her
 
 ### Migrating the running cluster to these templates
 
-**The layered templates have not been applied to the live nodes yet.** They replaced a single
-`machineconfig.yaml.j2` in the legacy format. They validate (`talosctl validate --mode metal`, all three nodes)
-and were compared to the live config with a dry run, but applying moves the bond, VLANs and VIP into new
-document types, so do it with care:
+**Done on 2026-10-05.** m2, then m1, then m0 were moved from the old single `machineconfig.yaml.j2` (legacy
+format) to these layered, typed templates. Each node was validated, compared to the live config with
+`just talos diff-node`, then applied with `--mode no-reboot` (no node rebooted, because the schematic is unchanged).
+Afterwards each node was checked: typed documents live and no legacy leftovers, LACP with both ports at 2500 Mbps,
+`net0`/`net1` aliases, labels, no taints, no flannel, Cilium and the BGP session, etcd, Ceph and Plex.
 
-- Do m0 first with `--mode try`, confirm it stays reachable on `192.168.10.10`, then apply for real.
-- Wait for `kubectl get nodes` and `ceph status` to settle, then m1, then m2.
-- Expected differences versus the old config: hostname is now a `HostnameConfig` (same value,
-  `mN.k8s.internal`); the bond is explicit about its member NICs (`enp87s0`, `enp89s0`, the same on all three
-  nodes) instead of selecting by MAC prefix and driver; `DHCPv4Config` uses the `mac` client identifier;
-  `topology.kubernetes.io/zone: m` moved to the control-plane `KubeNodeConfig`.
-- Intentionally dropped because the typed documents reject them or they are the new default:
-  `cluster.network.cni: none`, `allowSchedulingOnControlPlanes` (nodes have no taints today and none are
-  added), `cluster.discovery.registries.kubernetes.disabled`, `apiServer.disablePodSecurityPolicy`.
-- The bond config leaves `updelay`/`downdelay` unset to match today's behaviour; `validate` prints a warning
+What to know if you apply a change like this to a running node again:
+
+- **One node at a time, Ceph `HEALTH_OK` first.** Applying the network documents flaps the node's network
+  briefly. m2 (the first apply, and a `--mode try` run before it) took `mon.i`, `osd.1` and MDS `b` out, scaled Plex
+  to zero through the NFS scaler and made the API VIP refuse connections for about 30 seconds; m1 caused no Ceph
+  disruption; m0 caused a short mon warning. All of it recovered on its own. Slow OSD heartbeat warnings and the
+  `CephOSDTimeouts*` alerts clear 5 to 10 minutes later.
+- **Use `--mode try` only when you can accept the revert flap.** It applies, waits, and rolls back, which
+  disturbs the network a second time. `--mode no-reboot` refuses to reboot the node if the change needs one.
+- **Typed API server documents are required.** `KubeAPIServerConfig` alone is not enough: without
+  `KubeAuthorizerConfig` the kube-apiserver crash-loops with "at least one authorization mode must be defined"
+  (this happened on m2 and was fixed by adding the audit, authentication and authorizer documents).
+- **`just talos apply-node` asks for confirmation.** Use `just --yes` when running it from a script.
+- Settings that moved into typed documents keep their values (time, sysctls, sysfs, files, udev, kernel modules,
+  discovery, API server/controller-manager/scheduler/proxy/CoreDNS, install disk and image). The network moved from
+  `machine.network` to typed documents (aliases, bond, VLANs, VIP, resolver, hostname) with the same values.
+- Intentionally dropped as the new default or no longer valid: `cluster.discovery.registries.kubernetes.disabled`,
+  `apiServer.disablePodSecurityPolicy`.
+- The bond config leaves `updelay`/`downdelay` unset to match the old behaviour; `validate` prints a warning
   for that.
 
 ## Upgrades, reboots, resets
