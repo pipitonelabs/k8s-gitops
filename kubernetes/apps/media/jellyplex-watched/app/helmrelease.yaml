@@ -30,6 +30,9 @@ spec:
             env:
               TZ: America/New_York
               PYTHONDONTWRITEBYTECODE: "1"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: { enabled: false }
               readiness: { enabled: false }
@@ -49,21 +52,6 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
     persistence:
-      config:
-        type: emptyDir
-        advancedMounts:
-          jellyplex-watched:
-            app:
-              - path: /app/config
-      config-file:
-        type: secret
-        name: "{{ .Release.Name }}-secret"
-        advancedMounts:
-          jellyplex-watched:
-            app:
-              - path: /app/config/config.yaml
-                subPath: config.yaml
-                readOnly: true
       tmp:
         type: emptyDir
         advancedMounts:
