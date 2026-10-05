@@ -33,18 +33,21 @@ rules:
   # Thunderbolt
   - ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
 ---
+# The two 2.5G igc ports get the aliases net0 and net1 (in hardware-address order). The SFP+ ports are i40e and
+# the Thunderbolt links are thunderbolt-net, so they are not matched. An alias does not rename the interface.
 apiVersion: v1alpha1
-kind: KubeNodeConfig
-labels:
-  node.kubernetes.io/gpu: "true"
+kind: LinkAliasConfig
+name: net%d
+selector:
+  match: link.driver == "igc"
 ---
-# bond0 (LACP over the two igc NICs) with VLANs 20 and 30. The VIP is in controlplane.yaml.j2.
+# bond0 (LACP over net0 and net1) with VLANs 20 and 30. The VIP is in controlplane.yaml.j2.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
 links:
-  - enp87s0
-  - enp89s0
+  - net0
+  - net1
 bondMode: 802.3ad
 lacpRate: slow
 miimon: 1000
@@ -69,6 +72,11 @@ name: bond0.30
 vlanID: 30
 parent: bond0
 mtu: 1500
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  node.kubernetes.io/gpu: "true"
 ---
 apiVersion: v1alpha1
 kind: EthernetConfig

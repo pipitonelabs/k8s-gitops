@@ -10,8 +10,8 @@ machine:
     apidCheckExtKeyUsage: true
     diskQuotaSupport: true
     rbac: true
-  # Kept in the legacy v1alpha1 document: it has no typed equivalent for extraMounts, and a typed
-  # KubeletConfig cannot be combined with machine.kubelet.
+  # Kept in the legacy v1alpha1 document: the typed KubeletConfig has no extraMounts (Talos 1.14), and the
+  # two cannot be combined. The node IP is in KubeNodeConfig below.
   kubelet:
     # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
     image: ghcr.io/siderolabs/kubelet:v1.37.1
@@ -40,17 +40,6 @@ cluster:
   controlPlane:
     endpoint: https://k8s.internal:6443
   token: op://Kubernetes/talos/CLUSTER_TOKEN
----
-apiVersion: v1alpha1
-kind: ResolverConfig
-nameservers:
-  - address: 192.168.10.1
-searchDomains:
-  disableDefault: true
-hostDNS:
-  enabled: true
-  forwardKubeDNSToHost: false
-  resolveMemberNames: true
 ---
 apiVersion: v1alpha1
 kind: TimeSyncConfig
@@ -128,6 +117,7 @@ apiVersion: v1alpha1
 kind: KubePrismConfig
 port: 7445
 ---
+# No KubeFlannelCNIConfig anywhere means no CNI: Cilium is installed by Flux/bootstrap.
 apiVersion: v1alpha1
 kind: KubeNetworkConfig
 dnsDomain: cluster.local
@@ -143,3 +133,14 @@ nodeIP:
     - 192.168.10.0/24
 labels:
   topology.kubernetes.io/region: k8s
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+  - address: 192.168.10.1
+searchDomains:
+  disableDefault: true
+hostDNS:
+  enabled: true
+  forwardKubeDNSToHost: false
+  resolveMemberNames: true

@@ -14,12 +14,12 @@ and the layers are merged with `talosctl machineconfig patch`. Nothing with a se
 
 | File | Applies to | Contents |
 |---|---|---|
-| `cluster.yaml.j2` | every node | Shared settings that do not depend on the machine: CA/tokens, resolver, NTP, discovery, sysctls, NFS mount options, containerd customisation, kubelet, watchdog, Kube network/prism/node config |
-| `hardware/baremetal.yaml.j2` | m0, m1, m2 | Installer image (metal, computed schematic), `bond0` (LACP over `enp87s0` + `enp89s0`), VLANs 20 and 30, NIC ring sizes, thunderbolt, CPU frequency tuning, hugepages, GPU label |
+| `cluster.yaml.j2` | every node | Shared settings that do not depend on the machine: CA/tokens, resolver (nameservers, hostDNS), NTP, discovery, sysctls, NFS mount options, containerd customisation, kubelet, node IP and region label, pod/service subnets (`KubeNetworkConfig`; no CNI document means no CNI), watchdog, prism |
+| `hardware/baremetal.yaml.j2` | m0, m1, m2 | Installer image (metal, computed schematic), `LinkAliasConfig` (`net%d` for every `igc` NIC, giving `net0`/`net1`; the SFP+ ports are `i40e`), `bond0` (LACP over `net0` and `net1`), VLANs 20 and 30, NIC ring sizes, thunderbolt, CPU frequency tuning, hugepages, GPU label |
 | `hardware/proxmox.yaml.j2` | Proxmox VMs | Installer image (nocloud, the VM schematic). No link config: the NIC is `eth0` and gets its address from the cloud-init drive |
-| `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2`, API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
+| `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2` (on `bond0`), control-plane and zone labels (no taint, so workloads run here), API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
 | `worker.yaml.j2` | worker nodes | Zone label |
-| `nodes/<hardware>/<ip>.yaml.j2` | one node | Machine type, hostname, install disk serial (bare metal). The directory name is the node's hardware class |
+| `nodes/<hardware>/<ip>.yaml.j2` | one node | Machine type, hostname (`HostnameConfig`), install disk serial (bare metal). The directory name is the node's hardware class |
 | `schematics/baremetal.yaml.j2`, `schematics/proxmox.yaml.j2` | factory image | System extensions (and kernel args) for each hardware class. The IDs are computed at render time |
 | `secrets.yaml.j2` | talosconfig only | Secrets bundle rebuilt from 1Password, used by `generate-talosconfig` |
 
@@ -32,12 +32,22 @@ just talos validate-node 192.168.10.10     # talosctl validate --mode metal
 just talos diff-node 192.168.10.10         # dry run against the live node (secrets NOT redacted in the output)
 ```
 
-Things deliberately still in the legacy `v1alpha1` document because there is no typed equivalent:
-`machine.kubelet` (including `extraMounts` for `/var/mnt/extra`, which openebs-hostpath needs, and
-`disableManifestsDirectory`), CA/token fields, etcd settings, and `machine.features` (`rbac`,
-`apidCheckExtKeyUsage`, `diskQuotaSupport`). A typed `KubeletConfig` cannot be combined with `machine.kubelet`,
-and `KubeNodeConfig` cannot be combined with `machine.kubelet.nodeIP`, so node IP and labels are typed while the
-rest of the kubelet stays legacy.
+Everything is a typed document except what has no typed equivalent in Talos 1.14, which stays in the legacy
+`v1alpha1` document: CA/token fields, etcd settings, `machine.features` (`rbac`, `apidCheckExtKeyUsage`,
+`diskQuotaSupport`), `cluster.clusterName`/`controlPlane.endpoint`, and `machine.kubelet`. The kubelet stays legacy
+because the typed `KubeletConfig` has no `extraMounts` (needed for `/var/mnt/extra`, which openebs-hostpath uses) and
+the two cannot be combined; the node IP moved to `KubeNodeConfig`.
+
+Things that are easy to get wrong with typed documents:
+
+- **No CNI:** there is no `cni: none` key. Talos only installs a CNI if a `KubeFlannelCNIConfig` document exists, so
+  leaving it out is how Cilium stays the only CNI. A legacy `cluster.network` block next to `KubeNetworkConfig` is
+  rejected.
+- **Control-plane taint and labels:** a typed `KubeNodeConfig` without `taints` adds no control-plane taint, so
+  `allowSchedulingOnControlPlanes` is not needed (and is rejected). Talos removes any label it owns that is missing
+  from `KubeNodeConfig`, so the control-plane, GPU, region and zone labels are all listed explicitly.
+- **Interface selection:** `LinkAliasConfig` with `name: net%d` and `link.driver == "igc"` gives every matching NIC a
+  sequential alias (`net0`, `net1`, by hardware address). An alias does not rename the interface.
 
 ### Image and versions
 
@@ -54,11 +64,11 @@ kube-controller-manager / kube-scheduler / kube-proxy images in `cluster.yaml.j2
 They carry `# renovate:` comments, but Renovate's custom manager does not match `.yaml.j2` files yet, so nothing
 bumps them automatically.
 
-> **Open question: schematic drift.** The running nodes have extensions `i915`, `intel-ucode`, `mei`,
-> `nfsrahead`, `thunderbolt` (schematic `7af7f1f3...`). `schematics/baremetal.yaml.j2` also lists `intel-ice-firmware`, so
-> the computed schematic is `10884449...` and a fresh install or `just talos upgrade-node` would add that
-> extension. Decide whether it is wanted; if not, remove it from `schematics/baremetal.yaml.j2`. Rendered configs embed the
-> computed image, so this matters the next time the image is used.
+> **Schematic.** `schematics/baremetal.yaml.j2` computes schematic `7af7f1f3...`, the one the running nodes use:
+> extensions `i915`, `intel-ucode`, `mei`, `nfsrahead`, `thunderbolt` and no extra kernel arguments. The extension order
+> matters (the Image Factory hashes the list in order), so keep it as is. `intel-ice-firmware` is left out on purpose:
+> the nodes use `i40e` and `igc` NICs, not the `ice` driver. Security-lowering kernel arguments (`mitigations=off`,
+> `apparmor=0`, `-selinux`, `init_on_*`, auditd off) were considered and not used.
 
 ## Fresh install
 
@@ -175,13 +185,17 @@ document types, so do it with care:
 
 - Do m0 first with `--mode try`, confirm it stays reachable on `192.168.10.10`, then apply for real.
 - Wait for `kubectl get nodes` and `ceph status` to settle, then m1, then m2.
-- Expected differences versus the old config: hostname is now a `HostnameConfig` (same value,
-  `mN.k8s.internal`); the bond is explicit about its member NICs (`enp87s0`, `enp89s0`, the same on all three
-  nodes) instead of selecting by MAC prefix and driver; `DHCPv4Config` uses the `mac` client identifier;
-  `topology.kubernetes.io/zone: m` moved to the control-plane `KubeNodeConfig`.
-- Intentionally dropped because the typed documents reject them or they are the new default:
-  `cluster.network.cni: none`, `allowSchedulingOnControlPlanes` (nodes have no taints today and none are
-  added), `cluster.discovery.registries.kubernetes.disabled`, `apiServer.disablePodSecurityPolicy`.
+- Expected differences versus the old config: the settings that moved into typed documents keep their values
+  (time, sysctls, sysfs, files, udev, kernel modules, discovery, API server/controller-manager/scheduler/proxy/CoreDNS,
+  install disk and image); the install image is the same schematic as today (no kernel change, no reboot).
+  The network moves from the legacy `machine.network` block to typed documents (aliases, bond, VLANs, VIP,
+  resolver, hostname) with the same values.
+- **Applying the network change flaps m2's network for about a minute.** A `--mode try` test on m2 (typed config,
+  then the automatic revert) briefly took `mon.i`, `osd.1` and MDS `b` out, scaled Plex to zero through the NFS
+  scaler, and made the API VIP refuse connections for about 30 seconds. Everything recovered on its own within a few
+  minutes. Do it one node at a time, with Ceph `HEALTH_OK` first, and expect Plex to come back by itself.
+- Intentionally dropped as the new default or no longer valid: `cluster.discovery.registries.kubernetes.disabled`,
+  `apiServer.disablePodSecurityPolicy`.
 - The bond config leaves `updelay`/`downdelay` unset to match today's behaviour; `validate` prints a warning
   for that.
 
