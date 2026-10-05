@@ -178,25 +178,31 @@ procedure yet.**
 
 ### Migrating the running cluster to these templates
 
-**The layered templates have not been applied to the live nodes yet.** They replaced a single
-`machineconfig.yaml.j2` in the legacy format. They validate (`talosctl validate --mode metal`, all three nodes)
-and were compared to the live config with a dry run, but applying moves the bond, VLANs and VIP into new
-document types, so do it with care:
+**Done on 2026-10-05.** m2, then m1, then m0 were moved from the old single `machineconfig.yaml.j2` (legacy
+format) to these layered, typed templates. Each node was validated, compared to the live config with
+`just talos diff-node`, then applied with `--mode no-reboot` (no node rebooted, because the schematic is unchanged).
+Afterwards each node was checked: typed documents live and no legacy leftovers, LACP with both ports at 2500 Mbps,
+`net0`/`net1` aliases, labels, no taints, no flannel, Cilium and the BGP session, etcd, Ceph and Plex.
 
-- Do m0 first with `--mode try`, confirm it stays reachable on `192.168.10.10`, then apply for real.
-- Wait for `kubectl get nodes` and `ceph status` to settle, then m1, then m2.
-- Expected differences versus the old config: the settings that moved into typed documents keep their values
-  (time, sysctls, sysfs, files, udev, kernel modules, discovery, API server/controller-manager/scheduler/proxy/CoreDNS,
-  install disk and image); the install image is the same schematic as today (no kernel change, no reboot).
-  The network moves from the legacy `machine.network` block to typed documents (aliases, bond, VLANs, VIP,
-  resolver, hostname) with the same values.
-- **Applying the network change flaps m2's network for about a minute.** A `--mode try` test on m2 (typed config,
-  then the automatic revert) briefly took `mon.i`, `osd.1` and MDS `b` out, scaled Plex to zero through the NFS
-  scaler, and made the API VIP refuse connections for about 30 seconds. Everything recovered on its own within a few
-  minutes. Do it one node at a time, with Ceph `HEALTH_OK` first, and expect Plex to come back by itself.
+What to know if you apply a change like this to a running node again:
+
+- **One node at a time, Ceph `HEALTH_OK` first.** Applying the network documents flaps the node's network
+  briefly. m2 (the first apply, and a `--mode try` run before it) took `mon.i`, `osd.1` and MDS `b` out, scaled Plex
+  to zero through the NFS scaler and made the API VIP refuse connections for about 30 seconds; m1 caused no Ceph
+  disruption; m0 caused a short mon warning. All of it recovered on its own. Slow OSD heartbeat warnings and the
+  `CephOSDTimeouts*` alerts clear 5 to 10 minutes later.
+- **Use `--mode try` only when you can accept the revert flap.** It applies, waits, and rolls back, which
+  disturbs the network a second time. `--mode no-reboot` refuses to reboot the node if the change needs one.
+- **Typed API server documents are required.** `KubeAPIServerConfig` alone is not enough: without
+  `KubeAuthorizerConfig` the kube-apiserver crash-loops with "at least one authorization mode must be defined"
+  (this happened on m2 and was fixed by adding the audit, authentication and authorizer documents).
+- **`just talos apply-node` asks for confirmation.** Use `just --yes` when running it from a script.
+- Settings that moved into typed documents keep their values (time, sysctls, sysfs, files, udev, kernel modules,
+  discovery, API server/controller-manager/scheduler/proxy/CoreDNS, install disk and image). The network moved from
+  `machine.network` to typed documents (aliases, bond, VLANs, VIP, resolver, hostname) with the same values.
 - Intentionally dropped as the new default or no longer valid: `cluster.discovery.registries.kubernetes.disabled`,
   `apiServer.disablePodSecurityPolicy`.
-- The bond config leaves `updelay`/`downdelay` unset to match today's behaviour; `validate` prints a warning
+- The bond config leaves `updelay`/`downdelay` unset to match the old behaviour; `validate` prints a warning
   for that.
 
 ## Upgrades, reboots, resets
