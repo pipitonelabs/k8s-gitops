@@ -23,7 +23,6 @@ spec:
   interval: 1h
   values:
     csi:
-      cephFSKernelMountOptions: ms_mode=prefer-crc
       enableLiveness: true
       # csi-provisioner v6.2.0 (Rook v1.20.8's default) can leave the volumesnapshot-as-source-protection
       # finalizer on a VolSync temp snapshot after a write conflict, and nothing ever removes it. The

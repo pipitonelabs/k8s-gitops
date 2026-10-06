@@ -43,6 +43,12 @@ spec:
       crashCollector:
         disable: false
       csi:
+        # The cluster requires msgr2 (network.connections.requireMsgr2), but the kernel CephFS client defaults to
+        # msgr v1, so CephFS mounts fail with "no mds (Metadata Server) is up". With the ceph-csi-operator the mount
+        # options are read from here (not from the operator's csi.cephFSKernelMountOptions) and copied into the
+        # ClientProfile.
+        cephfs:
+          kernelMountOptions: ms_mode=prefer-crc
         readAffinity:
           enabled: true
       # Rotate daemon/service cephx keys to the new aes256k key type (Ceph 20.2.4,
