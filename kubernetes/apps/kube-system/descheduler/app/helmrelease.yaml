@@ -25,6 +25,9 @@ spec:
     kind: Deployment
     deschedulerPolicyAPIVersion: descheduler/v1alpha2
     deschedulerPolicy:
+      # Only the control-plane nodes are processed, so an empty worker node does not make LowNodeUtilization
+      # evict pods from m0/m2 onto it.
+      nodeSelector: node-role.kubernetes.io/control-plane
       metricsProviders:
         - source: KubernetesMetrics
       profiles:

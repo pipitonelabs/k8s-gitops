@@ -102,6 +102,15 @@ spec:
       network:
         connections:
           requireMsgr2: true
+      # Ceph daemons stay on the control-plane nodes: worker nodes (VMs) are Ceph clients only
+      placement:
+        all:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: Exists
       storage:
         # Explicit list so worker nodes (Ceph clients only) never get an OSD-prepare job
         useAllNodes: false
@@ -162,6 +171,12 @@ spec:
             activeStandby: true
             priorityClassName: system-cluster-critical
             placement:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: node-role.kubernetes.io/control-plane
+                          operator: Exists
               topologySpreadConstraints:
                 - maxSkew: 1
                   topologyKey: kubernetes.io/hostname
