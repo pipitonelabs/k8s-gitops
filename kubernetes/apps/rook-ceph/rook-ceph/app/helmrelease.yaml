@@ -24,12 +24,6 @@ spec:
   values:
     csi:
       enableLiveness: true
-      # csi-provisioner v6.2.0 (Rook v1.20.8's default) can leave the volumesnapshot-as-source-protection
-      # finalizer on a VolSync temp snapshot after a write conflict, and nothing ever removes it. The
-      # snapshot then never finishes deleting and that app's backups stop. v6.2.1 adds a sweep that
-      # cleans these up. Remove this override once Rook ships csi-provisioner >= v6.2.1.
-      provisioner:
-        tag: v6.2.1
       serviceMonitor:
         enabled: true
     image:
