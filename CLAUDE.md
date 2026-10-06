@@ -8,33 +8,39 @@ This is a GitOps-managed Kubernetes homelab cluster using Talos Linux as the OS 
 
 ## Common Commands
 
-This project uses Task (Taskfile) for automation. Run `task --list` to see all available tasks.
+This project uses [just](https://just.systems) for automation (Taskfile was replaced). Run `just --list` for modules and `just --list <module>` for recipes. Tools: `just workstation brew`. Talos recipes need talosctl v1.14+ and you must be signed in to 1Password (`op`).
 
-**Kubernetes Operations:**
+**Kubernetes Operations (`just kube`):**
 ```bash
-task kubernetes:sync-secrets         # Sync all ExternalSecrets
-task kubernetes:cleanse-pods         # Clean up Failed/Pending pods
-task kubernetes:browse-pvc CLAIM=X   # Mount PVC to container for debugging
+just kube sync es                    # Force-sync all ExternalSecrets (also: hr, ks, gitrepo, ocirepo)
+just kube prune-pods                 # Delete Failed/Pending/Succeeded pods
+just kube browse-pvc NS CLAIM        # Mount a PVC in a throwaway pod
+just kube debug-node NODE            # Privileged shell on a node
 ```
 
-**Talos Operations:**
+**Talos Operations (`just talos`, nodes are addressed by IP):**
 ```bash
-task talos:apply-node NODE=X         # Apply Talos config to a node
-task talos:upgrade-node NODE=X       # Upgrade Talos version on a node
-task talos:generate-kubeconfig       # Generate kubeconfig from Talos
-task talos:generate-iso VERSION=X    # Generate bootable Talos ISO
+just talos render-config IP          # Render the layered machine config (contains secrets)
+just talos diff-node IP              # Dry-run diff against the live node
+just talos apply-node IP --mode try  # Apply config (try = auto-rollback)
+just talos upgrade-node IP           # Upgrade Talos on a node
+just talos generate-talosconfig      # Rebuild talos/talosconfig from 1Password
+just talos kubeconfig                # Fetch kubeconfig
+just talos download-image vX.Y.Z     # Download the Talos ISO
 ```
 
-**VolSync Backup/Restore:**
+**VolSync Backup/Restore (`just kube`):**
 ```bash
-task volsync:snapshot NS=X APP=Y              # Create backup snapshot
-task volsync:restore NS=X APP=Y PREVIOUS=Z    # Restore from backup
+just kube snapshot NS APP            # Manual snapshot, waits for completion
+just kube restore NS APP [PREVIOUS]  # In-place restore (0 = latest snapshot)
+just kube volsync suspend|resume     # Pause VolSync
 ```
 
-**Bootstrap:**
+**Bootstrap (`just bootstrap`, see docs/rebuild-cluster.md):**
 ```bash
-task bootstrap:talos    # Bootstrap Talos cluster
-task bootstrap:apps     # Bootstrap Kubernetes apps via helmfile
+just bootstrap talos    # Apply configs, bootstrap etcd, fetch kubeconfig
+just bootstrap apps     # Secrets, CRDs, Cilium/CoreDNS/Spegel/cert-manager/Flux via helmfile
+just bootstrap cluster  # Both stages
 ```
 
 ## Architecture
@@ -43,10 +49,11 @@ task bootstrap:apps     # Bootstrap Kubernetes apps via helmfile
 - `kubernetes/apps/` - Applications organized by namespace (default, observability, networking, media, home, database, etc.)
 - `kubernetes/components/` - Reusable kustomize components (namespace, volsync, cnpg, nfs-scaler, dragonfly)
 - `kubernetes/flux/` - Flux configuration and Helm/OCI repository sources
-- `talos/` - Talos machine configs with Minijinja templating
+- `talos/` - Talos machine configs: layered Minijinja templates (`cluster`, `hardware/<class>`, `controlplane`/`worker`, `nodes/<class>/<ip>`) merged by `talosctl machineconfig patch`
 - `bootstrap/` - Initial cluster bootstrap (helmfile.d with CRDs and apps)
 - `terraform/` - Infrastructure as Code for non-K8s resources
-- `.taskfiles/` - Task automation scripts
+- `.justfile` + `*/mod.just` - `just` automation (modules: bootstrap, kube, talos, workstation in `.workstation/`)
+- `docs/` - Rebuild runbooks (rebuild-cluster, bootstrap-talos, bootstrap-apps)
 
 ### Core Stack
 - **OS**: Talos Linux (immutable, minimal)
