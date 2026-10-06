@@ -6,6 +6,8 @@ namespace: security
 resources:
   - ./blueprint-tradeforge.yaml
   - ./blueprint-budget.yaml
+  - ./blueprint-core.yaml
+  - ./blueprint-apps.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./httproute.yaml

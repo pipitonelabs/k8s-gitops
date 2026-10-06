@@ -35,6 +35,8 @@ spec:
       configMaps:
         - authentik-blueprint-tradeforge
         - authentik-blueprint-budget
+        - authentik-blueprint-core
+        - authentik-blueprint-apps
     global:
       podAnnotations:
         secret.reloader.stakater.com/reload: authentik-secret
