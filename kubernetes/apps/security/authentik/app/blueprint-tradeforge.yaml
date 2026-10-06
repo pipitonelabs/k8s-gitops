@@ -36,6 +36,7 @@ data:
           client_secret: !Env TRADEFORGE_JWT_SECRET
           sub_mode: user_uuid
           access_token_validity: hours=4
+          refresh_token_validity: days=30
           grant_types:
             - authorization_code
             - refresh_token
@@ -50,6 +51,7 @@ data:
             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-offline_access]]
             - !KeyOf tradeforge-role
           redirect_uris:
             - matching_mode: strict
