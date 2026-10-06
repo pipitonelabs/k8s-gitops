@@ -152,7 +152,7 @@ kubectl get replicationdestination -A                # LAST SYNC should populate
 kubectl get jobs -A | rg volsync-dst                 # the restore movers
 ```
 
-Apps restored this way: home-assistant, autobrr, maintainerr, openbooks, overseerr, pinchflat, plex, prowlarr,
+Apps restored this way: home-assistant, maintainerr, openbooks, overseerr, pinchflat, plex, prowlarr,
 radarr, recyclarr, sabnzbd, seerr, sonarr, tautulli, grafana (plus the unused garage and outline PVCs).
 
 **Manual or point-in-time restore** of a single app on a running cluster *(untested end to end)*:

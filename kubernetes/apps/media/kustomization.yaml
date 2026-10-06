@@ -5,7 +5,6 @@ namespace: media
 components:
   - ../../components/namespace
 resources:
-#  - ./autobrr/ks.yaml
   - ./seerr/ks.yaml
   - ./jellyplex-watched/ks.yaml
   - ./maintainerr/ks.yaml
