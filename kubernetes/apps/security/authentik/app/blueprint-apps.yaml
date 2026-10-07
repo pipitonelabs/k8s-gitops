@@ -1,10 +1,10 @@
 ---
 # Authentik blueprint for the OIDC apps formerly managed by terraform/authentik:
-# grafana, minio and outline. Mounted into /blueprints by the chart (see
+# grafana and outline. Mounted into /blueprints by the chart (see
 # helmrelease.yaml: blueprints.configMaps). Providers are matched by name and
 # applications by slug, so this adopts the existing objects. client_id/secret come
 # from env (<APP>_CLIENT_ID / <APP>_CLIENT_SECRET), provided via the
-# authentik-secret ExternalSecret (1Password items grafana, minio, outline).
+# authentik-secret ExternalSecret (1Password items grafana, outline).
 # Tokens are RS256, signed with the Authentik self-signed keypair, 4h access tokens.
 # Flows come from blueprint-core.yaml and are looked up by slug.
 apiVersion: v1
@@ -54,47 +54,6 @@ data:
         identifiers:
           target: !KeyOf grafana-app
           group: !Find [authentik_core.group, [name, Monitoring]]
-          order: 0
-        attrs:
-          enabled: true
-
-      # --- minio ----------------------------------------------------------
-      - id: minio-provider
-        model: authentik_providers_oauth2.oauth2provider
-        identifiers:
-          name: minio
-        attrs:
-          client_type: confidential
-          client_id: !Env MINIO_OAUTH_CLIENT_ID
-          client_secret: !Env MINIO_OAUTH_CLIENT_SECRET
-          access_token_validity: hours=4
-          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
-          authorization_flow: !Find [authentik_flows.flow, [slug, provider-authorization-implicit-consent]]
-          authentication_flow: !Find [authentik_flows.flow, [slug, authentication-flow]]
-          invalidation_flow: !Find [authentik_flows.flow, [slug, invalidation-flow]]
-          property_mappings:
-            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
-            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
-            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
-          redirect_uris:
-            - matching_mode: strict
-              url: https://minio.pipitonelabs.com/oauth_callback
-      - id: minio-app
-        model: authentik_core.application
-        identifiers:
-          slug: minio
-        attrs:
-          name: Minio
-          provider: !KeyOf minio-provider
-          group: Infrastructure
-          open_in_new_tab: true
-          meta_icon: https://dl.min.io/logo/Minio_logo_light/Minio_logo_light.svg
-          meta_launch_url: https://minio.pipitonelabs.com/
-          policy_engine_mode: all
-      - model: authentik_policies.policybinding
-        identifiers:
-          target: !KeyOf minio-app
-          group: !Find [authentik_core.group, [name, Infrastructure]]
           order: 0
         attrs:
           enabled: true
