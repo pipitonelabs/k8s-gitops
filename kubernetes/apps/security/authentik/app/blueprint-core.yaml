@@ -1,0 +1,478 @@
+---
+# Authentik core blueprint: groups, policies, stages, flows, brands. Mounted into
+# /blueprints by the chart (see helmrelease.yaml: blueprints.configMaps).
+# Replaces the retired terraform/authentik stack. Objects are matched on their
+# identifiers (slug / name / domain), so applying this adopts the objects Terraform
+# created instead of duplicating them. The app blueprints (blueprint-*.yaml) look
+# the flows up by slug.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-core
+data:
+  core.yaml: |
+    version: 1
+    metadata:
+      name: core
+    entries:
+      # --- Groups ---------------------------------------------------------
+      - model: authentik_core.group
+        identifiers: {name: Downloads}
+        attrs: {is_superuser: false}
+      - model: authentik_core.group
+        identifiers: {name: Home}
+        attrs: {is_superuser: false}
+      - model: authentik_core.group
+        identifiers: {name: Infrastructure}
+        attrs: {is_superuser: false}
+      - model: authentik_core.group
+        identifiers: {name: Media}
+        attrs: {is_superuser: false}
+      - model: authentik_core.group
+        identifiers: {name: Monitoring}
+        attrs: {is_superuser: false}
+      - id: group-users
+        model: authentik_core.group
+        identifiers: {name: Users}
+        attrs: {is_superuser: false}
+      - model: authentik_core.group
+        identifiers: {name: Self Hosted}
+        attrs: {is_superuser: false}
+      - model: authentik_core.group
+        identifiers: {name: Grafana Admins}
+        attrs: {is_superuser: false}
+
+      # --- Kubernetes service connection (for outposts) -------------------
+      - model: authentik_outposts.kubernetesserviceconnection
+        identifiers: {name: local}
+        attrs: {local: true}
+
+      # --- Policies -------------------------------------------------------
+      - id: policy-password-complexity
+        model: authentik_policies_password.passwordpolicy
+        identifiers: {name: password-complexity}
+        attrs:
+          length_min: 8
+          amount_digits: 1
+          amount_lowercase: 1
+          amount_uppercase: 1
+          error_message: "Minimum password length: 10. At least 1 of each required: uppercase, lowercase, digit"
+      - id: policy-user-settings-authorization
+        model: authentik_policies_expression.expressionpolicy
+        identifiers: {name: user-settings-authorization}
+        attrs:
+          expression: |
+            from authentik.lib.config import CONFIG
+            from authentik.core.models import (
+                USER_ATTRIBUTE_CHANGE_EMAIL,
+                USER_ATTRIBUTE_CHANGE_NAME,
+                USER_ATTRIBUTE_CHANGE_USERNAME
+            )
+            prompt_data = request.context.get('prompt_data')
+
+            if not request.user.group_attributes(request.http_request).get(
+                USER_ATTRIBUTE_CHANGE_EMAIL, CONFIG.y_bool('default_user_change_email', True)
+            ):
+                if prompt_data.get('email') != request.user.email:
+                    ak_message('Not allowed to change email address.')
+                    return False
+
+            if not request.user.group_attributes(request.http_request).get(
+                USER_ATTRIBUTE_CHANGE_NAME, CONFIG.y_bool('default_user_change_name', True)
+            ):
+                if prompt_data.get('name') != request.user.name:
+                    ak_message('Not allowed to change name.')
+                    return False
+
+            if not request.user.group_attributes(request.http_request).get(
+                USER_ATTRIBUTE_CHANGE_USERNAME, CONFIG.y_bool('default_user_change_username', True)
+            ):
+                if prompt_data.get('username') != request.user.username:
+                    ak_message('Not allowed to change username.')
+                    return False
+
+            return True
+
+      # --- Prompt fields --------------------------------------------------
+      - id: field-username
+        model: authentik_stages_prompt.prompt
+        identifiers: {name: username}
+        attrs:
+          field_key: username
+          label: Username
+          type: text
+          required: true
+          initial_value_expression: true
+          initial_value: |-
+            try:
+                return user.username
+            except:
+                return ''
+          placeholder: |-
+            try:
+                return user.username
+            except:
+                return ''
+          order: 200
+      - id: field-name
+        model: authentik_stages_prompt.prompt
+        identifiers: {name: name}
+        attrs:
+          field_key: name
+          label: Name
+          type: text
+          required: true
+          initial_value_expression: true
+          initial_value: |-
+            try:
+                return user.name
+            except:
+                return ''
+          placeholder: |-
+            try:
+                return user.name
+            except:
+                return ''
+          order: 201
+      - id: field-email
+        model: authentik_stages_prompt.prompt
+        identifiers: {name: email}
+        attrs:
+          field_key: email
+          label: Email
+          type: email
+          required: true
+          initial_value_expression: true
+          initial_value: |-
+            try:
+                return user.email
+            except:
+                return ''
+          placeholder: |-
+            try:
+                return user.email
+            except:
+                return ''
+          order: 202
+      - id: field-locale
+        model: authentik_stages_prompt.prompt
+        identifiers: {name: locale}
+        attrs:
+          field_key: attributes.settings.locale
+          label: Locale
+          type: ak-locale
+          required: true
+          initial_value_expression: true
+          initial_value: |-
+            try:
+                return user.attributes.get('settings', {}).get('locale', '')
+            except:
+                return ''
+          placeholder: |-
+            try:
+                return user.attributes.get('settings', {}).get('locale', '')
+            except:
+                return ''
+          order: 203
+      - id: field-password
+        model: authentik_stages_prompt.prompt
+        identifiers: {name: password}
+        attrs:
+          field_key: password
+          label: Password
+          type: password
+          required: true
+          initial_value: Password
+          placeholder: Password
+          order: 300
+      - id: field-password-repeat
+        model: authentik_stages_prompt.prompt
+        identifiers: {name: password-repeat}
+        attrs:
+          field_key: password-repeat
+          label: Password (repeat)
+          type: password
+          required: true
+          initial_value: Password (repeat)
+          placeholder: Password (repeat)
+          order: 301
+
+      # --- Flows ----------------------------------------------------------
+      - id: flow-authentication
+        model: authentik_flows.flow
+        identifiers: {slug: authentication-flow}
+        attrs:
+          name: authentication-flow
+          title: Welcome!
+          designation: authentication
+          policy_engine_mode: all
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      - id: flow-invalidation
+        model: authentik_flows.flow
+        identifiers: {slug: invalidation-flow}
+        attrs:
+          name: Logged out of application
+          title: You've logged out of %(app)s.
+          designation: invalidation
+          policy_engine_mode: any
+          denied_action: continue
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      - id: flow-recovery
+        model: authentik_flows.flow
+        identifiers: {slug: password-recovery}
+        attrs:
+          name: recovery-flow
+          title: Password recovery
+          designation: recovery
+          compatibility_mode: true
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      - id: flow-enrollment-invitation
+        model: authentik_flows.flow
+        identifiers: {slug: enrollment-invitation}
+        attrs:
+          name: enrollment-invitation-flow
+          title: Enrollment invitation
+          designation: enrollment
+          compatibility_mode: true
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      - id: flow-user-settings
+        model: authentik_flows.flow
+        identifiers: {slug: user-settings-flow}
+        attrs:
+          name: User settings
+          title: Update your info
+          designation: stage_configuration
+          policy_engine_mode: any
+          denied_action: message_continue
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      - id: flow-provider-authorization-implicit-consent
+        model: authentik_flows.flow
+        identifiers: {slug: provider-authorization-implicit-consent}
+        attrs:
+          name: Authorize Application
+          title: Redirecting to %(app)s
+          designation: authorization
+          policy_engine_mode: any
+          denied_action: message_continue
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+
+      # --- Stages: authentication ----------------------------------------
+      - id: stage-authentication-password
+        model: authentik_stages_password.passwordstage
+        identifiers: {name: authentication-password}
+        attrs:
+          backends:
+            - authentik.core.auth.InbuiltBackend
+          failed_attempts_before_cancel: 3
+      - id: stage-authentication-identification
+        model: authentik_stages_identification.identificationstage
+        identifiers: {name: authentication-identification}
+        attrs:
+          user_fields: [username, email]
+          case_insensitive_matching: false
+          show_source_labels: true
+          show_matched_user: false
+          password_stage: !KeyOf stage-authentication-password
+          recovery_flow: !KeyOf flow-recovery
+      - id: stage-authentication-mfa-validation
+        model: authentik_stages_authenticator_validate.authenticatorvalidatestage
+        identifiers: {name: authentication-mfa-validation}
+        attrs:
+          device_classes: [static, totp, webauthn]
+          not_configured_action: skip
+      - id: stage-authentication-login
+        model: authentik_stages_user_login.userloginstage
+        identifiers: {name: authentication-login}
+
+      # --- Stages: invalidation ------------------------------------------
+      - id: stage-invalidation-logout
+        model: authentik_stages_user_logout.userlogoutstage
+        identifiers: {name: invalidation-logout}
+
+      # --- Stages: recovery ----------------------------------------------
+      - id: stage-recovery-identification
+        model: authentik_stages_identification.identificationstage
+        identifiers: {name: recovery-identification}
+        attrs:
+          user_fields: [username, email]
+          case_insensitive_matching: false
+          show_source_labels: false
+          show_matched_user: false
+      - id: stage-recovery-email
+        model: authentik_stages_email.emailstage
+        identifiers: {name: recovery-email}
+        attrs:
+          activate_user_on_success: true
+          use_global_settings: true
+          template: email/password_reset.html
+          subject: Password recovery
+      - id: stage-password-change-prompt
+        model: authentik_stages_prompt.promptstage
+        identifiers: {name: password-change-prompt}
+        attrs:
+          fields:
+            - !KeyOf field-password
+            - !KeyOf field-password-repeat
+          validation_policies:
+            - !KeyOf policy-password-complexity
+      - id: stage-password-change-write
+        model: authentik_stages_user_write.userwritestage
+        identifiers: {name: password-change-write}
+        attrs:
+          create_users_as_inactive: false
+
+      # --- Stages: enrollment invitation ---------------------------------
+      - id: stage-enrollment-invitation
+        model: authentik_stages_invitation.invitationstage
+        identifiers: {name: enrollment-invitation}
+        attrs:
+          continue_flow_without_invitation: false
+      - id: stage-source-enrollment-prompt
+        model: authentik_stages_prompt.promptstage
+        identifiers: {name: source-enrollment-prompt}
+        attrs:
+          fields:
+            - !KeyOf field-username
+            - !KeyOf field-name
+            - !KeyOf field-email
+            - !KeyOf field-password
+            - !KeyOf field-password-repeat
+          validation_policies:
+            - !KeyOf policy-password-complexity
+      - id: stage-enrollment-user-write
+        model: authentik_stages_user_write.userwritestage
+        identifiers: {name: enrollment-user-write}
+        attrs:
+          create_users_as_inactive: false
+          create_users_group: !KeyOf group-users
+      - id: stage-source-enrollment-login
+        model: authentik_stages_user_login.userloginstage
+        identifiers: {name: source-enrollment-login}
+        attrs:
+          session_duration: seconds=0
+
+      # --- Stages: user settings -----------------------------------------
+      - id: stage-user-settings
+        model: authentik_stages_prompt.promptstage
+        identifiers: {name: user-settings}
+        attrs:
+          fields:
+            - !KeyOf field-username
+            - !KeyOf field-name
+            - !KeyOf field-email
+            - !KeyOf field-locale
+          validation_policies:
+            - !KeyOf policy-user-settings-authorization
+      - id: stage-user-settings-write
+        model: authentik_stages_user_write.userwritestage
+        identifiers: {name: user-settings-write}
+        attrs:
+          create_users_as_inactive: false
+
+      # --- Flow stage bindings -------------------------------------------
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-authentication
+          order: 0
+        attrs:
+          stage: !KeyOf stage-authentication-identification
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-authentication
+          order: 10
+        attrs:
+          stage: !KeyOf stage-authentication-mfa-validation
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-authentication
+          order: 100
+        attrs:
+          stage: !KeyOf stage-authentication-login
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-invalidation
+          order: 0
+        attrs:
+          stage: !KeyOf stage-invalidation-logout
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-recovery
+          order: 0
+        attrs:
+          stage: !KeyOf stage-recovery-identification
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-recovery
+          order: 10
+        attrs:
+          stage: !KeyOf stage-recovery-email
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-recovery
+          order: 20
+        attrs:
+          stage: !KeyOf stage-password-change-prompt
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-recovery
+          order: 30
+        attrs:
+          stage: !KeyOf stage-password-change-write
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-invitation
+          order: 0
+        attrs:
+          stage: !KeyOf stage-enrollment-invitation
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-invitation
+          order: 10
+        attrs:
+          stage: !KeyOf stage-source-enrollment-prompt
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-invitation
+          order: 20
+        attrs:
+          stage: !KeyOf stage-enrollment-user-write
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-invitation
+          order: 30
+        attrs:
+          stage: !KeyOf stage-source-enrollment-login
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-user-settings
+          order: 20
+        attrs:
+          stage: !KeyOf stage-user-settings
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-user-settings
+          order: 100
+        attrs:
+          stage: !KeyOf stage-user-settings-write
+
+      # --- Brands ---------------------------------------------------------
+      - model: authentik_brands.brand
+        identifiers: {domain: authentik-default}
+        attrs:
+          default: false
+          branding_title: authentik
+          branding_logo: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
+          branding_favicon: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
+          flow_authentication: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          flow_invalidation: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
+          flow_user_settings: !Find [authentik_flows.flow, [slug, default-user-settings-flow]]
+      - model: authentik_brands.brand
+        identifiers: {domain: pipitonelabs.com}
+        attrs:
+          default: true
+          branding_title: Home
+          branding_logo: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
+          branding_favicon: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
+          flow_authentication: !KeyOf flow-authentication
+          flow_invalidation: !KeyOf flow-invalidation
+          flow_user_settings: !KeyOf flow-user-settings
