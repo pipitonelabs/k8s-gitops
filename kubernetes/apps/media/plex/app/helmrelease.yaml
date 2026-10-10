@@ -75,6 +75,11 @@ spec:
         globalMounts:
           - path: /media
             readOnly: true
+      media-unas:
+        existingClaim: plex-unas-mediatest
+        globalMounts:
+          - path: /media-unas
+            readOnly: true
       tmpfs:
         type: emptyDir
         advancedMounts:
