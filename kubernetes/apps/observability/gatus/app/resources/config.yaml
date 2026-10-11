@@ -25,6 +25,13 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
+  - name: minecraft
+    group: games
+    url: tcp://minecraft.default.svc.cluster.local:25565
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
   - name: "*.pipitonelabs.com"
     group: certificates
     url: "tls://external.pipitonelabs.com:443"
