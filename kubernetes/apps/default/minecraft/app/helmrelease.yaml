@@ -30,6 +30,10 @@ spec:
               DIFFICULTY: normal
               MAX_PLAYERS: "10"
               ENABLE_RCON: "false"
+              # Geyser lets Bedrock clients (iOS) join; Floodgate lets them skip a Java account
+              PLUGINS: |-
+                https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
+                https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
             probes:
               startup:
                 enabled: true
@@ -87,3 +91,6 @@ spec:
           minecraft:
             port: 25565
             protocol: TCP
+          bedrock:
+            port: 19132
+            protocol: UDP
