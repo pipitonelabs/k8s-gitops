@@ -23,7 +23,7 @@ spec:
             env:
               TZ: America/New_York
               EULA: "TRUE"
-              TYPE: VANILLA
+              TYPE: PAPER
               VERSION: LATEST
               MEMORY: 3G
               MOTD: Pipitone Labs
