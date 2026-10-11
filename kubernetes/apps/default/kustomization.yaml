@@ -7,6 +7,7 @@ components:
 resources:
   - ./blog/ks.yaml
   - ./garage/ks.yaml
+  - ./minecraft/ks.yaml
   - ./outline/ks.yaml
   - ./reactive-resume/ks.yaml
   - ./smtp-relay/ks.yaml
