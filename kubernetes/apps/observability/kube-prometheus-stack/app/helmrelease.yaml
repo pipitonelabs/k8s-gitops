@@ -91,5 +91,31 @@ spec:
       fullnameOverride: node-exporter
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
+      rbac:
+        extraRules:
+          - apiGroups: ["snapshot.storage.k8s.io"]
+            resources: ["volumesnapshots"]
+            verbs: ["list", "watch"]
+      customResourceState:
+        enabled: true
+        config:
+          kind: CustomResourceStateMetrics
+          spec:
+            resources:
+              - groupVersionKind:
+                  group: snapshot.storage.k8s.io
+                  version: v1
+                  kind: VolumeSnapshot
+                metricNamePrefix: kube_volumesnapshot
+                labelsFromPath:
+                  name: [metadata, name]
+                  namespace: [metadata, namespace]
+                metrics:
+                  - name: deletion_timestamp_seconds
+                    help: Unix time a VolumeSnapshot was marked for deletion (only present while deleting)
+                    each:
+                      type: Gauge
+                      gauge:
+                        path: [metadata, deletionTimestamp]
     grafana:
       enabled: false
