@@ -27,3 +27,16 @@ spec:
           for: 5m
           labels:
             severity: critical
+
+        - alert: VolSyncSnapshotStuckDeleting
+          expr: |-
+            time() - kube_volumesnapshot_deletion_timestamp_seconds > 1800
+          annotations:
+            summary: >-
+              VolumeSnapshot {{ $labels.namespace }}/{{ $labels.name }} has been stuck deleting for over 30m
+            description: >-
+              Likely an orphaned csi-provisioner finalizer. Check that the rbd ctrlplugin provisioner logged
+              "Started SnapshotFinalizerProtection controller" and restart it if not.
+          for: 5m
+          labels:
+            severity: warning
