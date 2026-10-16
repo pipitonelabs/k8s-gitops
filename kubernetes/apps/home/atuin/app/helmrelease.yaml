@@ -54,7 +54,7 @@ spec:
                   secretKeyRef:
                     name: atuin-pguser-secret
                     key: uri
-            args: ["server", "start"]
+            args: ["start"]
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
