@@ -5,6 +5,6 @@ namespace: home
 components:
   - ../../components/namespace
 resources:
-#  - ./atuin/ks.yaml
+  - ./atuin/ks.yaml
 #  - ./homebridge/ks.yaml
 #  - ./home-assistant/ks.yaml
