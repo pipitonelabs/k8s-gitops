@@ -6,4 +6,4 @@ resources:
   - ./exit-node.yaml
   - ./proxyclass.yaml
   - ./servicemonitor.yaml
-#  - ./subnet-router.yaml
+  - ./subnet-router.yaml
