@@ -1,6 +1,6 @@
 # Security Policy
 
-🛡️ Found a security issue in a [k8s-gitops](https://github.com/tslamars/k8s-gitops) project? Read on.
+🛡️ Found a security issue in a [k8s-gitops](https://github.com/pipitonelabs/k8s-gitops) project? Read on.
 
 ## Reporting a Vulnerability
 

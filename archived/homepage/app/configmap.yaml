@@ -100,10 +100,10 @@ data:
             - icon: kubernetes-dashboard.png
               description: Helm Chart Search
               href: https://nanne.dev/k8s-at-home-search/
-        - tslamars:
+        - pipitonelabs:
             - icon: github.png
               description: mars cluster
-              href: https://github.com/tslamars/k8s-gitops
+              href: https://github.com/pipitonelabs/k8s-gitops
         - Homepage Icons:
             - icon: si-jpeg
               href: https://github.com/homarr-labs/dashboard-icons/blob/main/ICONS.md
