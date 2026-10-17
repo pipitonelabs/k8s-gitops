@@ -19,7 +19,6 @@ spec:
               tag: 1.43.4.10903@sha256:bbc1f1443223674df777d0d87f755ecb809f2782fd645d51d3a1e6ac961e65bf
             env:
               PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443
-              PLEX_NO_AUTH_NETWORKS: 10.69.30.0/24
               TZ: America/New_York
             probes:
               liveness: &probes
