@@ -6,6 +6,7 @@ components:
   - ../../components/namespace
 resources:
   - ./seerr/ks.yaml
+  - ./jellyfin/ks.yaml
   - ./jellyplex-watched/ks.yaml
   - ./maintainerr/ks.yaml
   - ./openbooks/ks.yaml
