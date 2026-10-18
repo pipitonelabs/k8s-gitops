@@ -9,7 +9,6 @@
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
-  # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
   image: factory.talos.dev/nocloud-installer/{{ ENV.SCHEMATIC }}:v1.14.0
 # The image is already installed on the VM's only disk (scsi0), so this is only read on an upgrade.
 provisioning:
