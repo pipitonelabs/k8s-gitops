@@ -91,7 +91,7 @@ spec:
           - "{{ .Release.Name }}.pipitonelabs.com"
           - requests.pipitonelabs.com
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: networking
     service:
       app:
