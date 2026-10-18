@@ -11,15 +11,4 @@ spec:
   interval: 1h
   values:
     storageClass:
-      create: true
-      name: nfs-slow
-      parameters:
-        server: mars.internal
-        share: /mnt/user/Kubernetes
-      mountOptions:
-        - nfsvers=4.2
-        - nconnect=16
-        - hard
-        - noatime
-      reclaimPolicy: Delete
-      volumeBindingMode: Immediate
+      create: false
