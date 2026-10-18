@@ -23,6 +23,9 @@ spec:
               ORIGIN: https://{{ .Release.Name }}.pipitonelabs.com
               PORT: &port 6868
               TZ: America/New_York
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
