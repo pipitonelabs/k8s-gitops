@@ -1,17 +1,17 @@
 ---
-# Same UNAS export as the other media apps; a PV binds to one claim, so each app gets its own
+# Same superheavy export as the other media apps; a PV binds to one claim, so each app gets its own
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: sabnzbd-unas-media
+  name: sabnzbd-superheavy-media
 spec:
   accessModes: ["ReadWriteMany"]
   capacity:
     storage: 1Mi
   claimRef:
-    name: sabnzbd-unas-media
+    name: sabnzbd-superheavy-media
     namespace: media
-  # UNAS Pro only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
+  # superheavy only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
   mountOptions: ["nfsvers=3", "nolock", "tcp", "hard", "noatime"]
   nfs:
     server: superheavy.internal
@@ -22,14 +22,14 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sabnzbd-unas-media
+  name: sabnzbd-superheavy-media
 spec:
   accessModes: ["ReadWriteMany"]
   resources:
     requests:
       storage: 1Mi
   storageClassName: ""
-  volumeName: sabnzbd-unas-media
+  volumeName: sabnzbd-superheavy-media
 ---
 # Completed downloads, shared with Radarr/Sonarr (RWX); incomplete downloads stay on node-local disk
 apiVersion: v1
