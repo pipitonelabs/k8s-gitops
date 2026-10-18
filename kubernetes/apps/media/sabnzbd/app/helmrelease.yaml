@@ -50,10 +50,9 @@ spec:
             resources:
               requests:
                 cpu: 1
-                memory: 15Gi
+                memory: 2Gi
               limits:
-                cpu: 4
-                memory: 24Gi
+                memory: 8Gi
 
     defaultPodOptions:
       securityContext:
@@ -99,10 +98,14 @@ spec:
                 storageClassName: openebs-hostpath
                 volumeMode: Filesystem
 
+      downloads:
+        existingClaim: downloads
+        globalMounts:
+          - path: /downloads
       media:
-        type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        existingClaim: sabnzbd-unas-media
+        globalMounts:
+          - path: /media
       tmpfs:
         type: emptyDir
         advancedMounts:
