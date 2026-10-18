@@ -1,21 +1,21 @@
 ---
-# Same UNAS export as plex-unas-mediatest; a PV binds to one claim, so Jellyfin gets its own
+# Same UNAS export as the other media apps; a PV binds to one claim, so Jellyfin gets its own
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: jellyfin-unas-mediatest
+  name: jellyfin-unas-media
 spec:
   accessModes: ["ReadOnlyMany"]
   capacity:
     storage: 1Mi
   claimRef:
-    name: jellyfin-unas-mediatest
+    name: jellyfin-unas-media
     namespace: media
   # UNAS Pro only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
   mountOptions: ["nfsvers=3", "nolock", "tcp", "hard", "noatime"]
   nfs:
-    server: unaspro.internal
-    path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/mediatest/.data
+    server: superheavy.internal
+    path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/media/.data
     readOnly: true
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
@@ -23,11 +23,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jellyfin-unas-mediatest
+  name: jellyfin-unas-media
 spec:
   accessModes: ["ReadOnlyMany"]
   resources:
     requests:
       storage: 1Mi
   storageClassName: ""
-  volumeName: jellyfin-unas-mediatest
+  volumeName: jellyfin-unas-media
