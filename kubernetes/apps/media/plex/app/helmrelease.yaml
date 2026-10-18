@@ -68,10 +68,10 @@ spec:
         existingClaim: "{{ .Release.Name }}-cache"
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Cache
-      media-unas:
+      media-superheavy:
         existingClaim: plex-superheavy-media
         globalMounts:
-          - path: /media-unas
+          - path: /media-superheavy
             readOnly: true
       tmpfs:
         type: emptyDir

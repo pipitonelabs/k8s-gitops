@@ -21,7 +21,7 @@ spec:
   claimRef:
     name: plex-superheavy-media
     namespace: media
-  # UNAS Pro only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
+  # superheavy only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
   mountOptions: ["nfsvers=3", "nolock", "tcp", "hard", "noatime"]
   nfs:
     server: superheavy.internal

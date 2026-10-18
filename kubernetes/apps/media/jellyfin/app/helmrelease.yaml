@@ -64,10 +64,10 @@ spec:
     persistence:
       config:
         existingClaim: "{{ .Release.Name }}"
-      media-unas:
-        existingClaim: jellyfin-unas-media
+      media-superheavy:
+        existingClaim: jellyfin-superheavy-media
         globalMounts:
-          - path: /media-unas
+          - path: /media-superheavy
             readOnly: true
       tmpfs:
         type: emptyDir

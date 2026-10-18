@@ -103,7 +103,7 @@ spec:
         globalMounts:
           - path: /downloads
       media:
-        existingClaim: sabnzbd-unas-media
+        existingClaim: sabnzbd-superheavy-media
         globalMounts:
           - path: /media
       tmpfs:
