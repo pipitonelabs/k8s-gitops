@@ -42,9 +42,10 @@ spec:
               claims:
                 - name: gpu
               requests:
-                cpu: 100m
+                cpu: 250m
+                memory: 512Mi
               limits:
-                memory: 8Gi
+                memory: 4Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
