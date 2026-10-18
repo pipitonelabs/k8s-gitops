@@ -41,7 +41,7 @@ workstation prep ──▶ boot nodes from ISO ──▶ just bootstrap talos �
 | Postgres logical dumps | NFS `mars.internal:/mnt/user/Kubernetes/apps/postgres` (4-hourly, outline) | Survives. Fallback if barman recovery fails. |
 | Media | NFS `mars.internal:/mnt/user/data/media` | Survives. |
 | Prometheus, VictoriaLogs data | `ceph-block` | Lost. Not backed up by design. |
-| `*-cache` PVCs (sonarr, radarr, plex, tautulli, seerr, overseerr, home-assistant) | `ceph-block` | Lost. Not backed up; they start empty. |
+| `*-cache` PVCs (sonarr, radarr, plex, tautulli, seerr, home-assistant) | `ceph-block` | Lost. Not backed up; they start empty. |
 | Wildcard TLS cert `pipitonelabs-com-tls` | 1Password (pushed by `certificates/export`) | Survives. Restored at bootstrap, which avoids Let's Encrypt rate limits. |
 | Authentik configuration | Being moved to blueprints in git | Partly outside git today; check before a rebuild. |
 
@@ -152,8 +152,8 @@ kubectl get replicationdestination -A                # LAST SYNC should populate
 kubectl get jobs -A | rg volsync-dst                 # the restore movers
 ```
 
-Apps restored this way: home-assistant, maintainerr, openbooks, overseerr, pinchflat, plex, prowlarr,
-radarr, recyclarr, sabnzbd, seerr, sonarr, tautulli, grafana (plus the unused garage and outline PVCs).
+Apps restored this way: home-assistant, maintainerr, openbooks, plex, prowlarr,
+radarr, sabnzbd, seerr, sonarr, tautulli, grafana (plus the unused garage and outline PVCs).
 
 **Manual or point-in-time restore** of a single app on a running cluster *(untested end to end)*:
 
