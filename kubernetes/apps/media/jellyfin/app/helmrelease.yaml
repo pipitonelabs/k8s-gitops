@@ -64,7 +64,7 @@ spec:
       config:
         existingClaim: "{{ .Release.Name }}"
       media-unas:
-        existingClaim: jellyfin-unas-mediatest
+        existingClaim: jellyfin-unas-media
         globalMounts:
           - path: /media-unas
             readOnly: true
