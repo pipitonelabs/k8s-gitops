@@ -68,7 +68,7 @@ spec:
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Cache
       media-unas:
-        existingClaim: plex-unas-mediatest
+        existingClaim: plex-superheavy-mediatest
         globalMounts:
           - path: /media-unas
             readOnly: true

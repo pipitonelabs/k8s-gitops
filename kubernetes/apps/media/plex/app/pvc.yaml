@@ -13,18 +13,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: plex-unas-mediatest
+  name: plex-superheavy-mediatest
 spec:
   accessModes: ["ReadOnlyMany"]
   capacity:
     storage: 1Mi
   claimRef:
-    name: plex-unas-mediatest
+    name: plex-superheavy-mediatest
     namespace: media
   # UNAS Pro only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
   mountOptions: ["nfsvers=3", "nolock", "tcp", "hard", "noatime"]
   nfs:
-    server: unaspro.internal
+    server: superheavy.internal
     path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/mediatest/.data
     readOnly: true
   persistentVolumeReclaimPolicy: Retain
@@ -33,11 +33,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: plex-unas-mediatest
+  name: plex-superheavy-mediatest
 spec:
   accessModes: ["ReadOnlyMany"]
   resources:
     requests:
       storage: 1Mi
   storageClassName: ""
-  volumeName: plex-unas-mediatest
+  volumeName: plex-superheavy-mediatest
