@@ -13,13 +13,13 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: plex-unas-media
+  name: plex-superheavy-media
 spec:
   accessModes: ["ReadOnlyMany"]
   capacity:
     storage: 1Mi
   claimRef:
-    name: plex-unas-media
+    name: plex-superheavy-media
     namespace: media
   # UNAS Pro only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
   mountOptions: ["nfsvers=3", "nolock", "tcp", "hard", "noatime"]
@@ -33,11 +33,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: plex-unas-media
+  name: plex-superheavy-media
 spec:
   accessModes: ["ReadOnlyMany"]
   resources:
     requests:
       storage: 1Mi
   storageClassName: ""
-  volumeName: plex-unas-media
+  volumeName: plex-superheavy-media
