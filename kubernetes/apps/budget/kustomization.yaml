@@ -6,4 +6,4 @@ namespace: budget
 components:
   - ../../components/namespace
 resources:
-  - ./ks.yaml
+#  - ./ks.yaml
