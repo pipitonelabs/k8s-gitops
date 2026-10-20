@@ -1,0 +1,11 @@
+---
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: CDI
+metadata:
+  name: cdi
+spec:
+  config:
+    scratchSpaceStorageClass: ceph-block
+  imagePullPolicy: IfNotPresent
+  infra: {}
+  workload: {}
