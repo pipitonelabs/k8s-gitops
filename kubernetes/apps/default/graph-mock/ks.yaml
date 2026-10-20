@@ -2,14 +2,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app wiremock
+  name: &app graph-mock
   namespace: &namespace default
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   interval: 1h
-  path: ./kubernetes/apps/default/wiremock/app
+  path: ./kubernetes/apps/default/graph-mock/app
   prune: true
   sourceRef:
     kind: GitRepository

@@ -4,10 +4,8 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
 configMapGenerator:
-  - name: wiremock-mappings
+  - name: graph-mock-server
     files:
-      - ./resources/mappings/token.json
-      - ./resources/mappings/subscribed-skus.json
-      - ./resources/mappings/users.json
+      - ./resources/server.ts
 generatorOptions:
   disableNameSuffixHash: true
