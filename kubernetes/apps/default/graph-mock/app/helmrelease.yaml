@@ -74,12 +74,8 @@ spec:
     route:
       app:
         annotations:
-          # Only /v1.0 and the token path are routed, so the default GET / hits Envoy's 404.
-          # Unauthenticated Graph calls return 401 from the app, which proves it is reachable.
-          gatus.home-operations.com/endpoint: |-
-            url: https://{{ .Release.Name }}.pipitonelabs.com/v1.0/subscribedSkus
-            conditions: ["[STATUS] == 401"]
-            group: external
+          # Only /v1.0 and the token path are routed, so Gatus's default GET / hits Envoy's 404.
+          gatus.home-operations.com/enabled: "false"
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
