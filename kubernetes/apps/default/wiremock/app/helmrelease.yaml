@@ -1,0 +1,88 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wiremock
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  interval: 1h
+  values:
+    controllers:
+      wiremock:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: docker.io/wiremock/wiremock
+              tag: 3.13.2@sha256:0d4ecb3e4dc8213fd7a4d37d6a78f6e6b553a6d2e15bd51b0999781282ac61b3
+            args:
+              - --port=8080
+              - --global-response-templating
+              - --disable-banner
+              - --verbose
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /__admin/health
+                    port: &port 8080
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+    persistence:
+      mappings:
+        type: configMap
+        name: wiremock-mappings
+        globalMounts:
+          - path: /home/wiremock/mappings
+            readOnly: true
+      files:
+        type: emptyDir
+        globalMounts:
+          - path: /home/wiremock/__files
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.pipitonelabs.com"
+        parentRefs:
+          - name: envoy-external
+            namespace: networking
+        rules:
+          # Only the Graph/token surface is public; /__admin stays cluster-internal.
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /v1.0
+              - path:
+                  type: RegularExpression
+                  value: /[^/]+/oauth2/v2\.0/token
+            backendRefs:
+              - identifier: app
+                port: *port
+    service:
+      app:
+        ports:
+          http:
+            port: *port

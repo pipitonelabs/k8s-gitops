@@ -1,0 +1,104 @@
+{
+  "mappings": [
+    {
+      "name": "GET user (default: licensed, mailbox provisioned)",
+      "priority": 10,
+      "request": { "method": "GET", "urlPathPattern": "/v1\\.0/users/[^/]+" },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users/$entity",
+          "id": "11111111-2222-3333-4444-555555555555",
+          "userPrincipalName": "{{request.path.[2]}}",
+          "mail": "{{request.path.[2]}}",
+          "displayName": "Mock User",
+          "accountEnabled": true,
+          "usageLocation": "US",
+          "assignedLicenses": [
+            { "skuId": "6fd2c87f-b296-42f0-b197-1e91e994b900", "disabledPlans": [] }
+          ],
+          "provisionedPlans": [
+            { "service": "exchange", "capabilityStatus": "Enabled", "provisioningStatus": "Success" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET user whose name starts with 'new' (unlicensed, no usageLocation)",
+      "priority": 5,
+      "request": { "method": "GET", "urlPathPattern": "/v1\\.0/users/new[^/]*" },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "id": "22222222-3333-4444-5555-666666666666",
+          "userPrincipalName": "{{request.path.[2]}}",
+          "mail": null,
+          "displayName": "Unlicensed User",
+          "accountEnabled": true,
+          "usageLocation": null,
+          "assignedLicenses": [],
+          "provisionedPlans": []
+        }
+      }
+    },
+    {
+      "name": "GET user whose name starts with 'pending' (licensed, mailbox still provisioning)",
+      "priority": 5,
+      "request": { "method": "GET", "urlPathPattern": "/v1\\.0/users/pending[^/]*" },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "id": "33333333-4444-5555-6666-777777777777",
+          "userPrincipalName": "{{request.path.[2]}}",
+          "displayName": "Pending Mailbox User",
+          "accountEnabled": true,
+          "usageLocation": "US",
+          "assignedLicenses": [
+            { "skuId": "6fd2c87f-b296-42f0-b197-1e91e994b900", "disabledPlans": [] }
+          ],
+          "provisionedPlans": [
+            { "service": "exchange", "capabilityStatus": "Enabled", "provisioningStatus": "PendingProvisioning" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET user whose name starts with 'missing' (404)",
+      "priority": 1,
+      "request": { "method": "GET", "urlPathPattern": "/v1\\.0/users/missing[^/]*" },
+      "response": {
+        "status": 404,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "error": {
+            "code": "Request_ResourceNotFound",
+            "message": "Resource '{{request.path.[2]}}' does not exist or one of its queried reference-property objects are not present."
+          }
+        }
+      }
+    },
+    {
+      "name": "POST assignLicense (add or remove)",
+      "request": { "method": "POST", "urlPathPattern": "/v1\\.0/users/[^/]+/assignLicense" },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "id": "11111111-2222-3333-4444-555555555555",
+          "userPrincipalName": "{{request.path.[2]}}",
+          "assignedLicenses": [
+            { "skuId": "6fd2c87f-b296-42f0-b197-1e91e994b900", "disabledPlans": [] }
+          ]
+        }
+      }
+    },
+    {
+      "name": "PATCH user",
+      "request": { "method": "PATCH", "urlPathPattern": "/v1\\.0/users/[^/]+" },
+      "response": { "status": 204 }
+    }
+  ]
+}

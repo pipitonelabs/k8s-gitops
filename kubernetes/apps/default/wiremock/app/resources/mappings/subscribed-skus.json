@@ -1,0 +1,51 @@
+{
+  "mappings": [
+    {
+      "name": "List subscribed SKUs",
+      "request": { "method": "GET", "urlPathPattern": "/v1\\.0/subscribedSkus" },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#subscribedSkus",
+          "value": [
+            {
+              "id": "00000000-0000-0000-0000-000000000001_6fd2c87f-b296-42f0-b197-1e91e994b900",
+              "skuId": "6fd2c87f-b296-42f0-b197-1e91e994b900",
+              "skuPartNumber": "ENTERPRISEPACK",
+              "capabilityStatus": "Enabled",
+              "appliesTo": "User",
+              "consumedUnits": 10,
+              "prepaidUnits": { "enabled": 25, "suspended": 0, "warning": 0 },
+              "servicePlans": [
+                {
+                  "servicePlanId": "efb87545-963c-4e0d-99df-69c6916d9eb0",
+                  "servicePlanName": "EXCHANGE_S_ENTERPRISE",
+                  "provisioningStatus": "Success",
+                  "appliesTo": "User"
+                }
+              ]
+            },
+            {
+              "id": "00000000-0000-0000-0000-000000000001_f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+              "skuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+              "skuPartNumber": "O365_BUSINESS_PREMIUM",
+              "capabilityStatus": "Enabled",
+              "appliesTo": "User",
+              "consumedUnits": 5,
+              "prepaidUnits": { "enabled": 5, "suspended": 0, "warning": 0 },
+              "servicePlans": [
+                {
+                  "servicePlanId": "efb87545-963c-4e0d-99df-69c6916d9eb0",
+                  "servicePlanName": "EXCHANGE_S_ENTERPRISE",
+                  "provisioningStatus": "Success",
+                  "appliesTo": "User"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
