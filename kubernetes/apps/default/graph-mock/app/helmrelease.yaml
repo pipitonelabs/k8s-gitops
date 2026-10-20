@@ -14,6 +14,9 @@ spec:
       graph-mock:
         annotations:
           reloader.stakater.com/auto: "true"
+        # State lives in one pod's memory.
+        replicas: 1
+        strategy: Recreate
         containers:
           app:
             image:
