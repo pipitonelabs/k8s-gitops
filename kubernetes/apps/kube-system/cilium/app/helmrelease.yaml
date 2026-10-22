@@ -68,6 +68,10 @@ spec:
       enabled: true
     operator:
       replicas: 2
+      resources:
+        requests:
+          cpu: 50m
+          memory: 256Mi
       rollOutPods: true
       prometheus:
         enabled: true
@@ -80,6 +84,10 @@ spec:
       serviceMonitor:
         enabled: true
         trustCRDsExist: true
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
     rollOutCiliumPods: true
     routingMode: native
     securityContext:
