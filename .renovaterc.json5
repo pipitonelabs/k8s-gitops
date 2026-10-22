@@ -3,7 +3,7 @@
   extends: [
     "config:recommended",
     "docker:enableMajor",
-    "github>home-operations/renovate-presets//apps/talosFactory.json5#10.0.0",
+    "github>home-operations/renovate-presets//apps/talosFactory.json5#10.0.1",
     "helpers:pinGitHubActionDigests",
     "github>josephpipitone/k8s-gitops//.renovate/allowedVersions.json5",
     "github>josephpipitone/k8s-gitops//.renovate/autoMerge.json5",
