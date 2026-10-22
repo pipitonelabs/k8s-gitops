@@ -17,8 +17,9 @@ spec:
           resources:
             requests:
               cpu: 100m
+              memory: 256Mi
             limits:
-              memory: 2Gi
+              memory: 512Mi
   shutdown:
     drainTimeout: 180s
   telemetry:
