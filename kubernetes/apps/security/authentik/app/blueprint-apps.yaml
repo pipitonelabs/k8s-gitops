@@ -107,6 +107,9 @@ data:
         attrs:
           client_type: confidential
           client_id: garage
+          grant_types:
+            - authorization_code
+            - refresh_token
           client_secret: !Env GARAGE_OIDC_CLIENT_SECRET
           access_token_validity: hours=4
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
@@ -148,6 +151,9 @@ data:
         attrs:
           client_type: confidential
           client_id: network-optimizer
+          grant_types:
+            - authorization_code
+            - refresh_token
           client_secret: !Env NETWORK_OPTIMIZER_OIDC_CLIENT_SECRET
           access_token_validity: hours=4
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
