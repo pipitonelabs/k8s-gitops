@@ -5,7 +5,6 @@ namespace: kube-system
 components:
   - ../../components/namespace
 resources:
-  - ./cdi/ks.yaml
   - ./cilium/ks.yaml
   - ./coredns/ks.yaml
   - ./csi-driver-nfs/ks.yaml
@@ -13,8 +12,6 @@ resources:
   - ./generic-device-plugin/ks.yaml
   - ./intel-gpu-resource-driver/ks.yaml
   - ./irqbalance/ks.yaml
-  - ./kubevirt/ks.yaml
-  - ./kubevirt-manager/ks.yaml
   - ./metrics-server/ks.yaml
   - ./reloader/ks.yaml
   - ./spegel/ks.yaml
