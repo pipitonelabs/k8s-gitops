@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: 0 0 1 * * # At 00:00 on day-of-month 1
 
+permissions:
+  contents: read
+
 jobs:
   main:
     name: Tag
@@ -17,6 +20,7 @@ jobs:
         with:
           client-id: Iv23lihLWc0L5wGEiClM
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
 
       - name: Get Previous Tag and Determine Next Tag
         id: determine-next-tag
@@ -44,10 +48,12 @@ jobs:
 
       - name: Create Tag
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TAG_NAME: ${{ steps.determine-next-tag.outputs.result }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |-
-            const tagName = "${{ steps.determine-next-tag.outputs.result }}";
+            const tagName = process.env.TAG_NAME;
 
             const tag = await github.rest.git.createTag({
               owner: context.repo.owner,
