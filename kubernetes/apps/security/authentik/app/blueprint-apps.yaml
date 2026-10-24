@@ -143,7 +143,9 @@ data:
         attrs:
           enabled: true
 
-      # --- network-optimizer (behind an Envoy Gateway SecurityPolicy) -----
+      # --- network-optimizer (native OIDC, configured in the app's Sign-In settings) --
+      # The app's callback is /signin-oidc/<scheme key>, where the key is generated when the
+      # provider is added in its UI, so the redirect URIs match by regex.
       - id: network-optimizer-provider
         model: authentik_providers_oauth2.oauth2provider
         identifiers:
@@ -165,8 +167,11 @@ data:
             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
           redirect_uris:
-            - matching_mode: strict
-              url: https://optimizer.pipitonelabs.com/oauth2/callback
+            - matching_mode: regex
+              url: https://optimizer\.pipitonelabs\.com/signin-oidc/.+
+            - matching_mode: regex
+              url: https://optimizer\.pipitonelabs\.com/signout-callback-oidc/.+
+              redirect_uri_type: logout
       - id: network-optimizer-app
         model: authentik_core.application
         identifiers:
