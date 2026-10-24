@@ -174,7 +174,7 @@ data:
         attrs:
           name: Network Optimizer
           provider: !KeyOf network-optimizer-provider
-          group: Infrastructure
+          group: Networking
           open_in_new_tab: true
           meta_launch_url: https://optimizer.pipitonelabs.com/
           policy_engine_mode: all

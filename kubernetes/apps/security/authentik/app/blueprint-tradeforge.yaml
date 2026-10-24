@@ -66,6 +66,7 @@ data:
         attrs:
           name: TradeForge
           provider: !KeyOf tradeforge-provider
+          group: SwappyBot
           meta_launch_url: https://tradeforge.pipitonelabs.com/
           open_in_new_tab: true
       # Restrict access to the "Self Hosted" group (your account must be a member)
