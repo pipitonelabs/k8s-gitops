@@ -1,0 +1,182 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # renovate: datasource=github-releases depName=home-operations/flate
+  FLATE_VERSION: 0.6.5
+  # renovate: datasource=github-releases depName=siderolabs/talos
+  TALOS_VERSION: v1.14.4
+
+jobs:
+  test:
+    name: Flate - Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Mise
+        uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
+        with:
+          cache: false
+          install: false
+
+      - name: Test
+        env:
+          MISE_GITHUB_TOKEN: ${{ github.token }}
+        run: mise exec "github:home-operations/flate@${FLATE_VERSION}" -- flate test all --path ./kubernetes
+
+  diff:
+    name: Flate - Diff
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      images: ${{ steps.images.outputs.images }}
+    steps:
+      - name: Checkout Pull Request Branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: pull
+          persist-credentials: false
+
+      - name: Checkout Default Branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: default
+          persist-credentials: false
+
+      - name: Setup Mise
+        uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
+        with:
+          cache: false
+          install: false
+
+      - name: Diff Resources
+        env:
+          MISE_GITHUB_TOKEN: ${{ github.token }}
+        run: |-
+          mise exec "github:home-operations/flate@${FLATE_VERSION}" -- \
+            flate diff all --path pull/kubernetes --path-orig default/kubernetes -o diff > diff.patch
+          # Keep the comment under GitHub's 65536 character limit
+          head -c 60000 diff.patch > diff.comment
+
+      - name: Diff Images
+        id: images
+        env:
+          MISE_GITHUB_TOKEN: ${{ github.token }}
+        run: |-
+          {
+            echo 'images<<EOF'
+            mise exec "github:home-operations/flate@${FLATE_VERSION}" -- \
+              flate diff images --path pull/kubernetes --path-orig default/kubernetes -o json
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Read Diff
+        id: diff
+        run: |-
+          {
+            echo 'diff<<EOF'
+            cat diff.comment
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - if: ${{ steps.diff.outputs.diff != '' }}
+        name: Generate Token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app-token
+        with:
+          client-id: Iv23lihLWc0L5wGEiClM
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-pull-requests: write
+
+      - if: ${{ steps.diff.outputs.diff != '' }}
+        name: Add Comment
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          header: flate-diff
+          message: |-
+            ```diff
+            ${{ steps.diff.outputs.diff }}
+            ```
+
+  image-pull:
+    if: >-
+      ${{
+        needs.diff.outputs.images != '[]' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      }}
+    needs: diff
+    name: Image Pull - Pull Images
+    runs-on: k8s-gitops-runner
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.diff.outputs.images) }}
+      max-parallel: 4
+      fail-fast: false
+    steps:
+      - name: Setup Mise
+        uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
+        with:
+          cache: false
+          install: false
+
+      - name: Pull Image
+        env:
+          IMAGE: ${{ matrix.image }}
+          MISE_GITHUB_TOKEN: ${{ github.token }}
+        run: mise exec "talosctl@${TALOS_VERSION}" -- talosctl --nodes "$NODE" image pull "$IMAGE"
+
+  zizmor:
+    name: Zizmor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
+        with:
+          advanced-security: false
+          annotations: true
+
+  status:
+    if: ${{ !cancelled() }}
+    name: CI - Success
+    needs:
+      - test
+      - diff
+      - image-pull
+      - zizmor
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Any jobs failed?
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
+
+      - name: All jobs passed or skipped?
+        if: ${{ !(contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: echo "All jobs passed or skipped" && echo "$RESULTS"
