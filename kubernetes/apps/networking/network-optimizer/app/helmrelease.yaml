@@ -18,9 +18,12 @@ spec:
             image:
               repository: ghcr.io/ozark-connect/network-optimizer
               tag: 2.10.0@sha256:4399ab243d63b77683d73004df616ae3752e30f03833e6b0fe3cacd04b257a9a
-            env:
+            env: &env
               TZ: America/New_York
               REVERSE_PROXIED_HOST_NAME: optimizer.pipitonelabs.com
+              # Served directly by the speedtest LoadBalancer (not Envoy) so tests stay on HTTP/1.1
+              OPENSPEEDTEST_HOST: speedtest.pipitonelabs.com
+              OPENSPEEDTEST_PORT: "3005"
             probes:
               liveness: &probes
                 enabled: true
@@ -55,15 +58,48 @@ spec:
               capabilities:
                 drop: ["ALL"]
                 add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]
+      speedtest:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ozark-connect/speedtest
+              tag: 2.10.0@sha256:da73e5218d0c43e7efe68d7e9be1bae1e1ee165dbb79b32c77b38ff8455a4aed
+            env: *env
+            probes:
+              liveness: &speedtestProbes
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &speedtestTargetPort 3000
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness: *speedtestProbes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              # nginx entrypoint renders config as root, then workers drop to the nginx user
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]
     persistence:
       data:
         existingClaim: "{{ .Release.Name }}"
-        globalMounts:
-          - path: /app/data
+        advancedMounts:
+          network-optimizer:
+            app:
+              - path: /app/data
       logs:
         type: emptyDir
-        globalMounts:
-          - path: /app/logs
+        advancedMounts:
+          network-optimizer:
+            app:
+              - path: /app/logs
     route:
       app:
         annotations:
@@ -73,8 +109,24 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: networking
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     service:
       app:
+        controller: network-optimizer
+        primary: true
         ports:
           http:
             port: *port
+      speedtest:
+        type: LoadBalancer
+        controller: speedtest
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: speedtest.pipitonelabs.com
+          lbipam.cilium.io/ips: 192.168.20.84
+        ports:
+          http:
+            port: 3005
+            targetPort: *speedtestTargetPort
