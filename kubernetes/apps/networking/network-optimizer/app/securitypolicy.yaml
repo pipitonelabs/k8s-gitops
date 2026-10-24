@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: network-optimizer
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: network-optimizer
+  oidc:
+    provider:
+      issuer: https://sso.pipitonelabs.com/application/o/network-optimizer/
+    clientID: network-optimizer
+    clientSecret:
+      name: network-optimizer-oidc
+    redirectURL: https://optimizer.pipitonelabs.com/oauth2/callback
+    logoutPath: /oauth2/logout
+    scopes: [openid, email, profile]
