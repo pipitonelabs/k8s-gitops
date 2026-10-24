@@ -11,7 +11,7 @@ spec:
       name: garage-webui
   oidc:
     provider:
-      issuer: https://sso.pipitonelabs.com/application/o/garage/
+      issuer: https://sso.pipitonelabs.com/application/o/garage
     clientID: garage
     clientSecret:
       name: garage-webui-oidc
