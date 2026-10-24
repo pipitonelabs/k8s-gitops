@@ -11,7 +11,7 @@ spec:
       name: network-optimizer
   oidc:
     provider:
-      issuer: https://sso.pipitonelabs.com/application/o/network-optimizer/
+      issuer: https://sso.pipitonelabs.com/application/o/network-optimizer
     clientID: network-optimizer
     clientSecret:
       name: network-optimizer-oidc
