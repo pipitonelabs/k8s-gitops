@@ -11,3 +11,9 @@ spec:
     schedule: 30 3 * * *
   repository:
     repository: volsync-maintenance-secret
+  moverVolumes:
+    - mountPath: repository
+      volumeSource:
+        nfs:
+          server: mars.internal
+          path: /mnt/sharecache/VolsyncKopia

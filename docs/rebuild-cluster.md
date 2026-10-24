@@ -142,7 +142,7 @@ NFS repository into the new PVC, and only then does the pod start. The label
 What the restore depends on, in order: Rook/Ceph healthy (`ceph-block`, snapshot class `csi-ceph-block`),
 `snapshot-controller`, `openebs-hostpath` (Kopia cache), the `volsync` HelmRelease (perfectra1n fork), the
 `onepassword` ClusterSecretStore (for `<app>-volsync-secret`, which carries `KOPIA_PASSWORD`), and NFS reachable
-(the repository is injected into every `volsync-*` Job by a MutatingAdmissionPolicy).
+(the repository is mounted into every mover Job through `moverVolumes`).
 
 Watch it:
 
