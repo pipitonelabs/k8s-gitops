@@ -81,13 +81,13 @@ spec:
             subPath: configuration.toml
       data:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/Kubernetes/garage/data
+        server: superheavy.internal
+        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/garage/data
         globalMounts:
           - path: /data
       meta:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/Kubernetes/garage/meta
+        server: superheavy.internal
+        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/garage/meta
         globalMounts:
           - path: /meta

@@ -45,5 +45,5 @@ spec:
           volumes:
             - name: backups
               nfs:
-                path: /mnt/user/Kubernetes/apps/postgres
-                server: mars.internal
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps/postgres
+                server: superheavy.internal
