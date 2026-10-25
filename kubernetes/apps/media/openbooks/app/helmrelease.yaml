@@ -77,8 +77,8 @@ spec:
     persistence:
       media:
         type: nfs
-        server: mars.internal
-        path: /mnt/user/data/media
+        server: superheavy.internal
+        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/media/.data
         globalMounts:
           - path: /books
       config:
