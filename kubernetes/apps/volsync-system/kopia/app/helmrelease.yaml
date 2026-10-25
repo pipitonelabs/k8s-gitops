@@ -99,8 +99,8 @@ spec:
             subPath: repository.config
       repository:
         type: nfs
-        server: mars.internal
-        path: /mnt/sharecache/VolsyncKopia
+        server: superheavy.internal
+        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/volsync/.data
         globalMounts:
           - path: /repository
       tmpfs:

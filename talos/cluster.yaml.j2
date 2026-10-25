@@ -91,6 +91,10 @@ contents: |
   noatime=True
   rsize=1048576
   wsize=1048576
+  # superheavy (UniFi UNAS) only serves NFSv3; Talos has no rpc.statd, so no NLM locking
+  [ Server "superheavy.internal" ]
+  nfsvers=3
+  lock=False
 ---
 apiVersion: v1alpha1
 kind: CRICustomizationConfig
