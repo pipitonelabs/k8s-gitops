@@ -18,7 +18,8 @@ spec:
               repository: ghcr.io/home-operations/plex-next
               tag: 1.43.5.11029@sha256:87fb3af36b1df3fc195651da4cd2ef1393cde2f432e75fb1ec1a32ace6bbef55
             env:
-              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443
+              # LAN LB address gives app.plex.tv a reachable local plex.direct connection (pod IPs are cluster-only)
+              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443,http://192.168.20.85:32400
               TZ: America/New_York
             probes:
               liveness: &probes
@@ -144,6 +145,9 @@ spec:
                   value: /library/streams
     service:
       app:
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.20.85
         ports:
           http:
             port: *port
