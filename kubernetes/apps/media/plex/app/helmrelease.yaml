@@ -46,12 +46,21 @@ spec:
                 cpu: 250m
                 memory: 1Gi
               limits:
-                memory: 6Gi
+                memory: 4Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
+      labels:
+        app.kubernetes.io/spread-group: media-heavy
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/spread-group: media-heavy
       resourceClaims:
         - name: gpu
           resourceClaimTemplateName: plex

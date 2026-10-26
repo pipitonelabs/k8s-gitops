@@ -50,11 +50,20 @@ spec:
             resources:
               requests:
                 cpu: 1
-                memory: 2Gi
+                memory: 4Gi
               limits:
                 memory: 8Gi
 
     defaultPodOptions:
+      labels:
+        app.kubernetes.io/spread-group: media-heavy
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/spread-group: media-heavy
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

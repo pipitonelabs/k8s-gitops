@@ -43,14 +43,23 @@ spec:
                 - name: gpu
               requests:
                 cpu: 250m
-                memory: 512Mi
+                memory: 1Gi
               limits:
-                memory: 4Gi
+                memory: 3Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
+      labels:
+        app.kubernetes.io/spread-group: media-heavy
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/spread-group: media-heavy
       resourceClaims:
         - name: gpu
           resourceClaimTemplateName: jellyfin
