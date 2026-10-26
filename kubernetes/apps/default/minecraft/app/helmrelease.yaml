@@ -13,7 +13,7 @@ spec:
   values:
     controllers:
       minecraft:
-        replicas: 1
+        replicas: 0 # disabled to relieve m2; set back to 1 to re-enable (PVC kept)
         strategy: Recreate
         containers:
           app:
