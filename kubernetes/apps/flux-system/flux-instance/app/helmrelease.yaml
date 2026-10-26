@@ -84,6 +84,71 @@ spec:
             target:
               kind: Deployment
               name: (kustomize-controller|helm-controller|source-controller)
+          - # Memory request for kustomize-controller
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: kustomize-controller
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          requests:
+                            memory: 384Mi
+            target:
+              kind: Deployment
+              name: kustomize-controller
+          - # Memory request for helm-controller
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: helm-controller
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          requests:
+                            memory: 256Mi
+            target:
+              kind: Deployment
+              name: helm-controller
+          - # Memory request for source-controller
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: source-controller
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          requests:
+                            memory: 128Mi
+            target:
+              kind: Deployment
+              name: source-controller
+          - # Spread the controllers across nodes
+            patch: |
+              - op: add
+                path: /spec/template/spec/topologySpreadConstraints
+                value:
+                  - maxSkew: 1
+                    topologyKey: kubernetes.io/hostname
+                    whenUnsatisfiable: ScheduleAnyway
+                    labelSelector:
+                      matchLabels:
+                        app.kubernetes.io/part-of: flux
+            target:
+              kind: Deployment
+              name: (kustomize-controller|helm-controller|source-controller|notification-controller)
           - # Enable in-memory kustomize builds
             patch: |
               - op: add
