@@ -49,10 +49,10 @@ spec:
                   name: sabnzbd-secret
             resources:
               requests:
-                cpu: 1
-                memory: 4Gi
+                cpu: 2
+                memory: 7Gi
               limits:
-                memory: 8Gi
+                memory: 12Gi
 
     defaultPodOptions:
       labels:
