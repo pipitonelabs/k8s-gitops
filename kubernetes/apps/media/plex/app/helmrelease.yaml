@@ -107,11 +107,19 @@ spec:
                     # Plex closes idle keep-alive connections after 20s unless this is set, so Envoy owns the pool
                     - name: X-Plex-Http-Pipeline
                       value: infinite
+              - type: ResponseHeaderModifier
+                responseHeaderModifier: &privateNetwork
+                  set:
+                    # Chrome blocks app.plex.tv (public) from calling this private IP without it
+                    - name: Access-Control-Allow-Private-Network
+                      value: "true"
           - name: events
             backendRefs: *backendRefs
             filters:
               - type: RequestHeaderModifier
                 requestHeaderModifier: *pipeline
+              - type: ResponseHeaderModifier
+                responseHeaderModifier: *privateNetwork
             matches:
               - path:
                   type: PathPrefix
@@ -128,6 +136,8 @@ spec:
                   <<: *pipeline
                   remove:
                     - Range
+              - type: ResponseHeaderModifier
+                responseHeaderModifier: *privateNetwork
             matches:
               - path:
                   type: PathPrefix
