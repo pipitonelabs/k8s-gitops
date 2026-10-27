@@ -42,7 +42,7 @@ spec:
           app:
             image:
               repository: ghcr.io/reactive-resume/reactive-resume
-              tag: v6.0.7@sha256:d6804c7f1298e87218dddc4b5d793a030aa9566c58d3aad3045541f172cfac20
+              tag: v6.0.7@sha256:469e5a31b6cdd8d92be4b3799f4af4bd4bdf347493543ffd7b80e806a506ce55
             env:
               APP_URL: https://rxresume.pipitonelabs.com
               PORT: "3000"
