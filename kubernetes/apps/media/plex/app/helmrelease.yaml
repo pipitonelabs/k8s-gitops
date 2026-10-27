@@ -19,7 +19,8 @@ spec:
               tag: 1.43.5.11079@sha256:4f9aa7fd981d03eca29a98e29159b5273ed411f4a61ec8c70a57c11343355d04
             env:
               # LAN LB address gives app.plex.tv a reachable local plex.direct connection (pod IPs are cluster-only)
-              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443,http://192.168.20.85:32400
+              # Tailscale device IP (plex-tailscale service) for Plex users shared the device rather than invited to the tailnet
+              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443,http://192.168.20.85:32400,http://100.66.242.95:32400
               TZ: America/New_York
             probes:
               liveness: &probes
