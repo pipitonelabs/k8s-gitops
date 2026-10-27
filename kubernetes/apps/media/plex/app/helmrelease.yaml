@@ -20,8 +20,9 @@ spec:
             env:
               # LAN LB address gives app.plex.tv a reachable local plex.direct connection (pod IPs are cluster-only)
               # Tailscale device (plex-tailscale service) for Plex users shared the device rather than invited to the tailnet.
-              # MagicDNS name, not the 100.x IP: plex.tv's WAF 403s any CGNAT IP literal, which rejects the whole connection update
-              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443,http://192.168.20.85:32400,http://plex.chipmunk-altered.ts.net:32400
+              # plex.direct name gives app.plex.tv (HTTPS-only) a valid cert; MagicDNS http is the fallback for native apps.
+              # Never a bare 100.x IP: plex.tv's WAF 403s any CGNAT IP literal, which rejects the whole connection update
+              PLEX_ADVERTISE_URL: https://{{ .Release.Name }}.pipitonelabs.com:443,http://192.168.20.85:32400,https://100-66-242-95.d0131c508cc046d59dccd63a274ca570.plex.direct:32400,http://plex.chipmunk-altered.ts.net:32400
               TZ: America/New_York
             probes:
               liveness: &probes
