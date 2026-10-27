@@ -26,6 +26,7 @@ endpoints:
       - "[STATUS] == 200"
 
   - name: minecraft
+    enabled: false # minecraft scaled to 0; remove this line when re-enabled
     group: games
     url: tcp://minecraft.default.svc.cluster.local:25565
     interval: 1m
