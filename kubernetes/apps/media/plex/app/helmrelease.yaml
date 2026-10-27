@@ -144,9 +144,20 @@ spec:
                   value: /library/streams
     service:
       app:
+        forceRename: "{{ .Release.Name }}"
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.20.85
+        ports:
+          http:
+            port: *port
+      # Tailscale device shared with non-member Plex users (they get no subnet routes or split DNS)
+      tailscale:
+        controller: plex
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+        annotations:
+          tailscale.com/hostname: plex
         ports:
           http:
             port: *port
