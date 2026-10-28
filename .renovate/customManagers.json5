@@ -23,5 +23,16 @@
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
+    {
+      customType: "regex",
+      description: "Process annotated image pins in Talos templates",
+      managerFilePatterns: ["/^talos/.+\\.yaml\\.j2$/"],
+      matchStrings: [
+        // # renovate: datasource=docker depName=registry.k8s.io/kube-apiserver
+        // image: registry.k8s.io/kube-apiserver:v1.37.2
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s*image: \\S+:(?<currentValue>v\\S+)",
+      ],
+      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+    },
   ],
 }
