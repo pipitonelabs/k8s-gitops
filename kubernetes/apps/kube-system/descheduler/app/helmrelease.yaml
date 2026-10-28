@@ -25,9 +25,9 @@ spec:
     kind: Deployment
     deschedulerPolicyAPIVersion: descheduler/v1alpha2
     deschedulerPolicy:
-      # Only the control-plane nodes are processed, so an empty worker node does not make LowNodeUtilization
-      # evict pods from m0/m2 onto it.
-      nodeSelector: node-role.kubernetes.io/control-plane
+      # All Linux nodes, so the bare-metal worker w2 is a balancing target. Pods that need the Intel GPU
+      # (DRA claim) or sit on a node-local openebs-hostpath volume cannot move there and are skipped by nodeFit.
+      nodeSelector: kubernetes.io/os=linux
       metricsProviders:
         - source: KubernetesMetrics
       profiles:
@@ -38,8 +38,13 @@ spec:
                 evictFailedBarePods: true
                 evictLocalStoragePods: true
                 evictSystemCriticalPods: true
+                nodeFit: true
             - name: LowNodeUtilization
               args:
+                evictableNamespaces:
+                  exclude:
+                    - rook-ceph
+                    - database
                 metricsUtilization:
                   source: KubernetesMetrics
                 thresholds:
