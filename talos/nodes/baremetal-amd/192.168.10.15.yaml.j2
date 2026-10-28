@@ -1,0 +1,14 @@
+---
+machine:
+  type: worker
+---
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+provisioning:
+  diskSelector:
+    match: disk.serial == "215186493404"
+  wipe: false
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: w2.k8s.internal
