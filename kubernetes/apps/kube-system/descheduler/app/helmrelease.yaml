@@ -28,6 +28,10 @@ spec:
       # All Linux nodes, so the bare-metal worker w2 is a balancing target. Pods that need the Intel GPU
       # (DRA claim) or sit on a node-local openebs-hostpath volume cannot move there and are skipped by nodeFit.
       nodeSelector: kubernetes.io/os=linux
+      # One pass evicted 16 pods at once, including both external-secrets webhook replicas, which made the
+      # webhook unavailable and failed Flux dry-runs. At most one pod per namespace per pass keeps replicas up.
+      maxNoOfPodsToEvictPerNode: 6
+      maxNoOfPodsToEvictPerNamespace: 1
       metricsProviders:
         - source: KubernetesMetrics
       profiles:
