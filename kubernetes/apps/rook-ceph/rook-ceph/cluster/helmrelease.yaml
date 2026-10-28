@@ -117,15 +117,25 @@ spec:
       network:
         connections:
           requireMsgr2: true
-      # Ceph daemons stay on the control-plane nodes: worker nodes (VMs) are Ceph clients only
+      # Ceph daemons run on m0-m2 and the bare-metal worker w2 (OSD host); the Proxmox VM workers are
+      # Ceph clients only. Mons and mgrs stay on the control-plane nodes.
       placement:
         all:
           nodeAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
               nodeSelectorTerms:
                 - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values: [m0, m1, m2, w2]
+        mon: &controlPlane
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
                     - key: node-role.kubernetes.io/control-plane
                       operator: Exists
+        mgr: *controlPlane
       storage:
         # Explicit list so worker nodes (Ceph clients only) never get an OSD-prepare job
         useAllNodes: false
@@ -135,6 +145,9 @@ spec:
           - name: m0
           - name: m1
           - name: m2
+          - name: w2
+            devices:
+              - name: /dev/disk/by-id/nvme-ZETTASTONE_CP200_1024GB_ZSP02OV1TCB824344536
       osd:
     cephBlockPools:
       - name: ceph-blockpool
