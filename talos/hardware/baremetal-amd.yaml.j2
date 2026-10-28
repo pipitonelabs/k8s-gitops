@@ -1,0 +1,46 @@
+---
+# AMD bare-metal worker (w2, GMKtec M5 Plus: Ryzen 7 5825U, two 2.5G r8169 NICs).
+# The schematic ID is computed from talos/schematics/baremetal-amd.yaml.j2 at render time (just talos schematic-id baremetal-amd).
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.14.5
+---
+# The two 2.5G r8169 ports get the aliases net0 and net1 (in hardware-address order). An alias does not rename the interface.
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: net%d
+selector:
+  match: link.driver == "r8169"
+---
+# bond0 (LACP over net0 and net1) with VLANs 20 and 30, same as the baremetal nodes.
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - net0
+  - net1
+bondMode: 802.3ad
+lacpRate: slow
+miimon: 1000
+xmitHashPolicy: layer3+4
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: DHCPv4Config
+name: bond0
+clientIdentifier: mac
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.20
+vlanID: 20
+parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.30
+vlanID: 30
+parent: bond0
+mtu: 1500

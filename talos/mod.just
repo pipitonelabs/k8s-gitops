@@ -28,7 +28,7 @@ diff-node node:
 [doc('Validate the rendered config for a node')]
 validate-node node:
     mode="metal"
-    [[ "$(just talos hardware {{ node }})" == "baremetal" ]] || mode="cloud"
+    [[ "$(just talos hardware {{ node }})" == baremetal* ]] || mode="cloud"
     just talos render-config {{ node }} | talosctl validate --mode "$mode" --config /dev/stdin
 
 [doc('Regenerate talosconfig from the 1Password secrets (needed on a fresh workstation or rebuild)')]
@@ -47,7 +47,7 @@ generate-talosconfig:
 kubeconfig:
     talosctl kubeconfig -n "$(talosctl config info -o yaml | yq -r -e '.endpoints[0]')" -f --force-context-name k8s "{{ justfile_directory() }}/kubernetes"
 
-[doc('Print the Talos factory schematic ID for talos/schematics/<hardware>.yaml.j2 (baremetal or proxmox)')]
+[doc('Print the Talos factory schematic ID for talos/schematics/<hardware>.yaml.j2 (baremetal, baremetal-amd or proxmox)')]
 schematic-id hardware='baremetal':
     just template "{{ source_directory() }}/schematics/{{ hardware }}.yaml.j2" \
         | curl -sX POST --data-binary @- https://factory.talos.dev/schematics | jq -r '.id'
@@ -112,7 +112,7 @@ node-file node:
     [[ -f "${files[0]}" ]] || { echo "No node file for {{ node }} under talos/nodes/" >&2; exit 1; }
     echo "${files[0]}"
 
-# The hardware class is the directory the node file lives in: baremetal or proxmox
+# The hardware class is the directory the node file lives in: baremetal, baremetal-amd or proxmox
 [private]
 hardware node:
     basename "$(dirname "$(just talos node-file {{ node }})")"
