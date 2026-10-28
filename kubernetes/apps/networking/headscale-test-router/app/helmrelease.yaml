@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headscale-test-router
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  interval: 1h
+  values:
+    controllers:
+      headscale-test-router:
+        replicas: 1
+        strategy: Recreate
+        serviceAccount:
+          name: headscale-test-router
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tailscale/tailscale
+              tag: v1.104.2@sha256:b11583ad2e93e4671128538c88cf11f460444a5d7e449311dd1933a400ab849d
+            env:
+              TS_HOSTNAME: headscale-test-router
+              TS_USERSPACE: "true"
+              TS_KUBE_SECRET: headscale-test-router-state
+              TS_AUTH_ONCE: "true"
+              TS_ROUTES: 192.168.20.81/32
+              TS_EXTRA_ARGS: --login-server=https://headscale.pipitonelabs.com --advertise-tags=tag:k8s
+            envFrom:
+              - secretRef:
+                  name: headscale-test-router-secret
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

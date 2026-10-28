@@ -1,0 +1,80 @@
+---
+# Validated against headscale v0.29.6 config-example.yaml
+server_url: https://headscale.pipitonelabs.com
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 0.0.0.0:9090
+# gRPC remote access disabled by binding to localhost only (CLI uses the unix socket).
+grpc_listen_addr: 127.0.0.1:50443
+grpc_allow_insecure: false
+
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+  allocation: sequential
+
+derp:
+  server:
+    enabled: false
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  paths: []
+  auto_update_enabled: true
+  update_frequency: 3h
+
+disable_check_updates: true
+
+node:
+  expiry: 0
+  ephemeral:
+    inactivity_timeout: 30m
+
+database:
+  type: sqlite
+  sqlite:
+    path: /var/lib/headscale/db.sqlite
+    write_ahead_log: true
+
+log:
+  level: info
+  format: text
+
+policy:
+  mode: file
+  path: /etc/headscale/policy.hujson
+
+dns:
+  magic_dns: true
+  # Must differ from the server_url domain (pipitonelabs.com).
+  base_domain: hs.pipitonelabs.internal
+  override_local_dns: true
+  nameservers:
+    global:
+      - 1.1.1.1
+      - 1.0.0.1
+    split:
+      # Must be 192.168.20.1; 10.69.1.1 is unreachable for remote members.
+      pipitonelabs.com:
+        - 192.168.20.1
+  search_domains: []
+  extra_records: []
+
+unix_socket: /var/run/headscale/headscale.sock
+unix_socket_permission: "0770"
+
+logtail:
+  enabled: false
+
+# TODO: enable once the Authentik provider/application "headscale" exists
+# (Authentik is configured via Blueprints). client_secret is supplied by the
+# HEADSCALE_OIDC_CLIENT_SECRET env var from headscale-secret (ExternalSecret).
+# oidc:
+#   only_start_if_oidc_is_available: false
+#   issuer: https://sso.pipitonelabs.com/application/o/headscale/
+#   client_id: headscale   # TODO: replace with the Authentik client id
+#   scope: ["openid", "profile", "email"]
+#   email_verified_required: true
+#   pkce:
+#     enabled: true

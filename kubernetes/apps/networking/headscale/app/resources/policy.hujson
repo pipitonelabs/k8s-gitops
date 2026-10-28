@@ -1,0 +1,47 @@
+// Headscale ACL policy (policy.mode: file), classic ACL syntax.
+// TODO: replace the placeholder usernames (joe@) with real headscale users.
+{
+  "groups": {
+    "group:admin": ["joe@"],
+    // TODO: add the household members here
+    "group:members": ["joe@"],
+  },
+
+  "tagOwners": {
+    "tag:k8s": ["group:admin"],
+  },
+
+  "autoApprovers": {
+    "routes": {
+      "10.0.0.0/8": ["tag:k8s"],
+      "192.168.10.0/24": ["tag:k8s"],
+      "192.168.20.0/24": ["tag:k8s"],
+      "192.168.20.81/32": ["tag:k8s"],
+    },
+  },
+
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["group:admin"],
+      "dst": ["*:*"],
+    },
+    {
+      "action": "accept",
+      "src": ["group:members"],
+      "proto": "tcp",
+      "dst": ["192.168.20.81:80,443"],
+    },
+    {
+      "action": "accept",
+      "src": ["group:members"],
+      "proto": "udp",
+      "dst": ["192.168.20.81:443"],
+    },
+    {
+      "action": "accept",
+      "src": ["group:members"],
+      "dst": ["192.168.20.1:53"],
+    },
+  ],
+}

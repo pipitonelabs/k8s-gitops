@@ -10,6 +10,8 @@ resources:
   - ./echo-server/ks.yaml
   - ./envoy-gateway/ks.yaml
   - ./external-dns/ks.yaml
+  - ./headscale/ks.yaml
+  - ./headscale-test-router/ks.yaml
 #  - ./multus/ks.yaml
   - ./network-optimizer/ks.yaml
   - ./sing-box/ks.yaml
