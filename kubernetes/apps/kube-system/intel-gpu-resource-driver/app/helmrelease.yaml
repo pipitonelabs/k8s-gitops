@@ -23,6 +23,9 @@ spec:
   interval: 1h
   values:
     kubeletPlugin:
+      # Only nodes with an Intel iGPU (labelled in talos/hardware/baremetal.yaml.j2) run the plugin.
+      nodeSelector:
+        node.kubernetes.io/gpu: "true"
       # xpumd (Intel XPU Manager) is not deployed, so health monitoring (-m)
       # cannot reach /run/xpumd/intelxpuinfo.sock and panics the plugin.
       # Disable it and let the driver read device details directly (requires privileged).
