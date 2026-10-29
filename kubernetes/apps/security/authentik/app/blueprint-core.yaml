@@ -52,11 +52,18 @@ data:
         model: authentik_policies_password.passwordpolicy
         identifiers: {name: password-complexity}
         attrs:
-          length_min: 8
+          length_min: 12
           amount_digits: 1
           amount_lowercase: 1
           amount_uppercase: 1
-          error_message: "Minimum password length: 10. At least 1 of each required: uppercase, lowercase, digit"
+          error_message: "Minimum password length: 12. At least 1 of each required: uppercase, lowercase, digit"
+      - id: policy-authentication-reputation
+        model: authentik_policies_reputation.reputationpolicy
+        identifiers: {name: authentication-reputation}
+        attrs:
+          check_ip: true
+          check_username: true
+          threshold: -5
       - id: policy-user-settings-authorization
         model: authentik_policies_expression.expressionpolicy
         identifiers: {name: user-settings-authorization}
@@ -279,7 +286,24 @@ data:
         identifiers: {name: authentication-mfa-validation}
         attrs:
           device_classes: [static, totp, webauthn]
-          not_configured_action: skip
+          not_configured_action: configure
+          configuration_stages:
+            - !KeyOf stage-authenticator-totp-setup
+            - !KeyOf stage-authenticator-webauthn-setup
+          webauthn_user_verification: preferred
+      - id: stage-authenticator-totp-setup
+        model: authentik_stages_authenticator_totp.authenticatortotpstage
+        identifiers: {name: authenticator-totp-setup}
+        attrs:
+          friendly_name: Authenticator app (TOTP)
+          digits: 6
+      - id: stage-authenticator-webauthn-setup
+        model: authentik_stages_authenticator_webauthn.authenticatorwebauthnstage
+        identifiers: {name: authenticator-webauthn-setup}
+        attrs:
+          friendly_name: Passkey / security key
+          user_verification: preferred
+          resident_key_requirement: preferred
       - id: stage-authentication-login
         model: authentik_stages_user_login.userloginstage
         identifiers: {name: authentication-login}
@@ -302,7 +326,7 @@ data:
         model: authentik_stages_email.emailstage
         identifiers: {name: recovery-email}
         attrs:
-          activate_user_on_success: true
+          activate_user_on_success: false
           use_global_settings: true
           template: email/password_reset.html
           subject: Password recovery
@@ -368,6 +392,19 @@ data:
         identifiers: {name: user-settings-write}
         attrs:
           create_users_as_inactive: false
+
+      # --- Flow policy bindings ------------------------------------------
+      # Reputation policy passes when the score is at or below the threshold
+      # (bad reputation), so negate it: the flow is denied for bad reputation.
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf flow-authentication
+          policy: !KeyOf policy-authentication-reputation
+          order: 0
+        attrs:
+          negate: true
+          enabled: true
+          timeout: 30
 
       # --- Flow stage bindings -------------------------------------------
       - model: authentik_flows.flowstagebinding
