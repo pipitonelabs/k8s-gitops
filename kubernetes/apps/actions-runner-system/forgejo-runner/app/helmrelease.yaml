@@ -123,6 +123,11 @@ spec:
               capacity: 2
               timeout: 3h
               shutdown_timeout: 3m
+              # Lets docker CLI in job containers reach the dind daemon
+              envs:
+                DOCKER_HOST: tcp://localhost:2376
+                DOCKER_TLS_VERIFY: "1"
+                DOCKER_CERT_PATH: /certs/client
               labels:
                 - docker:docker://node:22-bookworm
                 - ubuntu-latest:docker://node:22-bookworm
