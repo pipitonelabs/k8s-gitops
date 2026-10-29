@@ -51,3 +51,25 @@ spec:
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app onepassword-policy
+  namespace: &namespace external-secrets
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: onepassword-store
+      namespace: *namespace
+  interval: 1h
+  path: ./kubernetes/apps/external-secrets/onepassword/policy
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  timeout: 5m
