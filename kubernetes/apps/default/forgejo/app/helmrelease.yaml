@@ -37,7 +37,7 @@ spec:
               FORGEJO__server__SSH_LISTEN_PORT: &sshPort 2222
               FORGEJO__server__START_SSH_SERVER: "true"
               FORGEJO__server__HTTP_PORT: &port 3000
-              # Secret keys auto-generate into app.ini (persisted on the PVC) on first boot
+              # Secret keys auto-generate into $GITEA_APP_INI (/var/lib/gitea/custom/conf/app.ini) on first boot
               FORGEJO__security__INSTALL_LOCK: "true"
               FORGEJO__service__DISABLE_REGISTRATION: "true"
               FORGEJO__metrics__ENABLED: "true"
@@ -89,8 +89,6 @@ spec:
           forgejo:
             app:
               - path: /var/lib/gitea
-              - path: /etc/gitea
-                subPath: config
       tmpfs:
         type: emptyDir
         advancedMounts:
