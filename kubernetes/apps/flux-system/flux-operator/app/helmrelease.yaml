@@ -36,4 +36,4 @@ spec:
           - name: envoy-internal
             namespace: networking
       networkPolicy:
-        create: true
+        create: false

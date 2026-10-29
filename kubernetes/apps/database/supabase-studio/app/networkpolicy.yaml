@@ -23,6 +23,16 @@ spec:
     - fromEntities:
         - host
         - remote-node
+        - kube-apiserver
+    # Replies to this pod's own outbound service connections. Cilium can drop
+    # same-node rev-NATed replies as new ingress, so allow the backends.
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: networking
+            gateway.envoyproxy.io/owning-gateway-name: envoy-internal
 ---
 # yaml-language-server: $schema=https://kube-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
 apiVersion: cilium.io/v2
@@ -45,3 +55,13 @@ spec:
     - fromEntities:
         - host
         - remote-node
+        - kube-apiserver
+    # Replies to this pod's own outbound service connections. Cilium can drop
+    # same-node rev-NATed replies as new ingress, so allow the backends.
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: networking
+            gateway.envoyproxy.io/owning-gateway-name: envoy-internal
