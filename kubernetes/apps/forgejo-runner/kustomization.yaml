@@ -15,4 +15,4 @@ patches:
         labels:
           pod-security.kubernetes.io/enforce: privileged
 resources:
-  - ./ks.yaml
+  - ./forgejo-runner/ks.yaml
