@@ -34,5 +34,15 @@
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
+    {
+      customType: "regex",
+      description: "Process CloudNativePG cluster imageName pins",
+      managerFilePatterns: ["/^kubernetes/apps/database/cloudnative-pg/cluster/.+\\.yaml$/"],
+      matchStrings: [
+        // imageName: ghcr.io/cloudnative-pg/postgresql:17.6-202510201453-system-bullseye@sha256:...
+        "imageName: (?<depName>\\S+?):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)",
+      ],
+      datasourceTemplate: "docker",
+    },
   ],
 }

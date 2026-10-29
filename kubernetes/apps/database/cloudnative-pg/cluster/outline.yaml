@@ -6,7 +6,7 @@ metadata:
   name: outline
 spec:
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.6-202510201453-system-bullseye@sha256:c6d2a2ebe1a481c7dc1c4e1376852f65262ad4c07218230cbeeb8cd7cb1d58df
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
