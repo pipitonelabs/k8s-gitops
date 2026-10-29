@@ -149,7 +149,7 @@ spec:
     lateResponseHeaders:
       addIfAbsent:
         - name: Strict-Transport-Security
-          value: max-age=31536000; includeSubDomains
+          value: max-age=31536000
   http3: {}
   targetSelectors:
     - group: gateway.networking.k8s.io
