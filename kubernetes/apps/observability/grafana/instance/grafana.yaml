@@ -15,10 +15,6 @@ spec:
       signout_redirect_url: https://sso.pipitonelabs.com/application/o/grafana/end-session/
       oauth_auto_login: "false"
       oauth_allow_insecure_email_lookup: "true"
-    auth.anonymous:
-      enabled: "true"
-      org_role: Viewer
-      hide_version: "true"
     auth.generic_oauth:
       name: authentik
       enabled: "true"
