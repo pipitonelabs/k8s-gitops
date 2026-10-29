@@ -281,16 +281,6 @@ data:
           show_matched_user: false
           password_stage: !KeyOf stage-authentication-password
           recovery_flow: !KeyOf flow-recovery
-      - id: stage-authentication-mfa-validation
-        model: authentik_stages_authenticator_validate.authenticatorvalidatestage
-        identifiers: {name: authentication-mfa-validation}
-        attrs:
-          device_classes: [static, totp, webauthn]
-          not_configured_action: configure
-          configuration_stages:
-            - !KeyOf stage-authenticator-totp-setup
-            - !KeyOf stage-authenticator-webauthn-setup
-          webauthn_user_verification: preferred
       - id: stage-authenticator-totp-setup
         model: authentik_stages_authenticator_totp.authenticatortotpstage
         identifiers: {name: authenticator-totp-setup}
@@ -304,6 +294,16 @@ data:
           friendly_name: Passkey / security key
           user_verification: preferred
           resident_key_requirement: preferred
+      - id: stage-authentication-mfa-validation
+        model: authentik_stages_authenticator_validate.authenticatorvalidatestage
+        identifiers: {name: authentication-mfa-validation}
+        attrs:
+          device_classes: [static, totp, webauthn]
+          not_configured_action: configure
+          configuration_stages:
+            - !KeyOf stage-authenticator-totp-setup
+            - !KeyOf stage-authenticator-webauthn-setup
+          webauthn_user_verification: preferred
       - id: stage-authentication-login
         model: authentik_stages_user_login.userloginstage
         identifiers: {name: authentication-login}
