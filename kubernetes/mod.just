@@ -31,8 +31,8 @@ browse-pvc ns claim:
 
 [doc('Open a privileged debug shell on a node (replaces task kubernetes:node-shell)')]
 debug-node node:
-    trap 'kubectl delete pod -n default -l app.kubernetes.io/managed-by=kubectl-debug --field-selector spec.nodeName={{ node }} --ignore-not-found --wait=false' EXIT
-    kubectl debug node/{{ node }} -n default -it --image=mirror.gcr.io/alpine:latest --profile=sysadmin
+    trap 'kubectl delete pod -n kube-system -l app.kubernetes.io/managed-by=kubectl-debug --field-selector spec.nodeName={{ node }} --ignore-not-found --wait=false' EXIT
+    kubectl debug node/{{ node }} -n kube-system -it --image=mirror.gcr.io/alpine:latest --profile=sysadmin
 
 [doc('Print a decoded secret (needs the krew view-secret plugin)')]
 view-secret ns secret:

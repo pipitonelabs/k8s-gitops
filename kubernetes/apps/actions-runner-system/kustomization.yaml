@@ -4,6 +4,17 @@ kind: Kustomization
 namespace: actions-runner-system
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          # forgejo-runner dind sidecar is privileged
+          pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./actions-runner-controller/ks.yaml
   - ./forgejo-runner/ks.yaml

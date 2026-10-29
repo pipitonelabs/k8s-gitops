@@ -4,6 +4,17 @@ kind: Kustomization
 namespace: networking
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          # tailscale proxies are privileged (multus, when enabled, too)
+          pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./certificates/ks.yaml
   - ./cloudflared/ks.yaml
