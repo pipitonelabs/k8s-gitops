@@ -157,6 +157,7 @@ spec:
               - path: /config
       data:
         type: emptyDir
+        sizeLimit: 10Gi
         advancedMounts:
           forgejo-runner:
             register:
@@ -165,6 +166,7 @@ spec:
               - path: /data
       certs:
         type: emptyDir
+        sizeLimit: 16Mi
         advancedMounts:
           forgejo-runner:
             app:
@@ -174,6 +176,7 @@ spec:
               - path: /certs
       tmp:
         type: emptyDir
+        sizeLimit: 1Gi
         advancedMounts:
           forgejo-runner:
             app:
@@ -181,6 +184,7 @@ spec:
       # Ephemeral: image layers and build cache are lost on pod restart.
       docker-data:
         type: emptyDir
+        sizeLimit: 20Gi
         advancedMounts:
           forgejo-runner:
             dind:

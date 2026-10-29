@@ -81,7 +81,7 @@ spec:
               FORGEJO__service__DISABLE_REGISTRATION: "false"
               FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "true"
               FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
-              FORGEJO__oauth2_client__ACCOUNT_LINKING: auto
+              FORGEJO__oauth2_client__ACCOUNT_LINKING: login
               FORGEJO__oauth2_client__USERNAME: preferred_username
               FORGEJO__oauth2_client__UPDATE_AVATAR: "true"
               FORGEJO__openid__ENABLE_OPENID_SIGNIN: "false"
