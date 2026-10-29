@@ -6,3 +6,4 @@ resources:
   - ./helmrelease-postgres-meta.yaml
   - ./helmrelease-studio.yaml
   - ./httproute.yaml
+  - ./networkpolicy.yaml

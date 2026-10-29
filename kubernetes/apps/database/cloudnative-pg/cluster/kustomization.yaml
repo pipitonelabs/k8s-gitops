@@ -9,6 +9,7 @@ resources:
   - ./objectstore-tradeforge.yaml
   - ./outline.yaml
   - ./prometheusrule.yaml
+  - ./networkpolicy.yaml
   - ./scheduledbackup.yaml
   - ./tradeforge.yaml
 configMapGenerator:
