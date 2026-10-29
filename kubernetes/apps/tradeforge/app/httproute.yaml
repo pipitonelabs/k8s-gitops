@@ -30,7 +30,8 @@ spec:
           port: 3000
     # Realtime (Phoenix) serves the socket at /socket; map /realtime/v1 -> /socket.
     # VALIDATE at cutover: confirm the WS connects (devtools -> WS).
-    - matches:
+    - name: realtime
+      matches:
         - path: { type: PathPrefix, value: /realtime/v1 }
       filters:
         - type: URLRewrite
