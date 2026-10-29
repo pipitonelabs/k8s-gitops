@@ -13,3 +13,4 @@ resources:
   - ./smtp-relay/ks.yaml
   - ./nginx/ks.yaml
   - ./graph-mock/ks.yaml
+  - ./forgejo/ks.yaml
