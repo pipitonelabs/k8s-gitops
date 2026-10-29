@@ -92,10 +92,12 @@ jobs:
       - name: Read Diff
         id: diff
         run: |-
+          delimiter="EOF_$(openssl rand -hex 8)"
           {
-            echo 'diff<<EOF'
+            echo "diff<<${delimiter}"
             cat diff.comment
-            echo 'EOF'
+            echo
+            echo "${delimiter}"
           } >> "$GITHUB_OUTPUT"
 
       - if: ${{ steps.diff.outputs.diff != '' }}
