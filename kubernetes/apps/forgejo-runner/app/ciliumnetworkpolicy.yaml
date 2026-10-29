@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+# Workflow jobs run untrusted code, so keep the runner away from the LAN/cluster and only allow
+# DNS, Forgejo (git.pipitonelabs.com via envoy-internal) and the internet.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: forgejo-runner
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: forgejo-runner
+  # An empty rule enables default deny for ingress without allowing anything.
+  ingress:
+    - {}
+  egress:
+    # DNS
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # git.pipitonelabs.com -> 192.168.20.81 (envoy-internal LoadBalancer). Cilium's socket LB
+    # translates the VIP to the backend pod (port 443 -> targetPort 10443) before policy is
+    # evaluated, so allow the envoy pods on both ports, plus the VIP itself as a fallback.
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: networking
+            app.kubernetes.io/name: envoy
+            gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "10443"
+              protocol: TCP
+    - toCIDR:
+        - 192.168.20.81/32
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Internet only: no RFC1918 destinations
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
