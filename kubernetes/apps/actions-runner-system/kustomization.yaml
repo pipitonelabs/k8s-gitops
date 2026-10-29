@@ -6,3 +6,4 @@ components:
   - ../../components/namespace
 resources:
   - ./actions-runner-controller/ks.yaml
+  - ./forgejo-runner/ks.yaml

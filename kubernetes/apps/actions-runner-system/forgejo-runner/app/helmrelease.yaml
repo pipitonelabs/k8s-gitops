@@ -1,0 +1,187 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: forgejo-runner
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  interval: 1h
+  values:
+    controllers:
+      forgejo-runner:
+        replicas: 1
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            seccompProfile: { type: RuntimeDefault }
+        initContainers:
+          register:
+            image: &runnerImage
+              repository: code.forgejo.org/forgejo/runner
+              tag: 13.2.0@sha256:ca3d5eea46004789a175d1369eec6829d3ea9bfbe2011a06625b4bdaa55f7552
+            command: ["/bin/bash", "-c"]
+            args:
+              - |
+                # Offline registration with the shared secret. Retries until the
+                # server side `forgejo-cli actions register` has been run.
+                until forgejo-runner --config /config/config.yml create-runner-file \
+                  --instance "$FORGEJO_INSTANCE_URL" \
+                  --secret "$FORGEJO_RUNNER_SECRET" \
+                  --name "$RUNNER_NAME" --connect; do
+                  echo "registration failed, retrying in 10s"
+                  sleep 10
+                done
+            workingDir: /data
+            env:
+              FORGEJO_INSTANCE_URL: https://git.pipitonelabs.com
+              RUNNER_NAME: k8s-runner
+            envFrom:
+              - secretRef:
+                  name: forgejo-runner-secret
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+        containers:
+          app:
+            image: *runnerImage
+            command: ["/bin/bash", "-c"]
+            args:
+              - |
+                until nc -z localhost 2376 </dev/null; do
+                  echo "waiting for docker daemon..."
+                  sleep 3
+                done
+                exec forgejo-runner --config /config/config.yml daemon
+            workingDir: /data
+            env:
+              TZ: America/New_York
+              DOCKER_HOST: tcp://localhost:2376
+              DOCKER_TLS_VERIFY: "1"
+              DOCKER_CERT_PATH: /certs/client
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 2Gi
+            securityContext: *securityContext
+          dind:
+            image:
+              repository: docker.io/library/docker
+              tag: 29.9.2-dind@sha256:9e79b879b177fbd72c34376a3dd3d91747da5db49e1f560f76aea59561471977
+            env:
+              DOCKER_TLS_CERTDIR: /certs
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 4Gi
+            securityContext:
+              # Required for docker-in-docker
+              privileged: true
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    configMaps:
+      config:
+        data:
+          config.yml: |
+            log:
+              level: info
+              job_level: info
+            runner:
+              file: /data/.runner
+              capacity: 2
+              timeout: 3h
+              shutdown_timeout: 3m
+              # Lets docker CLI in job containers reach the dind daemon
+              envs:
+                DOCKER_HOST: tcp://localhost:2376
+                DOCKER_TLS_VERIFY: "1"
+                DOCKER_CERT_PATH: /certs/client
+              labels:
+                - docker:docker://node:22-bookworm
+                - ubuntu-latest:docker://node:22-bookworm
+            cache:
+              enabled: true
+              dir: /data/cache
+            container:
+              # Job containers share the pod network so they reach the dind
+              # daemon on localhost and use its TLS client certificates.
+              network: host
+              privileged: false
+              options: -v /certs/client:/certs/client:ro
+              valid_volumes:
+                - /certs/client
+              docker_host: "-"
+            host:
+              workdir_parent: /data/workdir
+    persistence:
+      config:
+        type: configMap
+        identifier: config
+        advancedMounts:
+          forgejo-runner:
+            register:
+              - path: /config
+            app:
+              - path: /config
+      data:
+        type: emptyDir
+        advancedMounts:
+          forgejo-runner:
+            register:
+              - path: /data
+            app:
+              - path: /data
+      certs:
+        type: emptyDir
+        advancedMounts:
+          forgejo-runner:
+            app:
+              - path: /certs
+                readOnly: true
+            dind:
+              - path: /certs
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          forgejo-runner:
+            app:
+              - path: /tmp
+      # Ephemeral: image layers and build cache are lost on pod restart.
+      docker-data:
+        type: emptyDir
+        advancedMounts:
+          forgejo-runner:
+            dind:
+              - path: /var/lib/docker
