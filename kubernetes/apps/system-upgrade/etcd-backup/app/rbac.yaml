@@ -1,0 +1,15 @@
+---
+# No Kubernetes RBAC: the job only talks to the Talos API, so this SA has no bindings.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: etcd-backup
+automountServiceAccountToken: false
+---
+apiVersion: talos.dev/v1alpha1
+kind: ServiceAccount
+metadata:
+  name: etcd-backup
+spec:
+  # etcd snapshot requires os:etcd:backup (must be listed in allowedRoles in talos/controlplane.yaml.j2)
+  roles: ["os:etcd:backup"]
