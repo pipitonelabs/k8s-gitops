@@ -4,5 +4,16 @@ kind: Kustomization
 namespace: security
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          # routes in this namespace may attach to envoy-external (public)
+          gateway.pipitonelabs.com/external: "true"
 resources:
   - ./authentik/ks.yaml

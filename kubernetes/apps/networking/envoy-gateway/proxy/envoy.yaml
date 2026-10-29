@@ -68,7 +68,10 @@ spec:
       port: 443
       allowedRoutes:
         namespaces:
-          from: All
+          from: Selector
+          selector:
+            matchLabels:
+              gateway.pipitonelabs.com/external: "true"
       tls:
         certificateRefs:
           - kind: Secret

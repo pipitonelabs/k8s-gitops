@@ -13,6 +13,8 @@ patches:
       metadata:
         name: not-used
         labels:
+          # routes in this namespace may attach to envoy-external (public)
+          gateway.pipitonelabs.com/external: "true"
           # tailscale proxies are privileged (multus, when enabled, too)
           pod-security.kubernetes.io/enforce: privileged
 resources:
