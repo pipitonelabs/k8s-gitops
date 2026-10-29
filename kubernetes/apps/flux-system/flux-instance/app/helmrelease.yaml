@@ -39,7 +39,7 @@ spec:
         # renovate: datasource=github-releases depName=controlplaneio-fluxcd/distribution
         version: 2.10.0
       cluster:
-        networkPolicy: false
+        networkPolicy: true
       components:
         - source-controller
         - kustomize-controller

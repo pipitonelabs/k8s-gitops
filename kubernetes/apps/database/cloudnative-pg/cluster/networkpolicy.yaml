@@ -1,0 +1,108 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+# postgres17: shared cluster used by every app that includes the cnpg component
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: postgres17-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: postgres17
+  ingress:
+    # replication, CNPG operator, barman plugin
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: database
+    # app connections (postgres-init initContainer, pg_dump CronJob, apps)
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: budget
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: default
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: home
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: security
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    # metrics
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+      toPorts:
+        - ports:
+            - port: "9187"
+              protocol: TCP
+    # kubelet probes
+    - fromEntities:
+        - host
+        - remote-node
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: outline-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: outline
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: database
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: default
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+      toPorts:
+        - ports:
+            - port: "9187"
+              protocol: TCP
+    - fromEntities:
+        - host
+        - remote-node
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tradeforge-pg-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: tradeforge-pg
+  ingress:
+    # replication, CNPG operator, supabase-studio, postgres-meta
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: database
+    # postgrest, realtime, reporter
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tradeforge
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+      toPorts:
+        - ports:
+            - port: "9187"
+              protocol: TCP
+    - fromEntities:
+        - host
+        - remote-node

@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: onepassword-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: onepassword
+  ingress:
+    # the ClusterSecretStore talks to http://onepassword.external-secrets.svc:80
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: external-secrets
+            app.kubernetes.io/name: external-secrets
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+    # kubelet probes
+    - fromEntities:
+        - host
+        - remote-node
