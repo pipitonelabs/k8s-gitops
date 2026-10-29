@@ -11,10 +11,13 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    # The volsync component ships an ExternalSecret against the 1Password store
+    - name: cloudnative-pg-cluster
+      namespace: database
+    # The volsync/cnpg components and forgejo-secret use the 1Password store
     - name: onepassword-store
       namespace: external-secrets
   components:
+    - ../../../../components/cnpg
     - ../../../../components/volsync
   path: ./kubernetes/apps/default/forgejo/app
   prune: true
