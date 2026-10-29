@@ -4,5 +4,15 @@ kind: Kustomization
 namespace: forgejo-runner
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./ks.yaml
