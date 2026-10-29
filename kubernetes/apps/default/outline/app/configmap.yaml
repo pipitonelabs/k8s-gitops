@@ -6,7 +6,7 @@ metadata:
 data:
   .env: |
     URL=https://outline.pipitonelabs.com
-    LOG_LEVEL=debug
+    LOG_LEVEL=info
     ENABLE_UPDATES=false
     AWS_REGION=us-east-1
     AWS_S3_ACL=private
@@ -25,7 +25,6 @@ data:
     SMTP_SECURE=false
     WEB_CONCURRENCY=1
     EMAIL_ENABLED=true
-    NODE_TLS_REJECT_UNAUTHORIZED=0
     OIDC_DISPLAY_NAME=authentik
     OIDC_SCOPES=openid profile email
     OIDC_AUTH_URI=https://sso.pipitonelabs.com/application/o/authorize/
