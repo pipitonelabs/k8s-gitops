@@ -54,6 +54,12 @@ spec:
               - searchook
             env:
               TZ: America/New_York
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
     service:
       app:
         controller: *app
