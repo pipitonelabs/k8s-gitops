@@ -11,6 +11,9 @@ spec:
     namespace: flux-system
   interval: 1h
   values:
+    defaultPodOptions:
+      nodeSelector:
+        kubernetes.io/hostname: w2
     controllers:
       network-optimizer:
         containers:
