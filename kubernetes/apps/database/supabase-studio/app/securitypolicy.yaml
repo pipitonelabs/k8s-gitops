@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: supabase-studio
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: supabase-studio
+  oidc:
+    provider:
+      issuer: https://sso.pipitonelabs.com/application/o/ops-tools
+    clientID: ops-tools
+    clientSecret:
+      name: ops-tools-oidc
+    redirectURL: https://supabase.pipitonelabs.com/oauth2/callback
+    logoutPath: /oauth2/logout
+    scopes: [openid, email, profile]

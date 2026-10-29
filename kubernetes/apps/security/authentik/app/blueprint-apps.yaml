@@ -278,3 +278,55 @@ data:
           order: 0
         attrs:
           enabled: true
+
+      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs, supabase-studio; Envoy SecurityPolicy) --
+      - id: ops-tools-provider
+        model: authentik_providers_oauth2.oauth2provider
+        identifiers:
+          name: ops-tools
+        attrs:
+          client_type: confidential
+          client_id: ops-tools
+          grant_types:
+            - authorization_code
+            - refresh_token
+          client_secret: !Env OPS_TOOLS_OIDC_CLIENT_SECRET
+          access_token_validity: hours=4
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+          authorization_flow: !Find [authentik_flows.flow, [slug, provider-authorization-implicit-consent]]
+          authentication_flow: !Find [authentik_flows.flow, [slug, authentication-flow]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, invalidation-flow]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+          redirect_uris:
+            - matching_mode: strict
+              url: https://prometheus.pipitonelabs.com/oauth2/callback
+            - matching_mode: strict
+              url: https://alertmanager.pipitonelabs.com/oauth2/callback
+            - matching_mode: strict
+              url: https://karma.pipitonelabs.com/oauth2/callback
+            - matching_mode: strict
+              url: https://logs.pipitonelabs.com/oauth2/callback
+            - matching_mode: strict
+              url: https://supabase.pipitonelabs.com/oauth2/callback
+      - id: ops-tools-app
+        model: authentik_core.application
+        identifiers:
+          slug: ops-tools
+        attrs:
+          name: Ops Tools
+          provider: !KeyOf ops-tools-provider
+          group: Monitoring
+          open_in_new_tab: true
+          meta_icon: https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/png/prometheus.png
+          meta_launch_url: https://prometheus.pipitonelabs.com/
+          policy_engine_mode: all
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf ops-tools-app
+          group: !Find [authentik_core.group, [name, Monitoring]]
+          order: 0
+        attrs:
+          enabled: true

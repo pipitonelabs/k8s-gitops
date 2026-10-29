@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: karma
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: karma
+  oidc:
+    provider:
+      issuer: https://sso.pipitonelabs.com/application/o/ops-tools
+    clientID: ops-tools
+    clientSecret:
+      name: ops-tools-oidc
+    redirectURL: https://karma.pipitonelabs.com/oauth2/callback
+    logoutPath: /oauth2/logout
+    scopes: [openid, email, profile]
