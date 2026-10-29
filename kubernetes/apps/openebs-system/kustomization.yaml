@@ -4,5 +4,16 @@ kind: Kustomization
 namespace: openebs-system
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          # localpv hostpath helper pods use hostPath
+          pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./openebs/ks.yaml

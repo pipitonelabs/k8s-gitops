@@ -4,6 +4,17 @@ kind: Kustomization
 namespace: rook-ceph
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          # OSDs, csi nodeplugins and osd-prepare jobs are privileged/hostPath
+          pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./ceph-csi-drivers/ks.yaml
   - ./rook-ceph/ks.yaml

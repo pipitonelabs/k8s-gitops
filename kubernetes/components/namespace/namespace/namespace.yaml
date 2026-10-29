@@ -3,5 +3,14 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: not-used
+  labels:
+    # Pod Security Admission defaults. Namespaces that need more override
+    # enforce via a patch in their kubernetes/apps/<ns>/kustomization.yaml.
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled

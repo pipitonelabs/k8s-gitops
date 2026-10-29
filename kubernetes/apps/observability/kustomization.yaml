@@ -4,6 +4,17 @@ kind: Kustomization
 namespace: observability
 components:
   - ../../components/namespace
+patches:
+  - target:
+      kind: Namespace
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: not-used
+        labels:
+          # node-exporter (hostPID/hostPath), smartctl-exporter (privileged), blackbox/gatus NET_RAW, log collector hostPath
+          pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./blackbox-exporter/ks.yaml
   - ./gatus/ks.yaml
