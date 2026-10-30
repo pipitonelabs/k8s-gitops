@@ -104,7 +104,7 @@ spec:
     matchLabels:
       cnpg.io/cluster: tradeforge-pg
   ingress:
-    # replication, CNPG operator, supabase-studio, postgres-meta
+    # replication, CNPG operator
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: database

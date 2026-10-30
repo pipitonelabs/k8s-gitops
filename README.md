@@ -74,7 +74,7 @@ The cluster is three control-plane nodes and one worker, all running Talos. It's
 | `media`   | Plex, Jellyfin |
 | `home`    | Atuin |
 | `default` | Outline, Reactive Resume, my blog, Minecraft server |
-| `database` | PostgreSQL, Dragonfly, Supabase Studio |
+| `database` | PostgreSQL, Dragonfly |
 | `tradeforge` | TradeForge, an app I built and self-host |
 | `networking` | Network Optimizer, sing-box, echo-server |
 
@@ -88,7 +88,6 @@ Plex and Jellyfin use Intel GPUs for hardware transcoding.
 | `outline` | Dedicated PostgreSQL cluster for Outline |
 | `tradeforge-pg` | Dedicated PostgreSQL cluster for TradeForge, which reaches it through PostgREST and Supabase Realtime |
 | [Dragonfly](https://github.com/dragonflydb/dragonfly) | Redis-compatible cache for Authentik and Outline |
-| [Supabase Studio](https://github.com/supabase/supabase) | Web UI for managing the TradeForge database, including its tables, data, and API docs |
 
 ### GitOps
 
