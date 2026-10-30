@@ -168,6 +168,18 @@ Automation lives in [just](https://just.systems) recipes. `just bootstrap cluste
 
 ---
 
+## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f50c/512.gif" alt="🔌" width="20" height="20"> Networking
+
+Everything runs on UniFi. A UCG Fiber handles routing and firewalling, with 5 Gbps Frontier Fiber as the primary WAN and Starlink as automatic failover. It connects at 10G to the USW Pro Max 24 PoE, which serves the Kubernetes nodes over bonded 2.5G links plus the cameras and IoT gear. The USW Pro XG 10 PoE hangs off that switch at 10G and carries the storage, workstations, and access points.
+
+Cilium advertises `LoadBalancer` IPs from the `services` VLAN to the UCG Fiber over BGP.
+
+<div align="center">
+  <img src="./docs/assets/network-topology.svg" alt="Home network topology diagram">
+</div>
+
+---
+
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif" alt="🌎" width="20" height="20"> DNS
 
 Two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) handle DNS, and the gateway a route uses decides where its records go:
