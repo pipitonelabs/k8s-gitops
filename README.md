@@ -106,7 +106,7 @@ This is achieved by defining routes with two specific gateways: `envoy-internal`
 | Device                    | Count | OS Disk Size | Data Disk Size          | Ram   | Operating System | Purpose                 |
 |---------------------------|-------|--------------|-------------------------|------ |------------------|-------------------------|
 | MS-01 (i9-12900H)         | 3     | 1xTB m2 nvme | 1xTB m2 nvme            | 64GB  | Talos            | Kubernetes              |
-| GMKtec M5 Plus            | 1     | 1xTB m2 nvme | 1xTB m2 nvme            | 32GB  | Talos            | Kubernetes              |
+| GMKtec M5 Plus            | 1     | 256GB m2 nvme | 1xTB m2 nvme            | 32GB  | Talos            | Kubernetes              |
 | Dell R730XD               | 1     | -            | Random drive sizes      | 128GB | UnRAID OS        | NFS                     |
 | superheavy (UniFi UNAS Pro) | 1     | -            | 7x16TB HDD              | 8GB   | UniFi OS         | Backup of backups       |
 | UniFi UCG Fiber           | 1     | -            | 1x2TB m2 nvme           | -     | UniFi OS         | Router & NVR            |
