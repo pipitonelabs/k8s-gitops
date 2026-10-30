@@ -32,6 +32,8 @@ spec:
           initContainers:
             - name: kopia-connect
               image: &kopia ghcr.io/home-operations/kopia:0.23.1@sha256:6025a14d5a673bc38de3efdf48711ee93f0130787798b677c85ca95d4eaa0f7a
+              # Image entrypoint runs `kopia server start`; call the binary directly
+              command: ["/usr/local/bin/kopia"]
               args:
                 - repository
                 - connect
@@ -62,6 +64,7 @@ spec:
                 - {name: tmp, mountPath: /tmp}
             - name: kopia-sync
               image: *kopia
+              command: ["/usr/local/bin/kopia"]
               args:
                 - repository
                 - sync-to
