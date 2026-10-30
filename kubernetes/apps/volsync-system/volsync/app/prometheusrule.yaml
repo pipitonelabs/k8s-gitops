@@ -40,3 +40,38 @@ spec:
           for: 5m
           labels:
             severity: warning
+
+    - name: backup-jobs.rules
+      rules:
+        - alert: BackupJobFailed
+          expr: |-
+            (kube_job_status_failed > 0)
+            * on (namespace, job_name) group_left (owner_name)
+            kube_job_owner{owner_kind="CronJob", owner_name=~"offsite-backup|etcd-backup|.*-pg-backups"}
+          annotations:
+            summary: >-
+              Backup job {{ $labels.namespace }}/{{ $labels.job_name }} failed
+            description: >-
+              A Job created by CronJob {{ $labels.namespace }}/{{ $labels.owner_name }} has failed pods.
+              Check the job logs with `kubectl -n {{ $labels.namespace }} logs job/{{ $labels.job_name }}`.
+          for: 5m
+          labels:
+            severity: warning
+
+        - alert: BackupStale
+          expr: |-
+            (
+              (time() - kube_cronjob_status_last_successful_time{cronjob=~"offsite-backup|etcd-backup"} > 26 * 3600)
+              or
+              (time() - kube_cronjob_status_last_successful_time{cronjob=~".*-pg-backups"} > 5 * 3600)
+            )
+            unless on (namespace, cronjob)
+            kube_cronjob_spec_suspend == 1
+          annotations:
+            summary: >-
+              Backup CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not succeeded recently
+            description: >-
+              CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | humanizeDuration }} ago.
+          for: 5m
+          labels:
+            severity: warning
