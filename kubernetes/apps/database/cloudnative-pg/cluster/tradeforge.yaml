@@ -44,6 +44,9 @@ spec:
           name: tradeforge-pg-authenticator
       - name: supabase_admin # was the Studio superuser; Studio has been removed
         ensure: absent
+      - name: dashboard_user # Realtime tenant migrations revoke grants from this role
+        ensure: present
+        login: false
       - name: tradeforge_realtime # Realtime login role (created NOLOGIN by the shim)
         ensure: present
         login: true
