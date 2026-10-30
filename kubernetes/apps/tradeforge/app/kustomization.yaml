@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./externalsecret-ghcr.yaml
+  - ./backendtrafficpolicy.yaml
   - ./helmrelease-postgrest.yaml
   - ./helmrelease-realtime.yaml
   - ./helmrelease-reporter.yaml

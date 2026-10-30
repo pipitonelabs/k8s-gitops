@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json
+# Dashboard streams traffic/logs/connections from the Clash API over websockets
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: sing-box
+spec:
+  mergeType: StrategicMerge
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: sing-box-clash-api
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: sing-box-dashboard
+  timeout:
+    http:
+      requestTimeout: 0s

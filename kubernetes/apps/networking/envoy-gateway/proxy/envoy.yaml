@@ -116,11 +116,14 @@ spec:
       brotli: {}
     - type: Gzip
       gzip: {}
+  # Only retry when the request provably never reached the upstream, so a POST is never replayed
   retry:
     numRetries: 2
     retryOn:
       triggers:
-        - reset
+        - connect-failure
+        - refused-stream
+        - reset-before-request
   targetSelectors:
     - group: gateway.networking.k8s.io
       kind: Gateway
@@ -128,7 +131,8 @@ spec:
   timeout:
     http:
       connectionIdleTimeout: 15s
-      requestTimeout: 0s
+      # Streaming/long-poll/upload routes override this to 0s via their own BackendTrafficPolicy
+      requestTimeout: 60s
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
@@ -141,6 +145,11 @@ spec:
         - 10.244.0.0/16
   http2:
     onInvalidMessage: TerminateStream
+  headers:
+    lateResponseHeaders:
+      addIfAbsent:
+        - name: Strict-Transport-Security
+          value: max-age=31536000
   http3: {}
   targetSelectors:
     - group: gateway.networking.k8s.io
