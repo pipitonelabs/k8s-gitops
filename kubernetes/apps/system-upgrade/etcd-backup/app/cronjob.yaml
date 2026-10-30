@@ -1,0 +1,70 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-backup
+spec:
+  schedule: 15 3 * * *
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: etcd-backup
+          automountServiceAccountToken: false
+          restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 100
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          initContainers:
+            - name: snapshot
+              image: ghcr.io/siderolabs/talosctl:v1.14.5@sha256:0b852e35c1f513ee5eacc22183d6193486012420569fde39fcd5260c51938443
+              args:
+                - --nodes=192.168.10.10
+                - --endpoints=192.168.10.10
+                - etcd
+                - snapshot
+                - /backups/etcd.snapshot.tmp
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+                - mountPath: /var/run/secrets/talos.dev
+                  name: talos
+                  readOnly: true
+          containers:
+            - name: rotate
+              image: docker.io/library/busybox:1.37.0@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  umask 077
+                  mv /backups/etcd.snapshot.tmp "/backups/etcd-$(date -u +%Y%m%dT%H%M%SZ).snapshot"
+                  find /backups -name 'etcd-*.snapshot' -mtime +14 -delete
+                  ls -l /backups
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+          volumes:
+            - name: backups
+              nfs:
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps/etcd
+                server: superheavy.internal
+            - name: talos
+              secret:
+                secretName: etcd-backup
