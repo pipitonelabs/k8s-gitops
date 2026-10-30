@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - ./alertmanagerconfig.yaml
   - ./externalsecret.yaml
+  - ./externalsecret-oidc.yaml
   - ./grafanadashboard.yaml
   - ./helmrelease.yaml
   - ./prometheusrule.yaml
+  - ./securitypolicy.yaml
