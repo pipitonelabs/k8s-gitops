@@ -41,7 +41,7 @@ spec:
               args:
                 evictFailedBarePods: true
                 evictLocalStoragePods: true
-                evictSystemCriticalPods: true
+                evictSystemCriticalPods: false
                 nodeFit: true
             - name: LowNodeUtilization
               args:
@@ -61,6 +61,10 @@ spec:
                   pods: 50
             - name: RemoveFailedPods
               args:
+                namespaces:
+                  exclude:
+                    - rook-ceph
+                    - database
                 reasons:
                   - ContainerStatusUnknown
                   - NodeAffinity
@@ -72,12 +76,31 @@ spec:
                   - Job
                 minPodLifetimeSeconds: 1800
             - name: RemovePodsViolatingInterPodAntiAffinity
+              args:
+                namespaces:
+                  exclude:
+                    - rook-ceph
+                    - database
             - name: RemovePodsViolatingNodeAffinity
               args:
+                namespaces:
+                  exclude:
+                    - rook-ceph
+                    - database
                 nodeAffinityType:
                   - requiredDuringSchedulingIgnoredDuringExecution
             - name: RemovePodsViolatingNodeTaints
+              args:
+                namespaces:
+                  exclude:
+                    - rook-ceph
+                    - database
             - name: RemovePodsViolatingTopologySpreadConstraint
+              args:
+                namespaces:
+                  exclude:
+                    - rook-ceph
+                    - database
           plugins:
             balance:
               enabled:
