@@ -7,4 +7,5 @@ components:
   - ../../components/namespace
 resources:
   - ./kopia/ks.yaml
+  - ./offsite-backup/ks.yaml
   - ./volsync/ks.yaml

@@ -1,0 +1,151 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/batch/cronjob_v1.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: offsite-backup
+spec:
+  schedule: "20 4 * * *"
+  timeZone: UTC
+  suspend: true
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: offsite-backup
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 100
+            seccompProfile:
+              type: RuntimeDefault
+          # Sequential init containers so rclone only runs after the Kopia sync succeeded,
+          # and a Kopia failure fails the Job before anything else is touched.
+          initContainers:
+            - name: kopia-connect
+              image: &kopia ghcr.io/home-operations/kopia:0.23.1@sha256:6025a14d5a673bc38de3efdf48711ee93f0130787798b677c85ca95d4eaa0f7a
+              args:
+                - repository
+                - connect
+                - filesystem
+                - --path=/repository
+                - --readonly
+                - --override-hostname=volsync.volsync-system.svc.cluster.local
+                - --override-username=volsync
+              env: &kopia-env
+                - name: KOPIA_CONFIG_PATH
+                  value: /kopia/config/repository.config
+                - name: KOPIA_CACHE_DIRECTORY
+                  value: /kopia/cache
+                - name: KOPIA_LOG_DIR
+                  value: /kopia/logs
+                - name: TMPDIR
+                  value: /tmp
+              envFrom: &secret
+                - secretRef:
+                    name: offsite-backup-secret
+              securityContext: &sc
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: ["ALL"]}
+              volumeMounts: &kopia-mounts
+                - {name: repository, mountPath: /repository, readOnly: true}
+                - {name: kopia, mountPath: /kopia}
+                - {name: tmp, mountPath: /tmp}
+            - name: kopia-sync
+              image: *kopia
+              args:
+                - repository
+                - sync-to
+                - s3
+                - --bucket=$(OFFSITE_BUCKET)
+                - --prefix=kopia/
+                - --endpoint=$(OFFSITE_ENDPOINT)
+                - --region=$(OFFSITE_REGION)
+                - --access-key=$(OFFSITE_ACCESS_KEY_ID)
+                - --secret-access-key=$(OFFSITE_SECRET_ACCESS_KEY)
+                - --delete
+                - --parallel=4
+              env: *kopia-env
+              envFrom: *secret
+              securityContext: *sc
+              volumeMounts: *kopia-mounts
+          containers:
+            - name: rclone
+              image: rclone/rclone:1.75.2@sha256:b06aed988cf5967de7c25be5925240983981c757f4ed1ac9d2fa659d51d60548
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  case "$OFFSITE_PROVIDER" in
+                    Cloudflare) provider=Cloudflare ;;
+                    *) provider=Other ;; # Backblaze B2 has no dedicated rclone S3 provider
+                  esac
+
+                  export RCLONE_CONFIG_OFFSITE_TYPE=s3
+                  export RCLONE_CONFIG_OFFSITE_PROVIDER="$provider"
+                  export RCLONE_CONFIG_OFFSITE_ENDPOINT="https://$OFFSITE_ENDPOINT"
+                  export RCLONE_CONFIG_OFFSITE_REGION="$OFFSITE_REGION"
+                  export RCLONE_CONFIG_OFFSITE_ACCESS_KEY_ID="$OFFSITE_ACCESS_KEY_ID"
+                  export RCLONE_CONFIG_OFFSITE_SECRET_ACCESS_KEY="$OFFSITE_SECRET_ACCESS_KEY"
+                  export RCLONE_CONFIG_OFFSITE_NO_CHECK_BUCKET=true
+
+                  export RCLONE_CONFIG_SECURE_TYPE=crypt
+                  export RCLONE_CONFIG_SECURE_REMOTE="offsite:$OFFSITE_BUCKET/crypt"
+                  export RCLONE_CONFIG_SECURE_PASSWORD="$(rclone obscure "$RCLONE_CRYPT_PASSWORD")"
+                  export RCLONE_CONFIG_SECURE_PASSWORD2="$(rclone obscure "$RCLONE_CRYPT_SALT")"
+
+                  export RCLONE_CONFIG_GARAGE_TYPE=s3
+                  export RCLONE_CONFIG_GARAGE_PROVIDER=Other
+                  export RCLONE_CONFIG_GARAGE_ENDPOINT=http://garage.default.svc.cluster.local:3900
+                  export RCLONE_CONFIG_GARAGE_REGION=us-east-1
+                  export RCLONE_CONFIG_GARAGE_FORCE_PATH_STYLE=true
+                  export RCLONE_CONFIG_GARAGE_ACCESS_KEY_ID="$GARAGE_ACCESS_KEY_ID"
+                  export RCLONE_CONFIG_GARAGE_SECRET_ACCESS_KEY="$GARAGE_SECRET_ACCESS_KEY"
+
+                  sync() {
+                    echo "==> $1 -> $2"
+                    rclone sync "$1" "$2" --max-delete 50 --fast-list --transfers 4 --stats-one-line -v
+                  }
+
+                  sync /data/apps/postgres secure:postgres
+                  sync /data/apps/etcd secure:etcd
+                  for bucket in cloudnative-pg tradeforge-pg outline-pg outline reactive-resume; do
+                    sync "garage:$bucket" "secure:garage/$bucket"
+                  done
+              env:
+                - name: HOME
+                  value: /tmp
+              envFrom: *secret
+              securityContext: *sc
+              resources:
+                requests:
+                  cpu: 10m
+                limits:
+                  memory: 1Gi
+              volumeMounts:
+                - {name: apps, mountPath: /data/apps, readOnly: true}
+                - {name: tmp, mountPath: /tmp}
+          volumes:
+            - name: repository
+              nfs:
+                server: superheavy.internal
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/volsync/.data
+                readOnly: true
+            - name: apps
+              nfs:
+                server: superheavy.internal
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps
+                readOnly: true
+            - name: kopia
+              emptyDir: {}
+            - name: tmp
+              emptyDir: {}
