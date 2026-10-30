@@ -51,7 +51,7 @@ spec:
                 - |
                   umask 077
                   mv /backups/etcd.snapshot.tmp "/backups/etcd-$(date -u +%Y%m%dT%H%M%SZ).snapshot"
-                  find /backups -name 'etcd-*.snapshot' -mtime +14 -delete
+                  find /backups -name 'etcd-*.snapshot' -mtime +7 -delete
                   ls -l /backups
               securityContext:
                 allowPrivilegeEscalation: false
