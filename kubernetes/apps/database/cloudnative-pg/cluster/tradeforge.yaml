@@ -42,8 +42,9 @@ spec:
           - service_role
         passwordSecret:
           name: tradeforge-pg-authenticator
-      - name: supabase_admin # was the Studio superuser; Studio has been removed
-        ensure: absent
+      - name: supabase_admin # Realtime tenant migrations reference this role
+        ensure: present
+        login: false
       - name: dashboard_user # Realtime tenant migrations revoke grants from this role
         ensure: present
         login: false
