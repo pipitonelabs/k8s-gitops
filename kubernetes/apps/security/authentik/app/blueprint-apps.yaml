@@ -279,7 +279,7 @@ data:
         attrs:
           enabled: true
 
-      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs, supabase-studio; Envoy SecurityPolicy) --
+      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs; Envoy SecurityPolicy) --
       - id: ops-tools-provider
         model: authentik_providers_oauth2.oauth2provider
         identifiers:
@@ -309,8 +309,6 @@ data:
               url: https://karma.pipitonelabs.com/oauth2/callback
             - matching_mode: strict
               url: https://logs.pipitonelabs.com/oauth2/callback
-            - matching_mode: strict
-              url: https://supabase.pipitonelabs.com/oauth2/callback
       - id: ops-tools-app
         model: authentik_core.application
         identifiers:

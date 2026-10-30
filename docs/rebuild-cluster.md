@@ -195,7 +195,7 @@ but keeps its data on NFS. That creates an ordering dependency:
 If barman recovery fails, `outline` also has 4-hourly logical dumps on NFS
 (`superheavy.internal:/volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps/postgres`).
 
-Apps that need a database (outline, authentik, tradeforge, budget, supabase-studio) wait on
+Apps that need a database (outline, authentik, tradeforge, budget) wait on
 `database/cloudnative-pg-cluster`, so they come up after the recovery completes.
 
 ### 6. Loose ends
