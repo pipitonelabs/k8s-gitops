@@ -1,0 +1,1235 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: backups
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  json: |
+    {
+      "title": "Backups",
+      "uid": "backups-overview",
+      "tags": [
+        "backups"
+      ],
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "refresh": "5m",
+      "timezone": "browser",
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "type": "row",
+          "title": "Overview",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "panels": []
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Offsite: last success",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - max(kube_cronjob_status_last_successful_time{cronjob=\"offsite-backup\"})",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 0,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 93600
+                  },
+                  {
+                    "color": "red",
+                    "value": 108000
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "etcd: last success",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - max(kube_cronjob_status_last_successful_time{cronjob=\"etcd-backup\"})",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 3,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 93600
+                  },
+                  {
+                    "color": "red",
+                    "value": 108000
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "pg_dump: oldest success",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - min(kube_cronjob_status_last_successful_time{cronjob=~\".*-pg-backups\"})",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 6,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 18000
+                  },
+                  {
+                    "color": "red",
+                    "value": 28800
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "Postgres base: oldest",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - min(max by (job) (barman_cloud_cloudnative_pg_io_last_available_backup_timestamp))",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 9,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 93600
+                  },
+                  {
+                    "color": "red",
+                    "value": 108000
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 6,
+          "type": "stat",
+          "title": "WAL: archive backlog",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "max(max by (job) (cnpg_collector_pg_wal_archive_status{value=\"ready\"}))",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 12,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 10
+                  },
+                  {
+                    "color": "red",
+                    "value": 50
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 7,
+          "type": "stat",
+          "title": "VolSync: out of sync",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(max by (obj_namespace, obj_name) (volsync_volume_out_of_sync{role=\"source\"}))",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 15,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 8,
+          "type": "stat",
+          "title": "Kopia repo reachable",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "min(volsync_kopia_repository_connectivity{role=\"source\"})",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 18,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 9,
+          "type": "stat",
+          "title": "Failed backup jobs",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count((kube_job_status_failed > 0) * on (namespace, job_name) group_left kube_job_owner{owner_kind=\"CronJob\", owner_name=~\"offsite-backup|etcd-backup|kopia-maint-.*|.*-pg-backups\"}) or vector(0)",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 21,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 10,
+          "type": "row",
+          "title": "Scheduled jobs",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 5
+          },
+          "panels": []
+        },
+        {
+          "id": 11,
+          "type": "stat",
+          "title": "Time since last success",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - max by (cronjob) (kube_cronjob_status_last_successful_time{cronjob=~\"offsite-backup|etcd-backup|kopia-maint-.*|.*-pg-backups\"})",
+              "legendFormat": "{{cronjob}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 8,
+            "w": 14,
+            "x": 0,
+            "y": 6
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 93600
+                  },
+                  {
+                    "color": "red",
+                    "value": 108000
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": ".*-pg-backups"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 18000
+                        },
+                        {
+                          "color": "red",
+                          "value": 28800
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "value_and_name",
+            "orientation": "auto"
+          }
+        },
+        {
+          "id": 12,
+          "type": "bargauge",
+          "title": "Latest job duration",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "max by (cronjob) (label_replace(kube_job_status_completion_time{job_name=~\"(offsite-backup|etcd-backup|kopia-maint-.*|.*-pg-backups)-[0-9]+\"} - kube_job_status_start_time, \"cronjob\", \"$1\", \"job_name\", \"(.*)-[0-9]+$\"))",
+              "legendFormat": "{{cronjob}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 6
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "showUnfilled": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 13,
+          "type": "row",
+          "title": "VolSync / Kopia",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "panels": []
+        },
+        {
+          "id": 14,
+          "type": "bargauge",
+          "title": "Snapshots in the last 3h (expect 3 per app)",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (obj_namespace, obj_name) (increase(volsync_sync_duration_seconds_count{role=\"source\"}[3h]))",
+              "legendFormat": "{{obj_namespace}}/{{obj_name}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 0,
+            "y": 15
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1
+                  },
+                  {
+                    "color": "green",
+                    "value": 2
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "showUnfilled": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 15,
+          "type": "timeseries",
+          "title": "Sync duration",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (obj_name) (rate(volsync_sync_duration_seconds_sum{role=\"source\"}[2h])) / sum by (obj_name) (rate(volsync_sync_duration_seconds_count{role=\"source\"}[2h]))",
+              "legendFormat": "{{obj_name}}",
+              "instant": false,
+              "range": true,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 16,
+            "x": 8,
+            "y": 15
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "calcs": [
+                "lastNotNull",
+                "max"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
+        },
+        {
+          "id": 16,
+          "type": "bargauge",
+          "title": "Retention compliance (lowest per app)",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "min by (obj_namespace, obj_name) (volsync_kopia_retention_compliance{role=\"source\"})",
+              "legendFormat": "{{obj_namespace}}/{{obj_name}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 8,
+            "y": 21
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "showUnfilled": true,
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
+        },
+        {
+          "id": 17,
+          "type": "table",
+          "title": "Missed intervals in the last 24h",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (obj_namespace, obj_name) (increase(volsync_missed_intervals_total{role=\"source\"}[24h])) > 0",
+              "legendFormat": "__auto",
+              "instant": true,
+              "range": false,
+              "format": "table",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 16,
+            "y": 21
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {},
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "type": "row",
+          "title": "Postgres (CNPG)",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 27
+          },
+          "panels": []
+        },
+        {
+          "id": 19,
+          "type": "stat",
+          "title": "Last base backup",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - max by (job) (barman_cloud_cloudnative_pg_io_last_available_backup_timestamp)",
+              "legendFormat": "{{job}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 0,
+            "y": 28
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 93600
+                  },
+                  {
+                    "color": "red",
+                    "value": 108000
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "value_and_name",
+            "orientation": "auto"
+          }
+        },
+        {
+          "id": 20,
+          "type": "stat",
+          "title": "Recovery window",
+          "description": "How far back point-in-time recovery can go.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - max by (job) (barman_cloud_cloudnative_pg_io_first_recoverability_point)",
+              "legendFormat": "{{job}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 6,
+            "y": 28
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 86400
+                  },
+                  {
+                    "color": "green",
+                    "value": 604800
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "value_and_name",
+            "orientation": "auto"
+          }
+        },
+        {
+          "id": 21,
+          "type": "stat",
+          "title": "Last failed base backup",
+          "description": "Time since the last failed backup; red means within 2 days.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "time() - max by (job) (barman_cloud_cloudnative_pg_io_last_failed_backup_timestamp > 0)",
+              "legendFormat": "{{job}}",
+              "instant": true,
+              "range": false,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 12,
+            "y": 28
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 172800
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "value_and_name",
+            "orientation": "auto"
+          }
+        },
+        {
+          "id": 22,
+          "type": "timeseries",
+          "title": "Time since last WAL archived (idle databases climb normally)",
+          "description": "",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "min by (job) (cnpg_pg_stat_archiver_seconds_since_last_archival)",
+              "legendFormat": "{{job}}",
+              "instant": false,
+              "range": true,
+              "format": "time_series",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 18,
+            "y": 28
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
+        }
+      ],
+      "templating": {
+        "list": []
+      },
+      "annotations": {
+        "list": []
+      }
+    }
