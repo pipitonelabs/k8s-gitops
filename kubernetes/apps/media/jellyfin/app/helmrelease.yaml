@@ -70,6 +70,7 @@ spec:
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [44, 106]
+        seccompProfile: { type: RuntimeDefault }
     persistence:
       config:
         existingClaim: "{{ .Release.Name }}"
