@@ -14,4 +14,3 @@ resources:
   - ./nginx/ks.yaml
   - ./graph-mock/ks.yaml
   - ./forgejo/ks.yaml
-  - ./forgejo-test-app/ks.yaml
