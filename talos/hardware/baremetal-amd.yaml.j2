@@ -13,6 +13,12 @@ params:
   devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
   {% endfor %}
 ---
+# Separate from node.kubernetes.io/gpu, which schedules the Intel GPU driver.
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  node.kubernetes.io/amd-gpu: "true"
+---
 # The two 2.5G r8169 ports get the aliases net0 and net1 (in hardware-address order). An alias does not rename the interface.
 apiVersion: v1alpha1
 kind: LinkAliasConfig

@@ -1,0 +1,30 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: k8s-gpu-dra-driver
+spec:
+  interval: 15m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 1.0.1
+  url: oci://ghcr.io/home-operations/charts-mirror/k8s-gpu-dra-driver
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: k8s-gpu-dra-driver
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: k8s-gpu-dra-driver
+  interval: 1h
+  values:
+    kubeletPlugin:
+      # Only nodes with an AMD iGPU (labelled in talos/hardware/baremetal-amd.yaml.j2) run the plugin.
+      nodeSelector:
+        node.kubernetes.io/amd-gpu: "true"
+    cdi:
+      dynamicPath: /var/cdi/dynamic
