@@ -77,6 +77,19 @@ kind: KubeNodeConfig
 labels:
   node.kubernetes.io/gpu: "true"
 ---
+# bond0's igc ports default to 256 RX descriptors, which overflow on Ceph traffic bursts.
+apiVersion: v1alpha1
+kind: EthernetConfig
+name: enp87s0
+rings:
+  rx: 4096
+---
+apiVersion: v1alpha1
+kind: EthernetConfig
+name: enp89s0
+rings:
+  rx: 4096
+---
 apiVersion: v1alpha1
 kind: EthernetConfig
 name: enp2s0f0np0
