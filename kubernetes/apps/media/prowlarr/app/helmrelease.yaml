@@ -44,8 +44,8 @@ spec:
                         value: "{{ .Release.Name }}"
                   initialDelaySeconds: 0
                   periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  timeoutSeconds: 10
+                  failureThreshold: 6
               readiness: *probes
             resources:
               requests:
