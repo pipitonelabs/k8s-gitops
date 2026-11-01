@@ -22,6 +22,8 @@ spec:
     substitute:
       APP: *app
       VOLSYNC_CAPACITY: 20Gi
+      VOLSYNC_FSGROUP_POLICY: OnRootMismatch
+      VOLSYNC_PGID: "100"
   prune: true
   sourceRef:
     kind: GitRepository
