@@ -1,5 +1,7 @@
 ---
 customization:
+  extraKernelArgs:
+    - pcie_aspm=off # NIC rx_missed bursts; keep PCIe links awake
   systemExtensions:
     officialExtensions:
       - siderolabs/i915
