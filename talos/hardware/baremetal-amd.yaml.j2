@@ -10,7 +10,7 @@ apiVersion: v1alpha1
 kind: SysfsConfig
 params:
   {% for i in range(0, 16) %}
-  devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
+  devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_performance
   {% endfor %}
 ---
 # Separate from node.kubernetes.io/gpu, which schedules the Intel GPU driver.
