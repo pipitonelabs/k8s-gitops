@@ -287,23 +287,14 @@ data:
         attrs:
           friendly_name: Authenticator app (TOTP)
           digits: 6
-      - id: stage-authenticator-webauthn-setup
-        model: authentik_stages_authenticator_webauthn.authenticatorwebauthnstage
-        identifiers: {name: authenticator-webauthn-setup}
-        attrs:
-          friendly_name: Passkey / security key
-          user_verification: preferred
-          resident_key_requirement: preferred
       - id: stage-authentication-mfa-validation
         model: authentik_stages_authenticator_validate.authenticatorvalidatestage
         identifiers: {name: authentication-mfa-validation}
         attrs:
-          device_classes: [static, totp, webauthn]
+          device_classes: [static, totp]
           not_configured_action: configure
           configuration_stages:
             - !KeyOf stage-authenticator-totp-setup
-            - !KeyOf stage-authenticator-webauthn-setup
-          webauthn_user_verification: preferred
       - id: stage-authentication-login
         model: authentik_stages_user_login.userloginstage
         identifiers: {name: authentication-login}
