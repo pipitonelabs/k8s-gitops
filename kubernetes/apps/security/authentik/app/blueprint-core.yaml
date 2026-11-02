@@ -303,7 +303,7 @@ data:
           configuration_stages:
             - !KeyOf stage-authenticator-totp-setup
             - !KeyOf stage-authenticator-webauthn-setup
-          webauthn_user_verification: preferred
+          webauthn_user_verification: required
       - id: stage-authentication-identification
         model: authentik_stages_identification.identificationstage
         identifiers: {name: authentication-identification}
