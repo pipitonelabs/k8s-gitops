@@ -64,16 +64,6 @@ data:
           check_ip: true
           check_username: true
           threshold: -5
-      - id: policy-authentication-mfa-optional
-        model: authentik_policies_expression.expressionpolicy
-        identifiers: {name: authentication-mfa-optional}
-        attrs:
-          expression: |
-            flow_plan = request.context.get("flow_plan")
-            if not flow_plan:
-                return True
-            # Skip MFA validation after a passkey login at the identification stage
-            return flow_plan.context.get("auth_method") != "auth_webauthn_pwl"
       - id: policy-user-settings-authorization
         model: authentik_policies_expression.expressionpolicy
         identifiers: {name: user-settings-authorization}
@@ -281,29 +271,6 @@ data:
           backends:
             - authentik.core.auth.InbuiltBackend
           failed_attempts_before_cancel: 3
-      - id: stage-authenticator-totp-setup
-        model: authentik_stages_authenticator_totp.authenticatortotpstage
-        identifiers: {name: authenticator-totp-setup}
-        attrs:
-          friendly_name: Authenticator app (TOTP)
-          digits: 6
-      - id: stage-authenticator-webauthn-setup
-        model: authentik_stages_authenticator_webauthn.authenticatorwebauthnstage
-        identifiers: {name: authenticator-webauthn-setup}
-        attrs:
-          friendly_name: Passkey / security key
-          user_verification: preferred
-          resident_key_requirement: preferred
-      - id: stage-authentication-mfa-validation
-        model: authentik_stages_authenticator_validate.authenticatorvalidatestage
-        identifiers: {name: authentication-mfa-validation}
-        attrs:
-          device_classes: [static, totp, webauthn]
-          not_configured_action: configure
-          configuration_stages:
-            - !KeyOf stage-authenticator-totp-setup
-            - !KeyOf stage-authenticator-webauthn-setup
-          webauthn_user_verification: required
       - id: stage-authentication-identification
         model: authentik_stages_identification.identificationstage
         identifiers: {name: authentication-identification}
@@ -314,7 +281,20 @@ data:
           show_matched_user: false
           password_stage: !KeyOf stage-authentication-password
           recovery_flow: !KeyOf flow-recovery
-          webauthn_stage: !KeyOf stage-authentication-mfa-validation
+      - id: stage-authenticator-totp-setup
+        model: authentik_stages_authenticator_totp.authenticatortotpstage
+        identifiers: {name: authenticator-totp-setup}
+        attrs:
+          friendly_name: Authenticator app (TOTP)
+          digits: 6
+      - id: stage-authentication-mfa-validation
+        model: authentik_stages_authenticator_validate.authenticatorvalidatestage
+        identifiers: {name: authentication-mfa-validation}
+        attrs:
+          device_classes: [static, totp]
+          not_configured_action: configure
+          configuration_stages:
+            - !KeyOf stage-authenticator-totp-setup
       - id: stage-authentication-login
         model: authentik_stages_user_login.userloginstage
         identifiers: {name: authentication-login}
@@ -424,20 +404,12 @@ data:
           order: 0
         attrs:
           stage: !KeyOf stage-authentication-identification
-      - id: binding-authentication-mfa-validation
-        model: authentik_flows.flowstagebinding
+      - model: authentik_flows.flowstagebinding
         identifiers:
           target: !KeyOf flow-authentication
           order: 10
         attrs:
           stage: !KeyOf stage-authentication-mfa-validation
-      - model: authentik_policies.policybinding
-        identifiers:
-          target: !KeyOf binding-authentication-mfa-validation
-          policy: !KeyOf policy-authentication-mfa-optional
-          order: 10
-        attrs:
-          failure_result: true
       - model: authentik_flows.flowstagebinding
         identifiers:
           target: !KeyOf flow-authentication
