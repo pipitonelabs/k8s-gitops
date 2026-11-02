@@ -229,7 +229,7 @@ data:
         identifiers: {slug: invalidation-flow}
         attrs:
           name: Logged out of application
-          title: You've logged out of %(app)s.
+          title: You have been logged out.
           designation: invalidation
           policy_engine_mode: any
           denied_action: continue
