@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: ghcr.io/pipitonelabs/temps
-              tag: latest@sha256:3e8391f3177148a49883682343228c252d431af1db37a4ceca7f6d7025f69070
+              tag: latest@sha256:9c43070e15ada9a9649b30a177c5d14550f97026c36a6cf15b846f9a6c81e95b
             env:
               TZ: America/New_York
             probes:
@@ -54,7 +54,6 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
-            url: https://temps.pipitonelabs.com/api/v1/query?query=up
             group: observability
         hostnames:
           - temps.pipitonelabs.com
