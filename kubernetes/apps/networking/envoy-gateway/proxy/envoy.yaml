@@ -151,9 +151,42 @@ spec:
         - name: Strict-Transport-Security
           value: max-age=31536000
   http3: {}
-  targetSelectors:
+  targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
+      name: envoy-external
+  tcpKeepalive: {}
+  timeout:
+    http:
+      idleTimeout: 60s
+  tls:
+    minVersion: "1.2"
+    alpnProtocols:
+      - h2
+      - http/1.1
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: envoy-internal
+spec:
+  clientIPDetection:
+    xForwardedFor:
+      trustedCIDRs:
+        - 10.244.0.0/16
+  http2:
+    onInvalidMessage: TerminateStream
+  headers:
+    lateResponseHeaders:
+      addIfAbsent:
+        - name: Strict-Transport-Security
+          value: max-age=31536000
+  # No HTTP/3 internally: browsers send each cookie as a separate QPACK header, and Envoy drops the
+  # OIDC callback (http3.too_many_headers) once a client holds enough cookies.
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-internal
   tcpKeepalive: {}
   timeout:
     http:
