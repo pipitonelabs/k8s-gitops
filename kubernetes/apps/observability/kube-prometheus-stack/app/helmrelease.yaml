@@ -23,6 +23,10 @@ spec:
   interval: 1h
   values:
     cleanPrometheusOperatorObjectNames: true
+    defaultRules:
+      disabled:
+        # Talos's own talos:admin client uses short-lived certs, which this rule flags as expiring
+        KubeClientCertificateExpiration: true
     alertmanager:
       route:
         main:
