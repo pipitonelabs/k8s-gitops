@@ -5,7 +5,14 @@ metadata:
   name: kubevirt
   namespace: kubevirt
 spec:
-  certificateRotateStrategy: {}
+  certificateRotateStrategy:
+    selfSigned:
+      ca:
+        duration: 720h
+        renewBefore: 240h
+      server:
+        duration: 168h
+        renewBefore: 48h
   configuration:
     developerConfiguration:
       useEmulation: false
