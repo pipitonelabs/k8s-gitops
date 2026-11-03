@@ -37,3 +37,25 @@ spec:
     namespace: flux-system
   timeout: 10m
   wait: false
+---
+# StorageProfile CRD only exists once the CDI CR is reconciled, so it can't share an apply with it
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app cdi-config
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: cdi
+  interval: 1h
+  retryInterval: 1m
+  path: ./kubernetes/apps/kube-system/cdi/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  timeout: 10m
+  wait: false
