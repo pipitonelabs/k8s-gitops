@@ -226,12 +226,19 @@ data:
           open_in_new_tab: true
           meta_icon: https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/png/forgejo.png
           meta_launch_url: https://git.pipitonelabs.com/
-          policy_engine_mode: all
+          policy_engine_mode: any
       - model: authentik_policies.policybinding
         identifiers:
           target: !KeyOf forgejo-app
           user: !Find [authentik_core.user, [username, joe]]
           order: 0
+        attrs:
+          enabled: true
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf forgejo-app
+          group: !Find [authentik_core.group, [name, Guests]]
+          order: 10
         attrs:
           enabled: true
 
@@ -322,11 +329,18 @@ data:
           open_in_new_tab: true
           meta_icon: https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/png/prometheus.png
           meta_launch_url: https://prometheus.pipitonelabs.com/
-          policy_engine_mode: all
+          policy_engine_mode: any
       - model: authentik_policies.policybinding
         identifiers:
           target: !KeyOf ops-tools-app
           group: !Find [authentik_core.group, [name, Monitoring]]
           order: 0
+        attrs:
+          enabled: true
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf ops-tools-app
+          group: !Find [authentik_core.group, [name, Guests]]
+          order: 10
         attrs:
           enabled: true

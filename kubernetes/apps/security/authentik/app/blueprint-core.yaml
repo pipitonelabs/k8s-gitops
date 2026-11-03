@@ -41,6 +41,11 @@ data:
       - model: authentik_core.group
         identifiers: {name: Grafana Admins}
         attrs: {is_superuser: false}
+      # External guests: bound only to Forgejo, TradeForge and Ops Tools (see blueprint-apps/tradeforge).
+      - id: group-guests
+        model: authentik_core.group
+        identifiers: {name: Guests}
+        attrs: {is_superuser: false}
 
       # --- Kubernetes service connection (for outposts) -------------------
       - model: authentik_outposts.kubernetesserviceconnection
@@ -242,6 +247,15 @@ data:
           designation: enrollment
           compatibility_mode: true
           background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      - id: flow-enrollment-guest
+        model: authentik_flows.flow
+        identifiers: {slug: enrollment-guest}
+        attrs:
+          name: enrollment-guest-flow
+          title: Guest enrollment
+          designation: enrollment
+          compatibility_mode: true
+          background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
       - id: flow-user-settings
         model: authentik_flows.flow
         identifiers: {slug: user-settings-flow}
@@ -360,6 +374,17 @@ data:
         attrs:
           create_users_as_inactive: false
           create_users_group: !KeyOf group-users
+      - id: stage-enrollment-guest-invitation
+        model: authentik_stages_invitation.invitationstage
+        identifiers: {name: enrollment-guest-invitation}
+        attrs:
+          continue_flow_without_invitation: false
+      - id: stage-enrollment-guest-user-write
+        model: authentik_stages_user_write.userwritestage
+        identifiers: {name: enrollment-guest-user-write}
+        attrs:
+          create_users_as_inactive: false
+          create_users_group: !KeyOf group-guests
       - id: stage-source-enrollment-login
         model: authentik_stages_user_login.userloginstage
         identifiers: {name: source-enrollment-login}
@@ -467,6 +492,30 @@ data:
       - model: authentik_flows.flowstagebinding
         identifiers:
           target: !KeyOf flow-enrollment-invitation
+          order: 30
+        attrs:
+          stage: !KeyOf stage-source-enrollment-login
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-guest
+          order: 0
+        attrs:
+          stage: !KeyOf stage-enrollment-guest-invitation
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-guest
+          order: 10
+        attrs:
+          stage: !KeyOf stage-source-enrollment-prompt
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-guest
+          order: 20
+        attrs:
+          stage: !KeyOf stage-enrollment-guest-user-write
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-guest
           order: 30
         attrs:
           stage: !KeyOf stage-source-enrollment-login

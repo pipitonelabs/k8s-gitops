@@ -69,6 +69,7 @@ data:
           group: SwappyBot
           meta_launch_url: https://tradeforge.pipitonelabs.com/
           open_in_new_tab: true
+          policy_engine_mode: any
       # Restrict access to the "Self Hosted" group (your account must be a member)
       - id: tradeforge-access
         model: authentik_policies.policybinding
@@ -76,5 +77,12 @@ data:
           target: !KeyOf tradeforge-app
           group: !Find [authentik_core.group, [name, "Self Hosted"]]
           order: 0
+        attrs:
+          enabled: true
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf tradeforge-app
+          group: !Find [authentik_core.group, [name, Guests]]
+          order: 10
         attrs:
           enabled: true
