@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: ghcr.io/pipitonelabs/temps
-              tag: latest@sha256:9c43070e15ada9a9649b30a177c5d14550f97026c36a6cf15b846f9a6c81e95b
+              tag: latest@sha256:66c710a6110eea2a8a3c7a8c7f1e1d7277ae09db6009f7f98c8d64efbe3215da
             env:
               TZ: America/New_York
             probes:
