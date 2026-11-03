@@ -16,6 +16,7 @@ patches:
           # cilium, csi-driver-nfs, irqbalance, intel-gpu, amd-gpu, generic-device-plugin use host namespaces/hostPath/privileged
           pod-security.kubernetes.io/enforce: privileged
 resources:
+  - ./cdi/ks.yaml
   - ./cilium/ks.yaml
   - ./coredns/ks.yaml
   - ./csi-driver-nfs/ks.yaml
@@ -24,6 +25,8 @@ resources:
   - ./intel-gpu-resource-driver/ks.yaml
   - ./irqbalance/ks.yaml
   - ./k8s-gpu-dra-driver/ks.yaml
+  - ./kubevirt/ks.yaml
+  - ./kubevirt-manager/ks.yaml
   - ./metrics-server/ks.yaml
   - ./reloader/ks.yaml
   - ./spegel/ks.yaml
