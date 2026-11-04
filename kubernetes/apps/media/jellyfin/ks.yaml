@@ -16,6 +16,8 @@ spec:
       namespace: kube-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
+    - name: multus-networks
+      namespace: networking
   interval: 1h
   path: ./kubernetes/apps/media/jellyfin/app
   postBuild:
