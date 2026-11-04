@@ -106,47 +106,15 @@ VM disks are Ceph block volumes, so a VM's data is replicated across nodes like 
 
 [Flux](https://github.com/fluxcd/flux2) watches the [kubernetes](./kubernetes) folder. Each namespace under [kubernetes/apps](./kubernetes/apps) has a `kustomization.yaml` pointing at its apps, and each app has a Flux `Kustomization` (`ks.yaml`) that deploys its `HelmRelease` and related resources. Shared patterns such as backups and databases live in [kubernetes/components](./kubernetes/components), so a new app can pull them in with a line or two.
 
-```mermaid
-graph LR
-    classDef source fill:#7C3AED,stroke:#5B21B6,stroke-width:3px,color:#fff,font-weight:bold
-    classDef check fill:#F59E0B,stroke:#B45309,stroke-width:3px,color:#000,font-weight:bold
-    classDef git fill:#1976D2,stroke:#0D47A1,stroke-width:3px,color:#fff,font-weight:bold
-    classDef flux fill:#43A047,stroke:#2E7D32,stroke-width:3px,color:#fff,font-weight:bold
+<div align="center">
+  <img src="./docs/assets/gitops-flow.svg" alt="GitOps flow: a change from me or Renovate opens a pull request, CI checks it, the merge to main triggers the Flux webhook, and Flux reconciles the cluster">
+</div>
 
-    ME["🧑‍💻 Me<br/>Feature branch"]:::source
-    RENOVATE["🤖 Renovate<br/>Dependency update"]:::source
-    PR["🔀 Pull request"]:::git
-    CI["✅ CI<br/>Test, diff, image pull, audit"]:::check
-    MAIN["🌿 main"]:::git
-    RECEIVER["📡 Flux webhook"]:::flux
-    FLUX["🔄 Flux<br/>Reconcile"]:::flux
-    CLUSTER["☸️ Cluster"]:::flux
+Flux also deploys in dependency order. Each `Kustomization` declares what it needs with `dependsOn`, so an app like Plex waits until Ceph storage and the GPU driver are ready:
 
-    ME --> PR
-    RENOVATE --> PR
-    PR --> CI
-    CI -->|Merge| MAIN
-    MAIN -->|Push event| RECEIVER
-    RECEIVER --> FLUX
-    FLUX -->|Apply| CLUSTER
-```
-
-Flux also deploys in dependency order. Each `Kustomization` declares what it needs with `dependsOn`, so an app like Plex waits until its storage is ready:
-
-```mermaid
-graph LR
-    classDef kustom fill:#43A047,stroke:#2E7D32,stroke-width:3px,color:#fff,font-weight:bold
-    classDef helm fill:#1976D2,stroke:#0D47A1,stroke-width:3px,color:#fff,font-weight:bold
-
-    A["📦 rook-ceph"]:::kustom
-    B["📦 rook-ceph-cluster"]:::kustom
-    C["📦 plex"]:::kustom
-    D["🎯 HelmRelease<br/>plex"]:::helm
-
-    A -->|Then| B
-    B -->|Then| C
-    C -->|Creates| D
-```
+<div align="center">
+  <img src="./docs/assets/flux-dependencies.svg" alt="Flux dependency chain: rook-ceph and volsync before rook-ceph-cluster, then plex waits for rook-ceph-cluster and the Intel GPU driver before creating its HelmRelease">
+</div>
 
 [Renovate](https://github.com/renovatebot/renovate) watches the whole repository and opens a PR for each update. Only a short list of trusted updates merges automatically, and those wait three days after release first.
 
