@@ -51,14 +51,6 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      annotations:
-        # Second and third NICs on the users and iot VLANs so clients there can find Jellyfin
-        # with its UDP 7359 broadcast. Clients then connect through the published HTTPS URL.
-        k8s.v1.cni.cncf.io/networks: |-
-          [
-            {"name": "multus-users", "namespace": "networking", "ips": ["10.69.30.96/24"], "mac": "02:4a:46:00:30:96"},
-            {"name": "multus-iot", "namespace": "networking", "ips": ["10.69.40.96/24"], "mac": "02:4a:46:00:40:96"}
-          ]
       labels:
         app.kubernetes.io/spread-group: media-heavy
       topologySpreadConstraints:
