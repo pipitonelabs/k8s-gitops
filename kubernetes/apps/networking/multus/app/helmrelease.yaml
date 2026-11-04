@@ -43,6 +43,8 @@ spec:
         serviceAccount:
           name: *app
     defaultPodOptions:
+      # multus builds its kubeconfig from the service account token
+      automountServiceAccountToken: true
       hostNetwork: true
     persistence:
       etc-cni-net-d:
