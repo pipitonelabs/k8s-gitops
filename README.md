@@ -63,6 +63,7 @@ The cluster is three control-plane nodes and one worker, all running Talos. It's
 | Backups     | [VolSync](https://github.com/backube/volsync) with [Kopia](https://github.com/kopia/kopia) |
 | Identity    | [Authentik](https://github.com/goauthentik/authentik) |
 | Observability | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts), [Grafana](https://github.com/grafana/grafana), [VictoriaLogs](https://github.com/VictoriaMetrics/VictoriaLogs), [Gatus](https://github.com/TwiN/gatus), [kromgo](https://github.com/home-operations/kromgo) for the badges above |
+| Virtualization | [KubeVirt](https://github.com/kubevirt/kubevirt) for VMs, [CDI](https://github.com/kubevirt/containerized-data-importer) for disk images, [kubevirt-manager](https://github.com/kubevirt-manager/kubevirt-manager) web UI |
 | Upgrades    | [tuppr](https://github.com/home-operations/tuppr) for Talos and Kubernetes |
 | Source control | [Forgejo](https://codeberg.org/forgejo/forgejo), self-hosted alongside this public GitHub repository |
 | CI runners  | [actions-runner-controller](https://github.com/actions/actions-runner-controller), Forgejo runners |
@@ -88,6 +89,18 @@ Plex and Jellyfin use Intel GPUs for hardware transcoding.
 | `outline` | Dedicated PostgreSQL cluster for Outline |
 | `tradeforge-pg` | Dedicated PostgreSQL cluster for TradeForge, which reaches it through PostgREST and Supabase Realtime |
 | [Dragonfly](https://github.com/dragonflydb/dragonfly) | Redis-compatible cache for Authentik and Outline |
+
+### Virtual Machines
+
+The cluster runs VMs alongside containers with [KubeVirt](https://github.com/kubevirt/kubevirt). A VM is just another Kubernetes resource, scheduled onto the same nodes as everything else.
+
+| Component | Role |
+|-----------|------|
+| [KubeVirt](https://github.com/kubevirt/kubevirt) | Runs each VM under KVM inside a pod, with hardware virtualization rather than emulation. VMs live-migrate to another node when KubeVirt upgrades |
+| [CDI](https://github.com/kubevirt/containerized-data-importer) | Imports and uploads ISOs and disk images into PVCs, so a VM boots from a volume |
+| [kubevirt-manager](https://github.com/kubevirt-manager/kubevirt-manager) | Web UI for creating, starting, and opening the console of VMs |
+
+VM disks are Ceph block volumes, so a VM's data is replicated across nodes like any other app.
 
 ### GitOps
 
