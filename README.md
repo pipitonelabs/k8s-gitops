@@ -63,6 +63,7 @@ The cluster is three control-plane nodes and one worker, all running Talos. It's
 | Backups     | [VolSync](https://github.com/backube/volsync) with [Kopia](https://github.com/kopia/kopia) |
 | Identity    | [Authentik](https://github.com/goauthentik/authentik) |
 | Observability | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts), [Grafana](https://github.com/grafana/grafana), [VictoriaLogs](https://github.com/VictoriaMetrics/VictoriaLogs), [Gatus](https://github.com/TwiN/gatus), [kromgo](https://github.com/home-operations/kromgo) for the badges above |
+| Virtualization | [KubeVirt](https://github.com/kubevirt/kubevirt) for VMs, [CDI](https://github.com/kubevirt/containerized-data-importer) for disk images, [kubevirt-manager](https://github.com/kubevirt-manager/kubevirt-manager) web UI |
 | Upgrades    | [tuppr](https://github.com/home-operations/tuppr) for Talos and Kubernetes |
 | Source control | [Forgejo](https://codeberg.org/forgejo/forgejo), self-hosted alongside this public GitHub repository |
 | CI runners  | [actions-runner-controller](https://github.com/actions/actions-runner-controller), Forgejo runners |
@@ -89,51 +90,31 @@ Plex and Jellyfin use Intel GPUs for hardware transcoding.
 | `tradeforge-pg` | Dedicated PostgreSQL cluster for TradeForge, which reaches it through PostgREST and Supabase Realtime |
 | [Dragonfly](https://github.com/dragonflydb/dragonfly) | Redis-compatible cache for Authentik and Outline |
 
+### Virtual Machines
+
+The cluster runs VMs alongside containers with [KubeVirt](https://github.com/kubevirt/kubevirt). A VM is just another Kubernetes resource, scheduled onto the same nodes as everything else.
+
+| Component | Role |
+|-----------|------|
+| [KubeVirt](https://github.com/kubevirt/kubevirt) | Runs each VM under KVM inside a pod, with hardware virtualization rather than emulation. VMs live-migrate to another node when KubeVirt upgrades |
+| [CDI](https://github.com/kubevirt/containerized-data-importer) | Imports and uploads ISOs and disk images into PVCs, so a VM boots from a volume |
+| [kubevirt-manager](https://github.com/kubevirt-manager/kubevirt-manager) | Web UI for creating, starting, and opening the console of VMs |
+
+VM disks are Ceph block volumes, so a VM's data is replicated across nodes like any other app.
+
 ### GitOps
 
 [Flux](https://github.com/fluxcd/flux2) watches the [kubernetes](./kubernetes) folder. Each namespace under [kubernetes/apps](./kubernetes/apps) has a `kustomization.yaml` pointing at its apps, and each app has a Flux `Kustomization` (`ks.yaml`) that deploys its `HelmRelease` and related resources. Shared patterns such as backups and databases live in [kubernetes/components](./kubernetes/components), so a new app can pull them in with a line or two.
 
-```mermaid
-graph LR
-    classDef source fill:#7C3AED,stroke:#5B21B6,stroke-width:3px,color:#fff,font-weight:bold
-    classDef check fill:#F59E0B,stroke:#B45309,stroke-width:3px,color:#000,font-weight:bold
-    classDef git fill:#1976D2,stroke:#0D47A1,stroke-width:3px,color:#fff,font-weight:bold
-    classDef flux fill:#43A047,stroke:#2E7D32,stroke-width:3px,color:#fff,font-weight:bold
+<div align="center">
+  <img src="./docs/assets/gitops-flow.svg" alt="GitOps flow: a change from me or Renovate opens a pull request, CI checks it, the merge to main triggers the Flux webhook, and Flux reconciles the cluster">
+</div>
 
-    ME["🧑‍💻 Me<br/>Feature branch"]:::source
-    RENOVATE["🤖 Renovate<br/>Dependency update"]:::source
-    PR["🔀 Pull request"]:::git
-    CI["✅ CI<br/>Test, diff, image pull, audit"]:::check
-    MAIN["🌿 main"]:::git
-    RECEIVER["📡 Flux webhook"]:::flux
-    FLUX["🔄 Flux<br/>Reconcile"]:::flux
-    CLUSTER["☸️ Cluster"]:::flux
+Flux also deploys in dependency order. Each `Kustomization` declares what it needs with `dependsOn`, so an app like Plex waits until Ceph storage and the GPU driver are ready:
 
-    ME --> PR
-    RENOVATE --> PR
-    PR --> CI
-    CI -->|Merge| MAIN
-    MAIN -->|Push event| RECEIVER
-    RECEIVER --> FLUX
-    FLUX -->|Apply| CLUSTER
-```
-
-Flux also deploys in dependency order. Each `Kustomization` declares what it needs with `dependsOn`, so an app like Plex waits until its storage is ready:
-
-```mermaid
-graph LR
-    classDef kustom fill:#43A047,stroke:#2E7D32,stroke-width:3px,color:#fff,font-weight:bold
-    classDef helm fill:#1976D2,stroke:#0D47A1,stroke-width:3px,color:#fff,font-weight:bold
-
-    A["📦 rook-ceph"]:::kustom
-    B["📦 rook-ceph-cluster"]:::kustom
-    C["📦 plex"]:::kustom
-    D["🎯 HelmRelease<br/>plex"]:::helm
-
-    A -->|Then| B
-    B -->|Then| C
-    C -->|Creates| D
-```
+<div align="center">
+  <img src="./docs/assets/flux-dependencies.svg" alt="Flux dependency chain: rook-ceph and volsync before rook-ceph-cluster, then plex waits for rook-ceph-cluster and the Intel GPU driver before creating its HelmRelease">
+</div>
 
 [Renovate](https://github.com/renovatebot/renovate) watches the whole repository and opens a PR for each update. Only a short list of trusted updates merges automatically, and those wait three days after release first.
 
