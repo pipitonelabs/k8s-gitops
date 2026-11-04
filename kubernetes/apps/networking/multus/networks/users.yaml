@@ -1,0 +1,22 @@
+---
+# users VLAN 30 (10.69.30.0/24), where the Pipitone and Pipitone-Fast SSIDs live.
+# No gateway or routes: only the VLAN's own subnet goes through this interface.
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: multus-users
+spec:
+  config: |-
+    {
+      "cniVersion": "0.3.1",
+      "name": "multus-users",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "bond0.30",
+          "mode": "bridge",
+          "capabilities": {"ips": true, "mac": true},
+          "ipam": {"type": "static"}
+        }
+      ]
+    }

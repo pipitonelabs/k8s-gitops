@@ -1,4 +1,6 @@
 ---
+# iot VLAN 40 (10.69.40.0/24), where the Pipitone-IoT SSID lives.
+# No gateway or routes: only the VLAN's own subnet goes through this interface.
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
@@ -11,17 +13,10 @@ spec:
       "plugins": [
         {
           "type": "macvlan",
-          "master": "bond0.30",
+          "master": "bond0.40",
           "mode": "bridge",
-          "ipam": {
-            "type": "static",
-            "routes": [
-              {"dst": "0.0.0.0/0", "gw": "192.168.30.1"}
-            ]
-          }
-        },
-        {
-          "type": "sbr"
+          "capabilities": {"ips": true, "mac": true},
+          "ipam": {"type": "static"}
         }
       ]
     }
