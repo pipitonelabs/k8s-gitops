@@ -13,7 +13,7 @@ patches:
       metadata:
         name: not-used
         labels:
-          # tailscale proxies are privileged (multus, when enabled, too)
+          # tailscale proxies and multus are privileged
           pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./certificates/ks.yaml
@@ -21,7 +21,7 @@ resources:
   - ./echo-server/ks.yaml
   - ./envoy-gateway/ks.yaml
   - ./external-dns/ks.yaml
-#  - ./multus/ks.yaml
+  - ./multus/ks.yaml
   - ./network-optimizer/ks.yaml
   - ./sing-box/ks.yaml
   - ./sing-box-dashboard/ks.yaml

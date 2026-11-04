@@ -1,0 +1,17 @@
+---
+# servers VLAN 70 (10.69.70.0/24) for KubeVirt VMs, through the br70 bridge on each node.
+# No IPAM: the VM gets its address from UniFi DHCP like any other server on VLAN 70.
+# KubeVirt needs a bridge here; macvlan and ipvlan do not work with its bridge binding.
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: multus-servers
+spec:
+  config: |-
+    {
+      "cniVersion": "0.3.1",
+      "name": "multus-servers",
+      "type": "bridge",
+      "bridge": "br70",
+      "ipam": {}
+    }
