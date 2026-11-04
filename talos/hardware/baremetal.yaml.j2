@@ -40,7 +40,7 @@ name: net%d
 selector:
   match: link.driver == "igc"
 ---
-# bond0 (LACP over net0 and net1) with VLANs 20 and 30. The VIP is in controlplane.yaml.j2.
+# bond0 (LACP over net0 and net1) with VLANs 20, 30, 40 and 70 (br70). The VIP is in controlplane.yaml.j2.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
@@ -70,6 +70,30 @@ kind: VLANConfig
 name: bond0.30
 vlanID: 30
 parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.40
+vlanID: 40
+parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.70
+vlanID: 70
+parent: bond0
+mtu: 1500
+---
+# Layer 2 bridge onto the servers VLAN for KubeVirt VMs (Multus bridge CNI). No address on the node.
+apiVersion: v1alpha1
+kind: BridgeConfig
+name: br70
+links:
+  - bond0.70
+stp:
+  enabled: false
 mtu: 1500
 ---
 apiVersion: v1alpha1
