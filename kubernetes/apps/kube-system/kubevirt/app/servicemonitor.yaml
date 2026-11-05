@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/monitoring.coreos.com/servicemonitor_v1.json
+# Scrapes KubeVirt's components (virt-api, virt-controller, virt-handler, ...) for VM metrics such as
+# kubevirt_vm_info. Added by hand instead of setting monitorNamespace on the KubeVirt CR, which would also
+# install KubeVirt's bundled alert rules.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubevirt
+  namespace: kubevirt
+spec:
+  namespaceSelector:
+    matchNames: [kubevirt]
+  selector:
+    matchLabels:
+      prometheus.kubevirt.io: "true"
+  endpoints:
+    - port: metrics
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
