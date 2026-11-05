@@ -3,18 +3,18 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: temps
+  name: clusterstats
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: temps
+      name: clusterstats
   oidc:
     provider:
       issuer: https://sso.pipitonelabs.com/application/o/ops-tools
     clientID: ops-tools
     clientSecret:
       name: ops-tools-oidc
-    redirectURL: https://temps.pipitonelabs.com/oauth2/callback
+    redirectURL: https://cluster.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
     scopes: [openid, email, profile]

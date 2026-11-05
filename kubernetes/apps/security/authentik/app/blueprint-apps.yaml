@@ -279,7 +279,7 @@ data:
         attrs:
           enabled: true
 
-      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs, temps; Envoy SecurityPolicy) --
+      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs, clusterstats; Envoy SecurityPolicy) --
       - id: ops-tools-provider
         model: authentik_providers_oauth2.oauth2provider
         identifiers:
@@ -310,7 +310,7 @@ data:
             - matching_mode: strict
               url: https://logs.pipitonelabs.com/oauth2/callback
             - matching_mode: strict
-              url: https://temps.pipitonelabs.com/oauth2/callback
+              url: https://cluster.pipitonelabs.com/oauth2/callback
       - id: ops-tools-app
         model: authentik_core.application
         identifiers:
