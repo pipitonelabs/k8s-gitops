@@ -30,6 +30,9 @@ spec:
       enabled: true
     route:
       dashboard:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: storage
         host:
           name: rook.pipitonelabs.com
           path: /
