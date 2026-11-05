@@ -15,6 +15,6 @@ spec:
     clientID: ops-tools
     clientSecret:
       name: ops-tools-oidc
-    redirectURL: https://temps.pipitonelabs.com/oauth2/callback
+    redirectURL: https://cluster.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
     scopes: [openid, email, profile]
