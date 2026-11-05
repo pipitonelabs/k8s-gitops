@@ -79,7 +79,7 @@ The cluster is three control-plane nodes and one worker, all running Talos. It's
 | `tradeforge` | TradeForge, an app I built and self-host |
 | `networking` | Network Optimizer, sing-box, echo-server |
 
-Plex and Jellyfin use Intel GPUs for hardware transcoding.
+Plex transcodes on an Intel iGPU (Talos `i915` and `intel-ucode` extensions, [Intel GPU resource driver](https://github.com/intel/intel-resource-drivers-for-kubernetes), DRA claim on `gpu.intel.com`), and Jellyfin on an AMD iGPU (`amdgpu` and `amd-ucode` extensions, [AMD GPU DRA driver](https://github.com/ROCm/k8s-gpu-dra-driver), DRA claim on `gpu.amd.com`).
 
 ### Databases
 
