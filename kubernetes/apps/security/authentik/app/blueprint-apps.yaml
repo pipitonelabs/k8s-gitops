@@ -279,7 +279,7 @@ data:
         attrs:
           enabled: true
 
-      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs, temps; Envoy SecurityPolicy) --
+      # --- ops-tools (prometheus, alertmanager, karma, victoria-logs, clusterstats; Envoy SecurityPolicy) --
       - id: ops-tools-provider
         model: authentik_providers_oauth2.oauth2provider
         identifiers:

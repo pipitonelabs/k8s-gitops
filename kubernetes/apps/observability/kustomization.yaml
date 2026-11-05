@@ -17,6 +17,7 @@ patches:
           pod-security.kubernetes.io/enforce: privileged
 resources:
   - ./blackbox-exporter/ks.yaml
+  - ./clusterstats/ks.yaml
   - ./gatus/ks.yaml
   - ./grafana/ks.yaml
   - ./karma/ks.yaml
@@ -25,7 +26,6 @@ resources:
   - ./kube-prometheus-stack/ks.yaml
   - ./silence-operator/ks.yaml
   - ./smartctl-exporter/ks.yaml
-  - ./temps/ks.yaml
 #  - ./snmp-exporter/ks.yaml
   - ./unpoller/ks.yaml
   - ./victoria-logs/ks.yaml
