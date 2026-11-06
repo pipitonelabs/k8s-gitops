@@ -20,4 +20,12 @@ spec:
     cookieNames:
       accessToken: AccessToken-karma
       idToken: IdToken-karma
+    # Background fetch/XHR (Sec-Fetch-Dest: empty) gets a 401 instead of a login redirect. Each redirect
+    # sets per-flow OauthNonce/CodeVerifier cookies on /oauth2/callback; a polling dashboard piles up
+    # 100+ of them and the callback then exceeds Envoy's HTTP/2 header count (ERR_HTTP2_PROTOCOL_ERROR).
+    denyRedirect:
+      headers:
+        - name: Sec-Fetch-Dest
+          type: Exact
+          value: empty
     scopes: [openid, email, profile]
