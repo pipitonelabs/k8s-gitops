@@ -17,4 +17,7 @@ spec:
       name: ops-tools-oidc
     redirectURL: https://cluster.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-clusterstats
+      idToken: IdToken-clusterstats
     scopes: [openid, email, profile]

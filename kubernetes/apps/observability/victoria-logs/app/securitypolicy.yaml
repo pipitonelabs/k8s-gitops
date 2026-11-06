@@ -17,4 +17,7 @@ spec:
       name: ops-tools-oidc
     redirectURL: https://logs.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-victoria-logs
+      idToken: IdToken-victoria-logs
     scopes: [openid, email, profile]

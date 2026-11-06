@@ -17,4 +17,7 @@ spec:
       name: kopia-oidc
     redirectURL: https://kopia.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-kopia
+      idToken: IdToken-kopia
     scopes: [openid, email, profile]

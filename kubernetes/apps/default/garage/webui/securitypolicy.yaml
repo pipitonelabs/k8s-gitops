@@ -17,4 +17,7 @@ spec:
       name: garage-webui-oidc
     redirectURL: https://garage.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-garage-webui
+      idToken: IdToken-garage-webui
     scopes: [openid, email, profile]
