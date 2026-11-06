@@ -34,4 +34,4 @@ spec:
   volumeName: pvc-46d2df27-7c74-4ce4-9a55-58ebbae14770
   resources:
     requests:
-      storage: "11114906"
+      storage: "12226397"  # KubeVirt grows the TPM PVC to fit filesystem overhead; must not be below status.capacity
