@@ -17,6 +17,9 @@ spec:
       name: ops-tools-oidc
     redirectURL: https://prometheus.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-prometheus
+      idToken: IdToken-prometheus
     scopes: [openid, email, profile]
 ---
 # yaml-language-server: $schema=https://kube-schemas.pages.dev/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
@@ -37,4 +40,7 @@ spec:
       name: ops-tools-oidc
     redirectURL: https://alertmanager.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-alertmanager
+      idToken: IdToken-alertmanager
     scopes: [openid, email, profile]

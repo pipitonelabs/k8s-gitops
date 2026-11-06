@@ -291,7 +291,8 @@ data:
             - authorization_code
             - refresh_token
           client_secret: !Env OPS_TOOLS_OIDC_CLIENT_SECRET
-          access_token_validity: hours=4
+          access_token_validity: days=1
+          refresh_token_validity: days=30
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
           authorization_flow: !Find [authentik_flows.flow, [slug, provider-authorization-implicit-consent]]
           authentication_flow: !Find [authentik_flows.flow, [slug, authentication-flow]]

@@ -17,4 +17,7 @@ spec:
       name: ops-tools-oidc
     redirectURL: https://karma.pipitonelabs.com/oauth2/callback
     logoutPath: /oauth2/logout
+    cookieNames:
+      accessToken: AccessToken-karma
+      idToken: IdToken-karma
     scopes: [openid, email, profile]
