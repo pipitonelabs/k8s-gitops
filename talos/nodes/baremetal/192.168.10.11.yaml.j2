@@ -12,3 +12,16 @@ provisioning:
 apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: m1.k8s.internal
+---
+# Experiment: bond m1 over the SFP+ (i40e) ports instead of the 2.5G igc ports. Overrides the hardware-layer alias.
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: net%d
+selector:
+  match: link.driver == "i40e"
+---
+# Keep the old igc-derived bond MAC so the DHCP reservation (192.168.10.11) and SLAAC addresses stay the same.
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+hardwareAddr: 58:47:ca:7b:f4:24
