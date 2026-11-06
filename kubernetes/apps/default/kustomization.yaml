@@ -14,3 +14,4 @@ resources:
   - ./nginx/ks.yaml
   - ./graph-mock/ks.yaml
   - ./forgejo/ks.yaml
+  - ./win11/ks.yaml
