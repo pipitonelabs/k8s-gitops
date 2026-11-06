@@ -1,0 +1,96 @@
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: win11
+  annotations:
+    # Never let Flux delete the VM: KubeVirt makes it the owner of the TPM state PVC, which would go with it.
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: win11
+    spec:
+      architecture: amd64
+      # Live-migrate off a node on drain instead of shutting the guest down (needs the RWX block disk).
+      evictionStrategy: LiveMigrate
+      domain:
+        clock:
+          timer:
+            hpet:
+              present: false
+            hyperv: {}
+        cpu:
+          cores: 4
+          model: host-passthrough
+        devices:
+          disks:
+            - name: rootdisk
+              bootOrder: 1
+              dedicatedIOThread: true
+              disk:
+                bus: virtio
+            - name: virtio-drivers
+              cdrom:
+                bus: sata
+          inputs:
+            - name: tablet
+              bus: usb
+              type: tablet
+          interfaces:
+            - name: default
+              macAddress: 02:42:ac:11:00:11
+              masquerade: {}
+              model: virtio
+            - name: servers
+              macAddress: 02:42:ac:11:70:11
+              bridge: {}
+              model: virtio
+          networkInterfaceMultiqueue: true
+          tpm:
+            persistent: true
+        features:
+          acpi: {}
+          hyperv:
+            frequencies: {}
+            ipi: {}
+            reenlightenment: {}
+            relaxed: {}
+            reset: {}
+            runtime: {}
+            spinlocks:
+              spinlocks: 8191
+            synic: {}
+            synictimer:
+              direct: {}
+            tlbflush: {}
+            vapic: {}
+            vpindex: {}
+          smm:
+            enabled: true
+        firmware:
+          bootloader:
+            efi:
+              secureBoot: true
+          # Pinned so Windows activation and the persistent TPM keep matching the same machine identity.
+          serial: cce0182f-7bd5-4840-a882-8a4b8c2156c9
+          uuid: fe4832b6-feb9-46f9-8203-05d62130cfad
+        machine:
+          type: q35
+        memory:
+          guest: 8Gi
+      networks:
+        - name: default
+          pod: {}
+        - name: servers
+          multus:
+            networkName: networking/multus-servers
+      volumes:
+        - name: rootdisk
+          persistentVolumeClaim:
+            claimName: win11-disk
+        - name: virtio-drivers
+          containerDisk:
+            image: quay.io/kubevirt/virtio-container-disk:v1.8.0

@@ -1,0 +1,37 @@
+---
+# The Windows install. Bound to its existing RBD volume, carried over from the default namespace.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: win11-disk
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  accessModes:
+    - ReadWriteMany  # live migration
+  volumeMode: Block
+  storageClassName: ceph-block
+  volumeName: pvc-c1ff5b83-bdf5-4c00-81b2-9094252ea133
+  resources:
+    requests:
+      storage: 100Gi
+---
+# Persistent TPM state (BitLocker and other TPM-sealed keys). KubeVirt finds it by the persistent-state-for label.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: persistent-state-for-win11
+  labels:
+    persistent-state-for: win11
+    cdi.kubevirt.io/applyStorageProfile: "true"
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: ceph-block
+  volumeName: pvc-46d2df27-7c74-4ce4-9a55-58ebbae14770
+  resources:
+    requests:
+      storage: "11114906"
