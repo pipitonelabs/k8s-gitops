@@ -12,6 +12,10 @@ spec:
   oidc:
     provider:
       issuer: https://sso.pipitonelabs.com/application/o/ops-tools
+      # Static endpoints so the controller never needs the discovery document: a slow Authentik during a
+      # reconcile otherwise sets a 500 direct response on every OIDC route (Gatus blip, 2026-11-06).
+      authorizationEndpoint: https://sso.pipitonelabs.com/application/o/authorize/
+      tokenEndpoint: https://sso.pipitonelabs.com/application/o/token/
     clientID: ops-tools
     clientSecret:
       name: ops-tools-oidc
@@ -43,6 +47,10 @@ spec:
   oidc:
     provider:
       issuer: https://sso.pipitonelabs.com/application/o/ops-tools
+      # Static endpoints so the controller never needs the discovery document: a slow Authentik during a
+      # reconcile otherwise sets a 500 direct response on every OIDC route (Gatus blip, 2026-11-06).
+      authorizationEndpoint: https://sso.pipitonelabs.com/application/o/authorize/
+      tokenEndpoint: https://sso.pipitonelabs.com/application/o/token/
     clientID: ops-tools
     clientSecret:
       name: ops-tools-oidc
