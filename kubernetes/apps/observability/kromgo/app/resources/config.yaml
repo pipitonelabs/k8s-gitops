@@ -1,5 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/home-operations/kromgo/main/config.schema.json
 
+# Browsers keep each badge for this long; the default (300s) left the cluster dashboard showing stale values for up to 5 minutes.
+cache:
+  maxAge: 30
+
 badges:
   - title: Talos
     id: talos_version
