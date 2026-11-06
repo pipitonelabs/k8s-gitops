@@ -1,0 +1,9 @@
+---
+# KubeVirt virtual machines. Kept out of the kubevirt namespace, which belongs to the operator and its control plane.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: vms
+components:
+  - ../../components/namespace
+resources:
+  - ./win11/ks.yaml

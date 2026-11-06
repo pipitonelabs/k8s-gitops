@@ -4,31 +4,17 @@ kind: VirtualMachine
 metadata:
   name: win11
   annotations:
-    # Never let Flux delete the VM: its dataVolumeTemplate owns the win11-disk PVC (the Windows install).
+    # Never let Flux delete the VM: KubeVirt makes it the owner of the TPM state PVC, which would go with it.
     kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   runStrategy: Always
-  dataVolumeTemplates:
-    - metadata:
-        name: win11-disk
-      spec:
-        source:
-          blank: {}
-        storage:
-          accessModes:
-            - ReadWriteMany
-          resources:
-            requests:
-              storage: 100Gi
-          storageClassName: ceph-block
-          volumeMode: Block
   template:
     metadata:
       labels:
         kubevirt.io/domain: win11
     spec:
       architecture: amd64
-      # Live-migrate off a node on drain instead of shutting the guest down (needs the RWX block disk above).
+      # Live-migrate off a node on drain instead of shutting the guest down (needs the RWX block disk).
       evictionStrategy: LiveMigrate
       domain:
         clock:
@@ -103,8 +89,8 @@ spec:
             networkName: networking/multus-servers
       volumes:
         - name: rootdisk
-          dataVolume:
-            name: win11-disk
+          persistentVolumeClaim:
+            claimName: win11-disk
         - name: virtio-drivers
           containerDisk:
             image: quay.io/kubevirt/virtio-container-disk:v1.8.0
