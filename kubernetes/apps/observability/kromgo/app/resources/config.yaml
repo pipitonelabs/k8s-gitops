@@ -62,5 +62,6 @@ badges:
 
   - title: Alerts
     id: cluster_alert_count
-    query: alertmanager_alerts{state="active"} - 1 # Ignore Watchdog
+    # Ignore the always-firing Watchdog and the transient InfoInhibitor; clamp so brief scrape lag never shows a negative count.
+    query: clamp_min(alertmanager_alerts{state="active"} - scalar(count(ALERTS{alertstate="firing",alertname=~"Watchdog|InfoInhibitor"}) or vector(0)), 0)
     colorExpr: 'colorScale(result, [1.0], ["green", "red"])'
