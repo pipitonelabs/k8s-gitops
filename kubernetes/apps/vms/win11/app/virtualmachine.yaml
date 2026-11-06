@@ -93,4 +93,4 @@ spec:
             claimName: win11-disk
         - name: virtio-drivers
           containerDisk:
-            image: quay.io/kubevirt/virtio-container-disk:v1.8.0
+            image: quay.io/kubevirt/virtio-container-disk:v1.9.1
