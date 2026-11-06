@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: ghcr.io/pipitonelabs/clusterstats
-              tag: latest@sha256:683c13e7149f1f8cb24fb7f249d9ecdb612d676b4f5944cfe4c78d74e67f3d7c
+              tag: latest@sha256:d41ba2ca11f53f839a3a5036c1147408ea514697329888a757463d05f95406cb
             env:
               TZ: America/New_York
             envFrom:
