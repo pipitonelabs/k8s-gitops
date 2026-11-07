@@ -23,5 +23,5 @@ spec:
       namespace: networking
   rules:
     - backendRefs:
-        - name: sing-box
+        - name: sing-box-clash-api
           port: 9090
