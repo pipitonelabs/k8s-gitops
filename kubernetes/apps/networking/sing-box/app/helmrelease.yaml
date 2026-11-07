@@ -76,6 +76,8 @@ spec:
       app:
         type: LoadBalancer
         controller: main
+        primary: true
+        forceRename: "{{ .Release.Name }}"
         externalTrafficPolicy: Cluster
         annotations:
           lbipam.cilium.io/ips: 192.168.20.82
@@ -84,6 +86,12 @@ spec:
             port: 443
             protocol: TCP
             targetPort: 443
+      # In-cluster only: reached through the envoy-internal HTTPRoute (TLS at the gateway),
+      # never published on the LoadBalancer IP
+      clash-api:
+        type: ClusterIP
+        controller: main
+        ports:
           clash-api:
             port: 9090
             protocol: TCP
