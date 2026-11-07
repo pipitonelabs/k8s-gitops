@@ -19,11 +19,6 @@
           "name": "iphone",
           "uuid": "${UUID_IPHONE}",
           "flow": "xtls-rprx-vision"
-        },
-        {
-          "name": "legacy",
-          "uuid": "${UUID}",
-          "flow": "xtls-rprx-vision"
         }
       ],
       "tls": {
