@@ -11,6 +11,17 @@
       "listen_port": 443,
       "users": [
         {
+          "name": "macbookpro",
+          "uuid": "${UUID_MACBOOKPRO}",
+          "flow": "xtls-rprx-vision"
+        },
+        {
+          "name": "iphone",
+          "uuid": "${UUID_IPHONE}",
+          "flow": "xtls-rprx-vision"
+        },
+        {
+          "name": "legacy",
           "uuid": "${UUID}",
           "flow": "xtls-rprx-vision"
         }
