@@ -58,6 +58,13 @@
   "route": {
     "rules": [
       {
+        "action": "sniff"
+      },
+      {
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
         "action": "resolve"
       },
       {
