@@ -3,10 +3,17 @@ apiVersion: resource.k8s.io/v1
 kind: ResourceClaimTemplate
 metadata:
   name: jellyfin
+  annotations:
+    # The spec is immutable; let Flux recreate the template when it changes.
+    kustomize.toolkit.fluxcd.io/force: enabled
 spec:
   spec:
     devices:
       requests:
+        # Prefer the AMD GPU on w2; fall back to the Intel iGPU on m0-m2 when w2 is out of the cluster.
         - name: gpu
-          exactly:
-            deviceClassName: gpu.amd.com
+          firstAvailable:
+            - name: amd
+              deviceClassName: gpu.amd.com
+            - name: intel
+              deviceClassName: gpu.intel.com
