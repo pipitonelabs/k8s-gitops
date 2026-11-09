@@ -15,7 +15,7 @@ and the layers are merged with `talosctl machineconfig patch`. Nothing with a se
 | File | Applies to | Contents |
 |---|---|---|
 | `cluster.yaml.j2` | every node | Shared settings that do not depend on the machine: CA/tokens, resolver (nameservers, hostDNS), NTP, discovery, sysctls, NFS mount options, containerd customisation, kubelet, node IP and region label, pod/service subnets (`KubeNetworkConfig`; no CNI document means no CNI), watchdog, prism |
-| `hardware/baremetal.yaml.j2` | m0, m1, m2 | Installer image (metal, computed schematic), `LinkAliasConfig` (`net%d` for every `igc` NIC, giving `net0`/`net1`; the SFP+ ports are `i40e`), `bond0` (LACP over `net0` and `net1`), VLANs 20 and 30, NIC ring sizes, thunderbolt, CPU frequency tuning, hugepages, GPU label |
+| `hardware/baremetal.yaml.j2` | m0, m1, m2 | Installer image (metal, computed schematic), `LinkAliasConfig` (`net%d` for every `igc` NIC, giving `net0`/`net1`; the SFP+ ports are `i40e`), `bond0` (LACP over `net0` and `net1`), VLANs 20 and 30, NIC ring sizes, CPU frequency tuning, hugepages, GPU label |
 | `hardware/proxmox.yaml.j2` | Proxmox VMs | Installer image (nocloud, the VM schematic). No link config: the NIC is `eth0` and gets its address from the cloud-init drive |
 | `controlplane.yaml.j2` | control-plane nodes | Control-plane CA keys, etcd, API VIP `192.168.20.2` (on `bond0`), control-plane and zone labels (no taint, so workloads run here), API server / controller-manager / scheduler / kube-proxy / CoreDNS config, etcd encryption, Talos API access for the runner and tuppr |
 | `worker.yaml.j2` | worker nodes | Zone label |
@@ -64,8 +64,8 @@ kube-controller-manager / kube-scheduler / kube-proxy images in `cluster.yaml.j2
 They carry `# renovate:` comments, but Renovate's custom manager does not match `.yaml.j2` files yet, so nothing
 bumps them automatically.
 
-> **Schematic.** `schematics/baremetal.yaml.j2` computes schematic `7af7f1f3...`, the one the running nodes use:
-> extensions `i915`, `intel-ucode`, `mei`, `nfsrahead`, `thunderbolt` and no extra kernel arguments. The extension order
+> **Schematic.** `schematics/baremetal.yaml.j2` computes schematic `9c5c9cb3...`, the one the running nodes use:
+> extensions `i915`, `intel-ucode`, `mei`, `nfsrahead` and no extra kernel arguments. The extension order
 > matters (the Image Factory hashes the list in order), so keep it as is. `intel-ice-firmware` is left out on purpose:
 > the nodes use `i40e` and `igc` NICs, not the `ice` driver. Security-lowering kernel arguments (`mitigations=off`,
 > `apparmor=0`, `-selinux`, `init_on_*`, auditd off) were considered and not used.
