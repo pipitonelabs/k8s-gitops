@@ -6,3 +6,6 @@ customization:
       - siderolabs/intel-ucode
       - siderolabs/mei
       - siderolabs/nfsrahead
+  # Devices DMA to physical addresses instead of through IOMMU translation (less CPU per packet/I/O).
+  extraKernelArgs:
+    - iommu.passthrough=1
