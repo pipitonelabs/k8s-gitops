@@ -44,7 +44,7 @@ badges:
     id: cluster_memory_usage
     query: round(sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes) * 100, 0.1)
     valueExpr: string(result) + "%"
-    colorExpr: 'colorScale(result, [35.0, 75.0], ["green", "orange", "red"])'
+    colorExpr: 'colorScale(result, [50.0, 75.0], ["green", "orange", "red"])'
 
   - title: Power
     id: cluster_power_usage
