@@ -74,3 +74,24 @@ spec:
           for: 1m
           labels:
             severity: warning
+        - alert: CNPGBackupFailed
+          annotations:
+            description: The latest barman-cloud backup for {{ $labels.job }} failed after its last successful one.
+            summary: CNPG plugin backup failed
+          expr: |-
+            max by (namespace, job) (
+              barman_cloud_cloudnative_pg_io_last_failed_backup_timestamp
+              - barman_cloud_cloudnative_pg_io_last_available_backup_timestamp
+            ) > 0
+          for: 5m
+          labels:
+            severity: warning
+        - alert: CNPGBackupTooOld
+          annotations:
+            description: No successful barman-cloud backup for {{ $labels.job }} in {{ $value | humanizeDuration }}.
+            summary: CNPG plugin backup is stale
+          expr: |-
+            min by (namespace, job) (time() - barman_cloud_cloudnative_pg_io_last_available_backup_timestamp) > 93600
+          for: 1h
+          labels:
+            severity: warning
