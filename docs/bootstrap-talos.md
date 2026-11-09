@@ -64,8 +64,8 @@ kube-controller-manager / kube-scheduler / kube-proxy images in `cluster.yaml.j2
 They carry `# renovate:` comments, but Renovate's custom manager does not match `.yaml.j2` files yet, so nothing
 bumps them automatically.
 
-> **Schematic.** `schematics/baremetal.yaml.j2` computes schematic `9c5c9cb3...`, the one the running nodes use:
-> extensions `i915`, `intel-ucode`, `mei`, `nfsrahead` and no extra kernel arguments. The extension order
+> **Schematic.** `schematics/baremetal.yaml.j2` computes schematic `3ce409df...`, the one the running nodes use:
+> extensions `i915`, `intel-ucode`, `mei`, `nfsrahead` and the kernel argument `iommu.passthrough=1`. The extension order
 > matters (the Image Factory hashes the list in order), so keep it as is. `intel-ice-firmware` is left out on purpose:
 > the nodes use `i40e` and `igc` NICs, not the `ice` driver. Security-lowering kernel arguments (`mitigations=off`,
 > `apparmor=0`, `-selinux`, `init_on_*`, auditd off) were considered and not used.
