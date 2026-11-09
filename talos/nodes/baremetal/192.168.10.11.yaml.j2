@@ -12,3 +12,11 @@ provisioning:
 apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: m1.k8s.internal
+---
+# Trial: balance_performance on m1 only (the baremetal class default is balance_power), to compare latency.
+apiVersion: v1alpha1
+kind: SysfsConfig
+params:
+  {% for i in range(0, 20) %}
+  devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_performance
+  {% endfor %}
