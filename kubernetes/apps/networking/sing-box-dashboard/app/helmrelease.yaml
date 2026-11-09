@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/metacubex/metacubexd
-              tag: v1.274.5@sha256:fc849f0cabd40a9809de6979087137c46c8639280d547363b3e62fa7bec9d9ba
+              tag: v1.274.6@sha256:3d720cd7b3ab1965c5cebb9d3622c0c3e0121deb5338ead02567034cec49a482
             probes:
               liveness: &probes
                 enabled: true
