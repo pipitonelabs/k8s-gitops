@@ -16,22 +16,6 @@ spec:
     requests:
       storage: 100Gi
 ---
-# Persistent TPM state (BitLocker and other TPM-sealed keys). KubeVirt finds it by the persistent-state-for label.
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: persistent-state-for-win11
-  labels:
-    persistent-state-for: win11
-    cdi.kubevirt.io/applyStorageProfile: "true"
-  annotations:
-    kustomize.toolkit.fluxcd.io/prune: disabled
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  storageClassName: ceph-block
-  volumeName: pvc-46d2df27-7c74-4ce4-9a55-58ebbae14770
-  resources:
-    requests:
-      storage: "12226397"  # KubeVirt grows the TPM PVC to fit filesystem overhead; must not be below status.capacity
+# The persistent TPM state PVC is not managed here. KubeVirt finds it by the persistent-state-for=win11 label and
+# replaces it with a new, randomly suffixed PVC on every live migration (the volume is RWO), so a fixed name and
+# volumeName in git goes stale after the first migration.
