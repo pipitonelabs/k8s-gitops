@@ -9,6 +9,7 @@ resources:
   - ./jellyfin/ks.yaml
   - ./jellyplex-watched/ks.yaml
   - ./maintainerr/ks.yaml
+  - ./metube/ks.yaml
   - ./openbooks/ks.yaml
   - ./plex/ks.yaml
   - ./profilarr/ks.yaml
