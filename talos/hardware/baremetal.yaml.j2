@@ -1,18 +1,10 @@
 ---
-# Bare-metal nodes (m0, m1, m2): Intel iGPU, two bonded igc NICs, thunderbolt, 20 CPU threads.
+# Bare-metal nodes (m0, m1, m2): Intel iGPU, two bonded igc NICs, 20 CPU threads.
 # The schematic ID is computed from talos/schematics/baremetal.yaml.j2 at render time (just talos schematic-id).
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
   image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.14.5
----
-apiVersion: v1alpha1
-kind: KernelModuleConfig
-name: thunderbolt
----
-apiVersion: v1alpha1
-kind: KernelModuleConfig
-name: thunderbolt_net
 ---
 apiVersion: v1alpha1
 kind: SysctlConfig
@@ -26,14 +18,8 @@ params:
   devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
   {% endfor %}
 ---
-apiVersion: v1alpha1
-kind: UdevRulesConfig
-rules:
-  # Thunderbolt
-  - ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{authorized}=="0", ATTR{authorized}="1"
----
-# The two 2.5G igc ports get the aliases net0 and net1 (in hardware-address order). The SFP+ ports are i40e and
-# the Thunderbolt links are thunderbolt-net, so they are not matched. An alias does not rename the interface.
+# The two 2.5G igc ports get the aliases net0 and net1 (in hardware-address order). The SFP+ ports are i40e, so
+# they are not matched. An alias does not rename the interface.
 apiVersion: v1alpha1
 kind: LinkAliasConfig
 name: net%d
