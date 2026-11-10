@@ -1,0 +1,93 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-defrag
+spec:
+  # Monthly: etcd is never auto-defragmented, so the database drifts past the 50% fragmentation alert threshold
+  schedule: 30 4 1 * *
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: etcd-defrag
+          automountServiceAccountToken: false
+          restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 100
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          # One member at a time (followers first, leader last) so quorum is never at risk
+          initContainers:
+            - name: defrag-m1
+              image: ghcr.io/siderolabs/talosctl:v1.14.5@sha256:0b852e35c1f513ee5eacc22183d6193486012420569fde39fcd5260c51938443
+              args:
+                - --nodes=192.168.10.11
+                - --endpoints=192.168.10.11
+                - etcd
+                - defrag
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - mountPath: /var/run/secrets/talos.dev
+                  name: talos
+                  readOnly: true
+            - name: defrag-m2
+              image: ghcr.io/siderolabs/talosctl:v1.14.5@sha256:0b852e35c1f513ee5eacc22183d6193486012420569fde39fcd5260c51938443
+              args:
+                - --nodes=192.168.10.12
+                - --endpoints=192.168.10.12
+                - etcd
+                - defrag
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - mountPath: /var/run/secrets/talos.dev
+                  name: talos
+                  readOnly: true
+            - name: defrag-m0
+              image: ghcr.io/siderolabs/talosctl:v1.14.5@sha256:0b852e35c1f513ee5eacc22183d6193486012420569fde39fcd5260c51938443
+              args:
+                - --nodes=192.168.10.10
+                - --endpoints=192.168.10.10
+                - etcd
+                - defrag
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - mountPath: /var/run/secrets/talos.dev
+                  name: talos
+                  readOnly: true
+          containers:
+            - name: status
+              image: ghcr.io/siderolabs/talosctl:v1.14.5@sha256:0b852e35c1f513ee5eacc22183d6193486012420569fde39fcd5260c51938443
+              args:
+                - --nodes=192.168.10.10
+                - --endpoints=192.168.10.10
+                - etcd
+                - status
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - mountPath: /var/run/secrets/talos.dev
+                  name: talos
+                  readOnly: true
+          volumes:
+            - name: talos
+              secret:
+                secretName: etcd-defrag
