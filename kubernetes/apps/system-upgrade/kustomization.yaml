@@ -6,4 +6,5 @@ components:
   - ../../components/namespace
 resources:
   - ./etcd-backup/ks.yaml
+  - ./etcd-defrag/ks.yaml
   - ./tuppr/ks.yaml
