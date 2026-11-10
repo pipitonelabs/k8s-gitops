@@ -13,27 +13,8 @@ apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: m1.k8s.internal
 ---
-# Drop the hardware-layer bond0 (net0/net1 on the 2.5G igc ports); patches append to lists, so it is redefined below.
-apiVersion: v1alpha1
-kind: BondConfig
-name: bond0
-$patch: delete
----
-# bond0 over the two 10G SFP+ (i40e) ports on the aggregation switch, named directly instead of via the
-# hardware-layer net%d alias (which stays on the unused 2.5G igc ports). The MAC is pinned to enp2s0f0np0's own
-# address so it doesn't depend on enslave order; the DHCP reservation for 192.168.10.11 points at it.
-# Fast LACP and up/down delays for quicker, cleaner failover; jumbo frames (VLANs and br70 stay at 1500).
+# bond0 takes the MAC of enp2s0f0np0 (first SFP+ port); the DHCP reservation points at it.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
 hardwareAddr: 58:47:ca:7b:f4:22
-links:
-  - enp2s0f0np0
-  - enp2s0f1np1
-bondMode: 802.3ad
-miimon: 100
-updelay: 200
-downdelay: 200
-xmitHashPolicy: layer3+4
-lacpRate: fast
-mtu: 9000

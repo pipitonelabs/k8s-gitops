@@ -18,26 +18,24 @@ params:
   devices.system.cpu.cpu{{ i }}.cpufreq.energy_performance_preference: balance_power
   {% endfor %}
 ---
-# The two 2.5G igc ports get the aliases net0 and net1 (in hardware-address order). The SFP+ ports are i40e, so
-# they are not matched. An alias does not rename the interface.
-apiVersion: v1alpha1
-kind: LinkAliasConfig
-name: net%d
-selector:
-  match: link.driver == "igc"
----
-# bond0 (LACP over net0 and net1) with VLANs 20, 30 and 70 (br70). The VIP is in controlplane.yaml.j2.
+# bond0 (LACP over the two 10G SFP+ i40e ports on the USW Aggregation switch) with VLANs 20, 30 and 70 (br70).
+# The 2.5G igc ports are unused. Each node file pins bond0's MAC to its first SFP+ port so the DHCP reservation
+# doesn't depend on enslave order. Jumbo frames on bond0 only; the VLANs and br70 stay at 1500.
+# Changing bond members on a running bond fails (netlink: invalid argument): stage the config and reboot instead.
+# The VIP is in controlplane.yaml.j2.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
 links:
-  - net0
-  - net1
+  - enp2s0f0np0
+  - enp2s0f1np1
 bondMode: 802.3ad
-lacpRate: slow
+lacpRate: fast
 miimon: 100
+updelay: 200
+downdelay: 200
 xmitHashPolicy: layer3+4
-mtu: 1500
+mtu: 9000
 ---
 apiVersion: v1alpha1
 kind: DHCPv4Config
