@@ -12,3 +12,9 @@ provisioning:
 apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: m1.k8s.internal
+---
+# bond0 takes the MAC of enp2s0f0np0 (first SFP+ port); the DHCP reservation points at it.
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+hardwareAddr: 58:47:ca:7b:f4:22
