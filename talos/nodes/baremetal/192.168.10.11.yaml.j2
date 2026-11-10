@@ -13,21 +13,26 @@ apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: m1.k8s.internal
 ---
-# Experiment: bond m1 over the SFP+ (i40e) ports instead of the 2.5G igc ports. Overrides the hardware-layer alias.
-apiVersion: v1alpha1
-kind: LinkAliasConfig
-name: net%d
-selector:
-  match: link.driver == "i40e"
----
-# Keep the old igc-derived bond MAC so the DHCP reservation (192.168.10.11) and SLAAC addresses stay the same.
-# Fast LACP and up/down delays for quicker, cleaner failover; jumbo frames on the 10G aggregation switch.
-# The VLANs and br70 stay at 1500.
+# Drop the hardware-layer bond0 (net0/net1 on the 2.5G igc ports); patches append to lists, so it is redefined below.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
-hardwareAddr: 58:47:ca:7b:f4:24
-lacpRate: fast
+$patch: delete
+---
+# bond0 over the two 10G SFP+ (i40e) ports on the aggregation switch, named directly instead of via the
+# hardware-layer net%d alias (which stays on the unused 2.5G igc ports). No MAC pin: the bond takes the first
+# port's MAC, so the DHCP reservation for 192.168.10.11 must point at 58:47:ca:7b:f4:22.
+# Fast LACP and up/down delays for quicker, cleaner failover; jumbo frames (VLANs and br70 stay at 1500).
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - enp2s0f0np0
+  - enp2s0f1np1
+bondMode: 802.3ad
+miimon: 100
 updelay: 200
 downdelay: 200
+xmitHashPolicy: layer3+4
+lacpRate: fast
 mtu: 9000
