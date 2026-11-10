@@ -21,7 +21,13 @@ selector:
   match: link.driver == "i40e"
 ---
 # Keep the old igc-derived bond MAC so the DHCP reservation (192.168.10.11) and SLAAC addresses stay the same.
+# Fast LACP and up/down delays for quicker, cleaner failover; jumbo frames on the 10G aggregation switch.
+# The VLANs and br70 stay at 1500.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
 hardwareAddr: 58:47:ca:7b:f4:24
+lacpRate: fast
+updelay: 200
+downdelay: 200
+mtu: 9000
