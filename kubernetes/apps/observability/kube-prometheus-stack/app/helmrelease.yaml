@@ -93,6 +93,13 @@ spec:
                   storage: 50Gi
     prometheus-node-exporter:
       fullnameOverride: node-exporter
+      prometheus:
+        monitor:
+          metricRelabelings:
+            # w2 only has 2.5G ports, so its MTU differs from the jumbo-frame SFP+ nodes and trips CephNodeInconsistentMTU
+            - action: drop
+              sourceLabels: [__name__, instance]
+              regex: node_network_mtu_bytes;192\.168\.10\.15:9100
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
       rbac:
