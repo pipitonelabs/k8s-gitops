@@ -13,6 +13,11 @@ spec:
     routes:
       - receiver: "null"
         matchers: [{name: alertname, value: InfoInhibitor, matchType: =}]
+      # w2 only has 2.5G ports, so it cannot run the jumbo MTU of the SFP+ nodes
+      - receiver: "null"
+        matchers:
+          - {name: alertname, value: CephNodeInconsistentMTU, matchType: =}
+          - {name: instance, value: "192.168.10.15:9100", matchType: =}
       - receiver: heartbeat
         groupInterval: 15s
         groupWait: 0s
