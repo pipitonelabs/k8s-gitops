@@ -150,7 +150,7 @@ Automation lives in [just](https://just.systems) recipes. `just bootstrap cluste
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f50c/512.gif" alt="🔌" width="20" height="20"> Networking
 
-Everything runs on UniFi. A UCG Fiber handles routing and firewalling, with 5 Gbps Frontier Fiber as the primary WAN and Starlink as automatic failover. It connects at 10G to the USW Pro Max 24 PoE, which serves the Kubernetes nodes over bonded 2.5G links plus the cameras and IoT gear. The USW Pro XG 10 PoE hangs off that switch at 10G and carries the storage, workstations, and access points.
+Everything runs on UniFi. A UCG Fiber handles routing and firewalling, with 5 Gbps Frontier Fiber as the primary WAN and Starlink as automatic failover. It connects at 10G to the USW Pro Max 24 PoE, which serves the cameras, IoT gear, and the GMKtec worker over bonded 2.5G links. The USW Pro XG 10 PoE hangs off that switch at 10G and carries the storage, workstations, and access points, and the USW Aggregation hangs off the XG at 10G. The MS-01 nodes connect to the Aggregation over two 10G SFP+ ports each, bonded with LACP and running jumbo frames.
 
 Cilium advertises `LoadBalancer` IPs from the `services` VLAN to the UCG Fiber over BGP.
 
@@ -176,7 +176,7 @@ Two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) 
 <details>
   <summary>Click to see my rack</summary>
 
-  <img src="./docs/assets/rack-front.jpg" align="center" alt="rack-front"/>
+  <img src="./docs/assets/rack-front.png" align="center" alt="rack-front"/>
   <img src="./docs/assets/rack-rear.jpg" align="center" alt="rack-rear"/>
 </details>
 
@@ -186,11 +186,11 @@ Two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) 
 |-----------------------------|-------|---------------|--------------------|-------|------------------|---------------------|
 | MS-01 (i9-12900H)           | 3     | 1xTB m2 nvme  | 1xTB m2 nvme       | 64GB  | Talos            | Kubernetes          |
 | GMKtec M5 Plus              | 1     | 256GB m2 nvme | 1xTB m2 nvme       | 32GB  | Talos            | Kubernetes          |
-| Dell R730XD                 | 1     | -             | Random drive sizes | 128GB | UnRAID OS        | NFS                 |
 | superheavy (UniFi UNAS Pro) | 1     | -             | 7x16TB HDD         | 8GB   | UniFi OS         | NFS and backups     |
 | UniFi UCG Fiber             | 1     | -             | 1x2TB m2 nvme      | -     | UniFi OS         | Router & NVR        |
 | UniFi USW Pro Max 24 PoE    | 1     | -             | -                  | -     | UniFi OS         | 1/2.5Gb PoE Switch  |
 | UniFi USW Pro XG 10 PoE     | 1     | -             | -                  | -     | UniFi OS         | 10Gb PoE Switch     |
+| UniFi USW Aggregation       | 1     | -             | -                  | -     | UniFi OS         | 10Gb SFP+ Switch    |
 
 ---
 
