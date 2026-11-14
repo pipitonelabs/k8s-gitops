@@ -63,7 +63,7 @@ spec:
           app:
             image:
               repository: ghcr.io/ozark-connect/speedtest
-              tag: 2.11.1@sha256:1e8adbaa08b6e0d647a2c633ede31543a2d63a414b07e6628b9065a75d7cabd0
+              tag: 2.11.2@sha256:1a260d637b5368e27f9f5e816407972b8a62d3ded913c5ae451399aaeb219074
             env: *env
             probes:
               liveness: &speedtestProbes
