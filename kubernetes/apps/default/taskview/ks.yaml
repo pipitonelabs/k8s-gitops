@@ -1,0 +1,39 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app taskview
+  namespace: &namespace default
+spec:
+  targetNamespace: *namespace
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: cloudnative-pg-cluster
+      namespace: database
+    - name: onepassword-store
+      namespace: external-secrets
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  components:
+    - ../../../../components/cnpg
+    - ../../../../components/volsync
+  path: ./kubernetes/apps/default/taskview/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  wait: false
+  interval: 1h
+  retryInterval: 2m
+  timeout: 5m
+  postBuild:
+    substitute:
+      # Drives the cnpg component (DB name/role/secrets) and the volsync PVC
+      # name. Must stay hyphen-free for the cnpg component's template keys.
+      APP: *app
+      CNPG_NAME: postgres17
+      # Task attachments (FILE_STORAGE_PROVIDER=local).
+      VOLSYNC_CAPACITY: 5Gi
