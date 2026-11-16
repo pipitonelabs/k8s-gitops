@@ -38,12 +38,13 @@ spec:
             envFrom:
               - secretRef:
                   name: taskview-initdb-secret
-          # Upstream's one-shot migration runner: waits for Postgres, then
-          # applies schema migrations (--create on an empty DB).
+          # One-shot migration runner: waits for Postgres, then applies
+          # schema migrations (--create on an empty DB). Images are built
+          # from source in pipitonelabs/taskview.
           02-migrate:
             image:
-              repository: docker.io/gimanhead/taskview-ce-db-migration
-              tag: 1.58.3@sha256:2a4456d374d36e036981225b02e3dd809e9022c5596e058ef8e6f01ddfc1cfa7
+              repository: ghcr.io/pipitonelabs/taskview-migration
+              tag: 1.58.3-0466a7e@sha256:9dec8a6d0029762a980ea7b64269f43374f7647039a5bec24b5d0baa9d31dc8e
             env: &dbEnv
               DB_HOST:
                 valueFrom:
@@ -67,8 +68,8 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/gimanhead/taskview-ce-api-server
-              tag: 1.58.3@sha256:3685d81eeb3b63cd3cddeacd4c7b45ffdbe50329a92d3694c76219ee59baf508
+              repository: ghcr.io/pipitonelabs/taskview-api
+              tag: 1.58.3-0466a7e@sha256:03d29954837dba25ae8d8ba2e2d3f5fe8ef0e323bb78dbb2980bc5c91a9ff7e0
             env:
               <<: *dbEnv
               TZ: America/New_York
@@ -135,8 +136,8 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/gimanhead/taskview-ce-webapp
-              tag: 1.58.3@sha256:78fbf8119fdfdb25f8f1682bee76ef60038b0414c245abb7394262c1f0be11dd
+              repository: ghcr.io/pipitonelabs/taskview-web
+              tag: 1.58.3-0466a7e@sha256:e5b675eea2839770f4cf90cc0ed7312f44b33b731173c27fdde61f44862e74d9
             # TASKVIEW_API_URL is deliberately unset: the image's entrypoint
             # would write config.js into the (read-only) web root. The same
             # file is mounted from the ConfigMap below instead.
@@ -160,6 +161,8 @@ spec:
               limits:
                 memory: 128Mi
     defaultPodOptions:
+      imagePullSecrets:
+        - name: taskview-ghcr-login
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
