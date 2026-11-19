@@ -93,7 +93,7 @@ contents: |
   wsize=1048576
   # superheavy serves NFSv4.1, but an nfsvers set here is not honored for mounts without explicit options
   # (they fall back to v3). Inline pod nfs volumes cannot pass options, so they stay on v3 with the
-  # /volume/<uuid>/.srv/.unifi-drive/<share>/.data paths; Talos has no rpc.statd, so no NLM locking.
+  # /var/nfs/shared/<share> export paths; Talos has no rpc.statd, so no NLM locking.
   # Static PVs set mountOptions nfsvers=4.1 (which overrides this) and use the v4 pseudo-root paths.
   [ Server "superheavy.internal" ]
   nfsvers=3

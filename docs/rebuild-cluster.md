@@ -35,10 +35,10 @@ workstation prep ──▶ boot nodes from ISO ──▶ just bootstrap talos �
 | Git repo, manifests | GitHub | Survives. Flux re-applies everything. |
 | All secrets | 1Password vault `Kubernetes` | Survives. **The 1Password items are the root of trust**; losing them means re-creating the cluster PKI. |
 | App config PVCs (`ceph-block`, volsync component) | Rook/Ceph on each node's `nvme1n1` | **Lost** with the disks. Restored automatically from the Kopia repo. |
-| Kopia backup repository | NFS `superheavy.internal:/volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/volsync/.data` (NFSv3) | Survives (not on the cluster). **Must not be touched.** |
+| Kopia backup repository | NFS `superheavy.internal:/var/nfs/shared/volsync` (NFSv3) | Survives (not on the cluster). **Must not be touched.** |
 | Garage (S3) data and metadata | NFS `superheavy.internal:/kubernetes/garage/data` (NFSv4.1 static PV; metadata is on `ceph-block`) | Survives. Needed before any database recovery. |
 | PostgreSQL data (CNPG, `openebs-hostpath`) | Node-local `/var/mnt/extra/openebs` | **Lost** on wipe. Restored from barman backups in Garage. |
-| Postgres logical dumps | NFS `superheavy.internal:/volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps/postgres` (NFSv3) (4-hourly, outline) | Survives. Fallback if barman recovery fails. |
+| Postgres logical dumps | NFS `superheavy.internal:/var/nfs/shared/kubernetes/apps/postgres` (NFSv3) (4-hourly, outline) | Survives. Fallback if barman recovery fails. |
 | Media | NFS `superheavy.internal:/media` (NFSv4.1, per-app static PVs) | Survives. |
 | Prometheus, VictoriaLogs data | `ceph-block` | Lost. Not backed up by design. |
 | `*-cache` PVCs (sonarr, radarr, plex, tautulli, seerr, home-assistant) | `ceph-block` | Lost. Not backed up; they start empty. |
@@ -83,7 +83,7 @@ The rebuild needs these items to exist and be correct. The first four are needed
 - `k8s.internal` must resolve to the API VIP `192.168.20.2`.
 - UniFi BGP peering for Cilium (router side: [bgp-config.conf](bgp-config.conf); cluster ASN 64514, router 64513,
   peer `10.69.1.1`). LoadBalancer IPs come from `192.168.20.0/24`.
-- NFS server `superheavy.internal` (UniFi UNAS, NFSv3 + NFSv4.1) reachable, with the `volsync`, `kubernetes` (`garage/`, `apps/postgres/`) and `media` shares intact and NFS-exported to the three node IPs. NFSv4 must be enabled in UniFi Drive. Static PVs (media, garage data) mount over NFSv4.1 with explicit `mountOptions` and the v4 pseudo-root paths (`/media`, `/kubernetes/...`); inline pod `nfs:` volumes (volsync, kopia, backup CronJobs) cannot pass options, so Talos `nfsmount.conf` forces `nfsvers=3` + `lock=False` for this server and they use the `/volume/<uuid>/.srv/.unifi-drive/<share>/.data` paths.
+- NFS server `superheavy.internal` (UniFi UNAS, NFSv3 + NFSv4.1) reachable, with the `volsync`, `kubernetes` (`garage/`, `apps/postgres/`) and `media` shares intact and NFS-exported to the three node IPs. NFSv4 must be enabled in UniFi Drive. Static PVs (media, garage data) mount over NFSv4.1 with explicit `mountOptions` and the v4 pseudo-root paths (`/media`, `/kubernetes/...`); inline pod `nfs:` volumes (volsync, kopia, backup CronJobs) cannot pass options, so Talos `nfsmount.conf` forces `nfsvers=3` + `lock=False` for this server and they use the `/var/nfs/shared/<share>` export paths (enabling NFSv4 moved the exports there).
 - GitHub reachable (the Flux `GitRepository` is the public HTTPS URL, no deploy key).
 - DNS/Cloudflare records are managed by external-dns after the cluster is up.
 
@@ -193,7 +193,7 @@ but keeps its data on NFS. That creates an ordering dependency:
 | `tradeforge-pg` | `s3://tradeforge-pg/` | `tradeforge-pg-v1` - bootstraps with `initdb` + seed SQL today, so a rebuild creates an empty schema unless you add a recovery source |
 
 If barman recovery fails, `outline` also has 4-hourly logical dumps on NFS
-(`superheavy.internal:/volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps/postgres`).
+(`superheavy.internal:/var/nfs/shared/kubernetes/apps/postgres`).
 
 Apps that need a database (outline, authentik, tradeforge, budget) wait on
 `database/cloudnative-pg-cluster`, so they come up after the recovery completes.
