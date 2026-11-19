@@ -80,6 +80,12 @@ spec:
               <<: *dbEnv
               TZ: America/New_York
               APP_PORT: "1401"
+              # Documented as optional, but the API's env schema requires
+              # them and refuses to start without. Values are the documented
+              # defaults.
+              JWT_ALG: HS256
+              ACCESS_LIFE_TIME: 1d
+              REFRESH_LIFE_TIME: 2d
               # npm (cache/logs) and pm2-runtime (~/.pm2) write under $HOME;
               # the root filesystem is read-only.
               HOME: /tmp
