@@ -22,7 +22,7 @@ spec:
         volumeSource:
           nfs:
             server: superheavy.internal
-            path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/volsync/.data
+            path: /var/nfs/shared/volsync
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=1000}
