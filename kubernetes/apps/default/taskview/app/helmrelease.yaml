@@ -109,9 +109,10 @@ spec:
               # DNS/HTTP ownership proof.
               SSO_ALLOW_PRIVATE_URLS: "true"
               SSO_TRUSTED_DOMAINS: pipitonelabs.com
-              # Left open so the first account can be created; set to "false"
-              # afterwards to make the instance invite-only.
-              ALLOW_PUBLIC_REGISTRATION: "true"
+              # Invite-only. The admin account is upstream's seeded default
+              # user, claimed via Account settings; Authentik (SSO) still
+              # provisions pipitonelabs.com users on first sign-in.
+              ALLOW_PUBLIC_REGISTRATION: "false"
               # Mail via the in-cluster relay (unauthenticated, plaintext).
               SMTP_HOST: smtp-relay.default.svc.cluster.local
               SMTP_PORT: "2525"
