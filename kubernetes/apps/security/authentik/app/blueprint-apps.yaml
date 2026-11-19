@@ -331,3 +331,50 @@ data:
           order: 0
         attrs:
           enabled: true
+
+      # --- taskview (native OIDC, configured in the org's SSO settings) ----
+      # The callback is /module/sso/callback/<config id>, where the id is
+      # assigned when the SSO config is created in TaskView, so the redirect
+      # URI matches by regex. TaskView uses PKCE (S256) and needs the email
+      # claim.
+      - id: taskview-provider
+        model: authentik_providers_oauth2.oauth2provider
+        identifiers:
+          name: taskview
+        attrs:
+          client_type: confidential
+          client_id: taskview
+          grant_types:
+            - authorization_code
+            - refresh_token
+          client_secret: !Env TASKVIEW_OIDC_CLIENT_SECRET
+          access_token_validity: hours=4
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+          authorization_flow: !Find [authentik_flows.flow, [slug, provider-authorization-implicit-consent]]
+          authentication_flow: !Find [authentik_flows.flow, [slug, authentication-flow]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, invalidation-flow]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+          redirect_uris:
+            - matching_mode: regex
+              url: https://taskview\.pipitonelabs\.com/module/sso/callback/[0-9]+
+      - id: taskview-app
+        model: authentik_core.application
+        identifiers:
+          slug: taskview
+        attrs:
+          name: TaskView
+          provider: !KeyOf taskview-provider
+          group: Self Hosted
+          open_in_new_tab: true
+          meta_launch_url: https://taskview.pipitonelabs.com/
+          policy_engine_mode: all
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf taskview-app
+          group: !Find [authentik_core.group, [name, Self Hosted]]
+          order: 0
+        attrs:
+          enabled: true
