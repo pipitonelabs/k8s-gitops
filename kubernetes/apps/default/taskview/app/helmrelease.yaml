@@ -44,7 +44,10 @@ spec:
           02-migrate:
             image:
               repository: ghcr.io/pipitonelabs/taskview-migration
-              tag: 1.58.3-0466a7e@sha256:9dec8a6d0029762a980ea7b64269f43374f7647039a5bec24b5d0baa9d31dc8e
+              # Digest-pinned: Spegel serves the mutable `latest` tag from peer
+              # cache, so a bare `latest` won't pull new builds. Renovate bumps
+              # the digest on each new image.
+              tag: latest@sha256:2a5107730037bd382a38002d824251f3b44a5a7481f590688b65e8587708c810
             env: &dbEnv
               DB_HOST:
                 valueFrom:
@@ -69,7 +72,10 @@ spec:
           app:
             image:
               repository: ghcr.io/pipitonelabs/taskview-api
-              tag: 1.58.3-0466a7e@sha256:03d29954837dba25ae8d8ba2e2d3f5fe8ef0e323bb78dbb2980bc5c91a9ff7e0
+              # Digest-pinned: Spegel serves the mutable `latest` tag from peer
+              # cache, so a bare `latest` won't pull new builds. Renovate bumps
+              # the digest on each new image.
+              tag: latest@sha256:603ac23e0e7a7a413cfd87de0bddcc86a47893a232c43030d58c5ef71cf9d1c7
             env:
               <<: *dbEnv
               TZ: America/New_York
@@ -137,7 +143,10 @@ spec:
           app:
             image:
               repository: ghcr.io/pipitonelabs/taskview-web
-              tag: 1.58.3-0466a7e@sha256:e5b675eea2839770f4cf90cc0ed7312f44b33b731173c27fdde61f44862e74d9
+              # Digest-pinned: Spegel serves the mutable `latest` tag from peer
+              # cache, so a bare `latest` won't pull new builds. Renovate bumps
+              # the digest on each new image.
+              tag: latest@sha256:81b35146560ee86b5a3d0cdd4bea67940c9f302707ff1f8379a06291fb2dd980
             # TASKVIEW_API_URL is deliberately unset: the image's entrypoint
             # would write config.js into the (read-only) web root. The same
             # file is mounted from the ConfigMap below instead.
