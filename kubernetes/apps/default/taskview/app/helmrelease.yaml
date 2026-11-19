@@ -162,7 +162,7 @@ spec:
                 memory: 128Mi
     defaultPodOptions:
       imagePullSecrets:
-        - name: taskview-ghcr-login
+        - name: ghcr-login
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
