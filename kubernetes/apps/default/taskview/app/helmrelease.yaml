@@ -47,7 +47,7 @@ spec:
               # Digest-pinned: Spegel serves the mutable `latest` tag from peer
               # cache, so a bare `latest` won't pull new builds. Renovate bumps
               # the digest on each new image.
-              tag: latest@sha256:2a5107730037bd382a38002d824251f3b44a5a7481f590688b65e8587708c810
+              tag: latest@sha256:c07ca5f9997788c0b0547f2ee738ada14e8bf024e3926797db4830ae0a92cf5c
             env: &dbEnv
               DB_HOST:
                 valueFrom:
@@ -75,7 +75,7 @@ spec:
               # Digest-pinned: Spegel serves the mutable `latest` tag from peer
               # cache, so a bare `latest` won't pull new builds. Renovate bumps
               # the digest on each new image.
-              tag: latest@sha256:603ac23e0e7a7a413cfd87de0bddcc86a47893a232c43030d58c5ef71cf9d1c7
+              tag: latest@sha256:574974fe722f44e030d3fbac13e29b14e4517c64212ad0a8c6b67e22e2a7ea09
             env:
               <<: *dbEnv
               TZ: America/New_York
@@ -165,7 +165,7 @@ spec:
               # Digest-pinned: Spegel serves the mutable `latest` tag from peer
               # cache, so a bare `latest` won't pull new builds. Renovate bumps
               # the digest on each new image.
-              tag: latest@sha256:81b35146560ee86b5a3d0cdd4bea67940c9f302707ff1f8379a06291fb2dd980
+              tag: latest@sha256:c24e01d4f6be710cf00ee83cc195595163aefb500fdef2e29e60efbe0b5f60fc
             # TASKVIEW_API_URL is deliberately unset: the image's entrypoint
             # would write config.js into the (read-only) web root. The same
             # file is mounted from the ConfigMap below instead.
@@ -289,8 +289,12 @@ spec:
     route:
       app:
         annotations:
+          # The sidecar derives the URL from the first rule (/module, the
+          # API prefix, which 404s). Probe an unauthenticated API endpoint
+          # instead so the check covers the API, not just the static web pod.
           gatus.home-operations.com/endpoint: |-
             group: default
+            url: https://taskview.pipitonelabs.com/module/auth/login-options
         hostnames:
           - taskview.pipitonelabs.com
         parentRefs:
