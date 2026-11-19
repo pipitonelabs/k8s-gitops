@@ -10,3 +10,35 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: ceph-block
+---
+# Garage object data on superheavy over NFSv4.1 (static PV so it can set mount options)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: garage-superheavy-data
+spec:
+  accessModes: ["ReadWriteMany"]
+  capacity:
+    storage: 1Mi
+  claimRef:
+    name: garage-superheavy-data
+    namespace: default
+  # Explicit options override the nfsvers=3 server default in nfsmount.conf
+  mountOptions: ["nfsvers=4.1", "hard", "noatime"]
+  nfs:
+    server: superheavy.internal
+    path: /kubernetes/garage/data
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage-superheavy-data
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: 1Mi
+  storageClassName: ""
+  volumeName: garage-superheavy-data

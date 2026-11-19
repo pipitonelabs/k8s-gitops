@@ -11,6 +11,8 @@ spec:
   claimRef:
     name: jellyfin-superheavy-media
     namespace: media
+  # Explicit options override the nfsvers=3 server default in nfsmount.conf
+  mountOptions: ["nfsvers=4.1", "hard", "noatime"]
   nfs:
     server: superheavy.internal
     path: /media
