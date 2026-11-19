@@ -80,20 +80,39 @@ spec:
               <<: *dbEnv
               TZ: America/New_York
               APP_PORT: "1401"
+              # Documented as optional, but the API's env schema requires
+              # them and refuses to start without. Values are the documented
+              # defaults.
+              JWT_ALG: HS256
+              ACCESS_LIFE_TIME: 1d
+              REFRESH_LIFE_TIME: 2d
               # npm (cache/logs) and pm2-runtime (~/.pm2) write under $HOME;
               # the root filesystem is read-only.
               HOME: /tmp
               # 2 workers x 10 pool = 20 connections on the shared cluster.
               PM2_INSTANCES: "2"
               DB_POOL_MAX: "10"
-              APP_URL: https://taskview.pipitonelabs.com
-              API_PUBLIC_URL: https://taskview-api.pipitonelabs.com
-              CORS_ALLOWED_ORIGINS: https://taskview.pipitonelabs.com
+              # Web and API share one origin: the route below sends /module,
+              # /scim and /.well-known to the API. Upstream builds links such
+              # as the email-confirmation URL as APP_URL + /module/..., so the
+              # API must be reachable under the web host.
+              APP_URL: &url https://taskview.pipitonelabs.com
+              API_PUBLIC_URL: *url
+              CORS_ALLOWED_ORIGINS: *url
               # Single hop: Envoy Gateway.
               TRUST_PROXY: "1"
-              # Left open so the first account can be created; set to "false"
-              # afterwards to make the instance invite-only.
-              ALLOW_PUBLIC_REGISTRATION: "true"
+              # Sign-in: Authentik (OIDC, configured in the org's SSO settings),
+              # email code, and password. Social providers are not configured.
+              AUTH_LOGIN_METHODS: magic-link,password,sso
+              # Authentik resolves to a private address from inside the
+              # cluster, and the domain is ours, so skip the public
+              # DNS/HTTP ownership proof.
+              SSO_ALLOW_PRIVATE_URLS: "true"
+              SSO_TRUSTED_DOMAINS: pipitonelabs.com
+              # Invite-only. The admin account is upstream's seeded default
+              # user, claimed via Account settings; Authentik (SSO) still
+              # provisions pipitonelabs.com users on first sign-in.
+              ALLOW_PUBLIC_REGISTRATION: "false"
               # Mail via the in-cluster relay (unauthenticated, plaintext).
               SMTP_HOST: smtp-relay.default.svc.cluster.local
               SMTP_PORT: "2525"
@@ -210,9 +229,10 @@ spec:
                 }
                 error_page 404 /index.html;
             }
-          # Pins the web app to this API and hides the server picker.
+          # Pins the web app to this API (same origin) and hides the server
+          # picker.
           config.js: |
-            window.__TASKVIEW_CONFIG__ = { apiUrl: "https://taskview-api.pipitonelabs.com" };
+            window.__TASKVIEW_CONFIG__ = { apiUrl: "https://taskview.pipitonelabs.com" };
     service:
       api:
         controller: api
@@ -267,7 +287,7 @@ spec:
               - path: /tmp
                 subPath: tmp
     route:
-      web:
+      app:
         annotations:
           gatus.home-operations.com/endpoint: |-
             group: default
@@ -277,16 +297,14 @@ spec:
           - name: envoy-internal
             namespace: networking
         rules:
+          # API paths (REST, SCIM, OAuth discovery for MCP clients).
+          - matches:
+              - path: { type: PathPrefix, value: /module }
+              - path: { type: PathPrefix, value: /scim }
+              - path: { type: PathPrefix, value: /.well-known }
+            backendRefs:
+              - identifier: api
+                port: 1401
           - backendRefs:
               - identifier: web
                 port: *webPort
-      api:
-        hostnames:
-          - taskview-api.pipitonelabs.com
-        parentRefs:
-          - name: envoy-internal
-            namespace: networking
-        rules:
-          - backendRefs:
-              - identifier: api
-                port: 1401
