@@ -141,12 +141,12 @@ spec:
             - name: repository
               nfs:
                 server: superheavy.internal
-                path: /volsync
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/volsync/.data
                 readOnly: true
             - name: apps
               nfs:
                 server: superheavy.internal
-                path: /kubernetes/apps
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps
                 readOnly: true
             - name: kopia
               emptyDir: {}

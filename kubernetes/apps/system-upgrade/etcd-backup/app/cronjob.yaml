@@ -63,7 +63,7 @@ spec:
           volumes:
             - name: backups
               nfs:
-                path: /kubernetes/apps/etcd
+                path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/apps/etcd
                 server: superheavy.internal
             - name: talos
               secret:

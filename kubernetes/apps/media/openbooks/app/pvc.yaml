@@ -1,0 +1,32 @@
+---
+# Same superheavy export as the other media apps; a PV binds to one claim, so each app gets its own
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: openbooks-superheavy-media
+spec:
+  accessModes: ["ReadWriteMany"]
+  capacity:
+    storage: 1Mi
+  claimRef:
+    name: openbooks-superheavy-media
+    namespace: media
+  # Explicit options override the nfsvers=3 server default in nfsmount.conf
+  mountOptions: ["nfsvers=4.1", "hard", "noatime"]
+  nfs:
+    server: superheavy.internal
+    path: /media
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openbooks-superheavy-media
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: 1Mi
+  storageClassName: ""
+  volumeName: openbooks-superheavy-media

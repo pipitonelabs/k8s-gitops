@@ -100,7 +100,7 @@ spec:
       repository:
         type: nfs
         server: superheavy.internal
-        path: /volsync
+        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/volsync/.data
         globalMounts:
           - path: /repository
       tmpfs:

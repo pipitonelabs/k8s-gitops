@@ -82,9 +82,7 @@ spec:
 
     persistence:
       media:
-        type: nfs
-        server: superheavy.internal
-        path: /media
+        existingClaim: openbooks-superheavy-media
         globalMounts:
           - path: /books
       config:
