@@ -11,11 +11,9 @@ spec:
   claimRef:
     name: metube-superheavy-media
     namespace: media
-  # superheavy only serves this export over NFSv3; overrides nfsvers=4.1 from nfsmount.conf
-  mountOptions: ["nfsvers=3", "nolock", "tcp", "hard", "noatime"]
   nfs:
     server: superheavy.internal
-    path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/media/.data
+    path: /media
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
 ---

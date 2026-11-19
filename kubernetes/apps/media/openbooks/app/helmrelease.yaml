@@ -84,7 +84,7 @@ spec:
       media:
         type: nfs
         server: superheavy.internal
-        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/media/.data
+        path: /media
         globalMounts:
           - path: /books
       config:

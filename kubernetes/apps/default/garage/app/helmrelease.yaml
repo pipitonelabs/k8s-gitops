@@ -83,7 +83,7 @@ spec:
       data:
         type: nfs
         server: superheavy.internal
-        path: /volume/030ba2d3-244f-4673-bf9a-befbcba695ef/.srv/.unifi-drive/kubernetes/.data/garage/data
+        path: /kubernetes/garage/data
         globalMounts:
           - path: /data
       meta:
