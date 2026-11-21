@@ -58,6 +58,29 @@ spec:
               capabilities:
                 drop: ["ALL"]
                 add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]
+          # The Client Speed Test page health-checks http://127.0.0.1:<OPENSPEEDTEST_PORT> and hides the
+          # browser test when that fails; forward it to the speedtest pod's Service
+          speedtest-proxy:
+            image:
+              repository: docker.io/alpine/socat
+              tag: 1.8.1.1@sha256:7f9a06753033f2b7de18edc2353f2c15153413d95a039163c6db270fc7a6c3b0
+            args:
+              - TCP-LISTEN:3005,bind=127.0.0.1,fork,reuseaddr
+              - TCP:network-optimizer-speedtest.networking.svc.cluster.local:3005
+            resources:
+              requests:
+                cpu: 5m
+                memory: 8Mi
+              limits:
+                memory: 32Mi
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 65534
+              runAsGroup: 65534
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
       speedtest:
         containers:
           app:
