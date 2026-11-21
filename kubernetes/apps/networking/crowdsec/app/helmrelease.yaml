@@ -1,0 +1,99 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: crowdsec
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: crowdsec
+  interval: 1h
+  values:
+    # Talos uses containerd, so container logs are in CRI format
+    container_runtime: containerd
+
+    config:
+      # Simulation mode: alerts are raised but every local decision is
+      # flagged as simulated. No bouncer is deployed yet.
+      simulation.yaml: |
+        simulation: true
+        exclusions: []
+      parsers:
+        s01-parse:
+          sing-box-reality.yaml: |
+            name: pipitonelabs/sing-box-reality
+            description: "Parse sing-box REALITY handshake failures"
+            filter: "evt.Parsed.program == 'sing-box'"
+            onsuccess: next_stage
+            grok:
+              pattern: 'from %{IP:source_ip}:%{INT:source_port}: TLS handshake: REALITY: processed invalid connection'
+              apply_on: message
+            statics:
+              - meta: log_type
+                value: sing-box_reality_invalid
+              - meta: service
+                value: sing-box
+              - meta: source_ip
+                expression: evt.Parsed.source_ip
+        s02-enrich:
+          lan-whitelist.yaml: |
+            name: pipitonelabs/lan-whitelist
+            description: "Never act on LAN sources (node IPs run the kubelet TCP probe)"
+            whitelist:
+              reason: "LAN and node addresses"
+              cidr:
+                - 192.168.10.0/24
+                - 192.168.0.0/16
+                - 10.0.0.0/8
+                - 172.16.0.0/12
+      scenarios:
+        sing-box-reality-probe.yaml: |
+          type: leaky
+          name: pipitonelabs/sing-box-reality-probe
+          description: "Repeated REALITY handshake failures against sing-box"
+          filter: "evt.Meta.log_type == 'sing-box_reality_invalid'"
+          groupby: evt.Meta.source_ip
+          # Kept high on purpose so sing-box still behaves like the REALITY target
+          capacity: 30
+          leakspeed: 2m
+          blackhole: 5m
+          labels:
+            service: sing-box
+            confidence: 2
+            spoofable: 0
+            classification:
+              - attack.T1595
+            behavior: "tcp:scan"
+            label: "sing-box REALITY probe"
+            remediation: true
+
+    agent:
+      acquisition:
+        # Also matches sing-box-dashboard pods; the parser filter only
+        # matches REALITY failure lines, so that is harmless.
+        - namespace: networking
+          podName: sing-box-*
+          program: sing-box
+      env:
+        - name: PARSERS
+          value: "crowdsecurity/cri-logs crowdsecurity/whitelists"
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+
+    lapi:
+      persistentVolume:
+        data:
+          enabled: true
+          existingClaim: crowdsec
+          subPath: data
+        config:
+          enabled: true
+          existingClaim: crowdsec
+          subPath: config
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
