@@ -25,7 +25,7 @@ spec:
               OPENSPEEDTEST_HOST: speedtest.pipitonelabs.com
               OPENSPEEDTEST_PORT: "3005"
               # iperf3 server on 5201 in the app container, exposed by the iperf3 LoadBalancer
-              IPERF3_SERVER_ENABLED: "true"
+              Iperf3Server__Enabled: "true"
             probes:
               liveness: &probes
                 enabled: true
