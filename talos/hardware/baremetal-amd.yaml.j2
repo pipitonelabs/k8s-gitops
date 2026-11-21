@@ -26,7 +26,7 @@ name: net%d
 selector:
   match: link.driver == "r8169"
 ---
-# bond0 (LACP over net0 and net1) with VLANs 20, 30 and 70 (br70), same as the baremetal nodes.
+# bond0 (LACP over net0 and net1, MTU 9000) with VLANs 20, 30 and 70 (br70) at 1500, same as the baremetal nodes.
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
@@ -37,7 +37,7 @@ bondMode: 802.3ad
 lacpRate: slow
 miimon: 100
 xmitHashPolicy: layer3+4
-mtu: 1500
+mtu: 9000
 ---
 apiVersion: v1alpha1
 kind: DHCPv4Config
