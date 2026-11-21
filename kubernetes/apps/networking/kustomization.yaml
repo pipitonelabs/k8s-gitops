@@ -18,6 +18,7 @@ patches:
 resources:
   - ./certificates/ks.yaml
   - ./cloudflared/ks.yaml
+  - ./crowdsec/ks.yaml
   - ./echo-server/ks.yaml
   - ./envoy-gateway/ks.yaml
   - ./external-dns/ks.yaml
