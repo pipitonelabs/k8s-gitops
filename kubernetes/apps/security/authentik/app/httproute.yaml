@@ -14,7 +14,37 @@ spec:
     - name: envoy-external
       namespace: networking
   rules:
-    - backendRefs:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/v3/schema
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: gateway.envoyproxy.io
+            kind: HTTPRouteFilter
+            name: authentik-not-found
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        # Authentik reads the first X-Forwarded-For entry, so send only the client IP Envoy detected
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-For
+                value: "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"
+      backendRefs:
         - name: authentik-server
           namespace: security
           port: 80
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/httproutefilter_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRouteFilter
+metadata:
+  name: authentik-not-found
+spec:
+  directResponse:
+    statusCode: 404
