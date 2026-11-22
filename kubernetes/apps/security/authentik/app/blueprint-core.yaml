@@ -64,6 +64,11 @@ data:
           check_ip: true
           check_username: true
           threshold: -5
+      - id: policy-deny
+        model: authentik_policies_expression.expressionpolicy
+        identifiers: {name: deny}
+        attrs:
+          expression: "return False"
       - id: policy-user-settings-authorization
         model: authentik_policies_expression.expressionpolicy
         identifiers: {name: user-settings-authorization}
@@ -214,6 +219,14 @@ data:
           designation: authentication
           policy_engine_mode: all
           background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
+      # Declared so a policy can be bound to it: !KeyOf resolves a flow to its policy target, !Find does not
+      - id: flow-default-authentication
+        model: authentik_flows.flow
+        identifiers: {slug: default-authentication-flow}
+        attrs:
+          name: Welcome to authentik!
+          title: Welcome to authentik!
+          designation: authentication
       - id: flow-invalidation
         model: authentik_flows.flow
         identifiers: {slug: invalidation-flow}
@@ -249,6 +262,7 @@ data:
           name: User settings
           title: Update your info
           designation: stage_configuration
+          authentication: require_authenticated
           policy_engine_mode: any
           denied_action: message_continue
           background: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/surface-of-mars.jpg
@@ -292,7 +306,7 @@ data:
         identifiers: {name: authentication-mfa-validation}
         attrs:
           device_classes: [static, totp]
-          not_configured_action: configure
+          not_configured_action: deny
           configuration_stages:
             - !KeyOf stage-authenticator-totp-setup
       - id: stage-authentication-login
@@ -334,6 +348,7 @@ data:
         model: authentik_stages_user_write.userwritestage
         identifiers: {name: password-change-write}
         attrs:
+          user_creation_mode: never_create
           create_users_as_inactive: false
 
       # --- Stages: enrollment invitation ---------------------------------
@@ -382,6 +397,7 @@ data:
         model: authentik_stages_user_write.userwritestage
         identifiers: {name: user-settings-write}
         attrs:
+          user_creation_mode: never_create
           create_users_as_inactive: false
 
       # --- Flow policy bindings ------------------------------------------
@@ -395,6 +411,17 @@ data:
         attrs:
           negate: true
           enabled: true
+          timeout: 30
+
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf flow-default-authentication
+          policy: !KeyOf policy-deny
+          order: 0
+        attrs:
+          negate: false
+          enabled: true
+          failure_result: false
           timeout: 30
 
       # --- Flow stage bindings -------------------------------------------
@@ -467,6 +494,12 @@ data:
       - model: authentik_flows.flowstagebinding
         identifiers:
           target: !KeyOf flow-enrollment-invitation
+          order: 25
+        attrs:
+          stage: !KeyOf stage-authenticator-totp-setup
+      - model: authentik_flows.flowstagebinding
+        identifiers:
+          target: !KeyOf flow-enrollment-invitation
           order: 30
         attrs:
           stage: !KeyOf stage-source-enrollment-login
@@ -491,7 +524,7 @@ data:
           branding_title: authentik
           branding_logo: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
           branding_favicon: https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/mars.png
-          flow_authentication: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          flow_authentication: !KeyOf flow-authentication
           flow_invalidation: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
           flow_user_settings: !Find [authentik_flows.flow, [slug, default-user-settings-flow]]
       - model: authentik_brands.brand

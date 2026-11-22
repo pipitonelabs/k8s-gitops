@@ -7,6 +7,31 @@ metadata:
   name: authentik
 spec:
   mergeType: StrategicMerge
+  # Per client IP on each proxy replica. A login takes about 10 executor calls
+  rateLimit:
+    type: Local
+    local:
+      rules:
+        - clientSelectors:
+            - path:
+                type: PathPrefix
+                value: /api/v3/flows/executor/
+              sourceCIDR:
+                type: Distinct
+                value: 0.0.0.0/0
+          limit:
+            requests: 60
+            unit: Minute
+        - clientSelectors:
+            - path:
+                type: PathPrefix
+                value: /api/v3/flows/executor/
+              sourceCIDR:
+                type: Distinct
+                value: "::/0"
+          limit:
+            requests: 60
+            unit: Minute
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
