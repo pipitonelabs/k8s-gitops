@@ -50,6 +50,10 @@ metadata:
       client:
         dns-resolver: tcp://1.1.1.1:53
       group: external
+      ui:
+        hide-hostname: true
+        hide-url: true
+        hide-errors: true
 spec:
   gatewayClassName: envoy
   infrastructure:
@@ -80,6 +84,11 @@ metadata:
   name: envoy-internal
   annotations:
     external-dns.alpha.kubernetes.io/target: &hostname internal.pipitonelabs.com
+    gatus.home-operations.com/endpoint: |-
+      ui:
+        hide-hostname: true
+        hide-url: true
+        hide-errors: true
 spec:
   gatewayClassName: envoy
   infrastructure:

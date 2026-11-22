@@ -2,7 +2,7 @@
 
 A stateful emulator of the Microsoft Entra ID token endpoint and the parts of Microsoft Graph v1.0 used to license users for Exchange Online. It lets C1 functions be tested end to end without a Microsoft 365 tenant. Responses, status codes, error codes and permission checks follow real Graph as closely as practical.
 
-It runs at `https://graph-mock.pipitonelabs.com` on `envoy-external`. The server is a single Deno script, `app/resources/server.ts`, mounted from a ConfigMap.
+It runs at `https://graph-mock.pipitonelabs.com` on `envoy-internal`, so it is reachable from the LAN and tailnet only. To test from a hosted service, switch the route's parent to `envoy-external` for the duration. The server is a single Deno script, `app/resources/server.ts`, mounted from a ConfigMap.
 
 ## What it provides
 
@@ -77,7 +77,7 @@ These are environment variables on the HelmRelease. All are optional.
 
 ## Admin (cluster-internal only)
 
-Only `/v1.0/*` and the token path are routed publicly.
+Only `/v1.0/*` and the token path are routed.
 
 ```sh
 # Restore seed data. This also invalidates every issued token.
