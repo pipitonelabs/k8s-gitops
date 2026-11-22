@@ -1,0 +1,48 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+# Publishes these files to the Zensical site. Every page must be listed here.
+# A ConfigMap is flat and capped at 1MiB, so no photos.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+configMapGenerator:
+  - name: zensical-pages
+    files:
+      - ./add-app.md
+      - ./applications.md
+      - ./architecture.md
+      - ./backups.md
+      - ./before-you-wipe.md
+      - ./bootstrap-apps.md
+      - ./bootstrap-talos.md
+      - ./cluster-template.md
+      - ./commands.md
+      - ./flux.md
+      - ./hardware.md
+      - ./home-assistant.md
+      - ./index.md
+      - ./install-talos.md
+      - ./known-gaps.md
+      - ./machine-config.md
+      - ./network-prerequisites.md
+      - ./networking.md
+      - ./postgres.md
+      - ./proxmox-cloud-init.md
+      - ./rebuild-cluster.md
+      - ./restore-databases.md
+      - ./restore-garage.md
+      - ./restore-volumes.md
+      - ./rook-ceph.md
+      - ./secrets.md
+      - ./storage.md
+      - ./talos-nodes.md
+      - ./talos-operations.md
+      - ./verify-cluster.md
+      - ./workingnotes.md
+      - ./workstation.md
+      - ./writing-pages.md
+      - ./bgp-config.conf
+      - ./assets/flux-dependencies.svg
+      - ./assets/gitops-flow.svg
+      - ./assets/network-topology.svg
+generatorOptions:
+  disableNameSuffixHash: true

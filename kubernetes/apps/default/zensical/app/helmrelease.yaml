@@ -28,9 +28,10 @@ spec:
               - |
                 cd /work
                 rm -rf docs
-                mkdir docs
+                mkdir -p docs/assets
                 cp /src/config/zensical.toml zensical.toml
-                cp /src/docs/*.md docs/
+                cp /src/docs/*.md /src/docs/*.conf docs/
+                cp /src/docs/*.svg docs/assets/
                 zensical build --clean --strict
             env:
               HOME: /tmp
@@ -93,7 +94,7 @@ spec:
                 readOnly: true
       docs:
         type: configMap
-        name: zensical-docs
+        name: zensical-pages
         advancedMounts:
           zensical:
             build:

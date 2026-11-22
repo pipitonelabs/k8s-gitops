@@ -1,102 +1,90 @@
-### Rook Ceph
+# Rook and Ceph
 
-Collection of useful things I have done in the past to fix stuff...
+## Run Ceph commands
 
-### Acknowledge / clear crash
+```bash
+ceph() { kubectl -n rook-ceph exec deploy/rook-ceph-tools -- ceph "$@"; }
 
+ceph status
+ceph health detail
+ceph osd tree
+ceph df
 ```
+
+The rest of this page uses that function.
+
+Four `AUTH_INSECURE_*` warnings are muted in the cluster HelmRelease. The CSI client keys cannot move to
+`aes256k` until the nodes run kernel 7.0 or newer.
+
+## Clear crash warnings
+
+```bash
+ceph crash ls
 ceph crash archive-all
 ```
 
-### Remove OSD
+## Remove an OSD
 
-If the Node is already dead, then we gotta do some stuff to clean it up... Taken from [here](https://docs.mirantis.com/container-cloud/latest/operations-guide/tshoot/tshoot-ceph/ceph-manual-osd-remove.html)
+> [!WARNING]
+> Remove one OSD at a time. If the disk still works, wait for `safe-to-destroy` before purging.
 
-```
-# Get Status Of Ceph Cluster
-kubelet rook-ceph ceph -s
+1. Remove the disk or node from the Rook cluster HelmRelease and merge it.
+2. Stop the operator from restarting the OSD, then remove it:
 
-# Scale OSD Down (should be stuck in Pending if node is dead)
-kubectl -n rook-ceph scale deploy rook-ceph-osd-<ID> --replicas 0
+    ```bash
+    id=3
+    flux -n rook-ceph suspend kustomization rook-ceph
+    flux -n rook-ceph suspend helmrelease rook-ceph
+    kubectl -n rook-ceph scale deploy/rook-ceph-operator --replicas=0
 
-# Purge it
-kubectl rook-ceph ceph osd purge <ID> --yes-i-really-mean-it
+    ceph osd out "$id"
+    ceph osd safe-to-destroy "$id"    # repeat until it says it is safe
+    kubectl -n rook-ceph scale "deploy/rook-ceph-osd-$id" --replicas=0
+    ceph osd purge "$id" --yes-i-really-mean-it
+    kubectl -n rook-ceph delete "deploy/rook-ceph-osd-$id"
+    ```
 
-# Delete Auth
-kubectl ceph auth del osd.<ID>
+3. If the host has no OSDs left, remove it with `ceph osd crush remove HOSTNAME`.
+4. Start the operator again:
 
-# Remove dead node
-kubectl rook-ceph ceph osd crush remove <nodename>
-```
+    ```bash
+    kubectl -n rook-ceph scale deploy/rook-ceph-operator --replicas=1
+    flux -n rook-ceph resume kustomization rook-ceph
+    flux -n rook-ceph resume helmrelease rook-ceph
+    ```
 
-### Clean Rook Directory on Storage Device
+`purge` also removes the OSD's auth key and CRUSH entry.
 
-Ceph likes a nice clean drive, and if you have previously used the device it might have left over stuff, best to wipe it clean before adding as an OSD.
+## Clean a disk for reuse
 
-Replace `<nodename>` with the name of the node you wish to wipe.
+With the node in maintenance mode, follow [Clean the Ceph disks](install-talos.md#5-clean-the-ceph-disks).
+A full Talos reset clears `/var/lib/rook`.
 
-```
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Pod
-metadata:
-  name: disk-clean-rook
-spec:
-  restartPolicy: Never
-  nodeName: m2
-  volumes:
-  - name: rook-data-dir
-    hostPath:
-      path: /var/lib/rook
-  containers:
-  - name: disk-clean
-    image: busybox
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - name: rook-data-dir
-      mountPath: /node/rook-data
-    command: ["/bin/sh", "-c", "rm -rf /node/rook-data/*"]
-EOF
-```
+## An OSD cannot authenticate
 
-### OSD Fails to Join Cluster
+This happens when an OSD's disk is intact but its key was deleted from Ceph.
 
-I ran into this after moving a storage device from 1 node to the other, probably also because I deleted the auth above, anyway, if the OSD fails to join the cluster due to what appears to be a permission issue, the fix is relatively straight forward and we need to import the credentials. Taken from [here](https://github.com/rook/rook/issues/4238#issuecomment-664627282)
+1. Start maintenance mode and read the keyring:
 
+    ```bash
+    kubectl rook-ceph -n rook-ceph maintenance start rook-ceph-osd-ID
+    kubectl -n rook-ceph exec deploy/rook-ceph-osd-ID-maintenance -- cat /var/lib/ceph/osd/ceph-ID/keyring
+    ```
 
-Start a debug pod for the OSD having issues
+2. Save it as `osd.export`, outside the repository, with these capabilities:
 
-```
-kubectl rook-ceph debug stop rook-ceph-osd-<ID>
-```
+    ```ini
+    [osd.ID]
+    key = KEY
+    caps mon = "allow profile osd"
+    caps mgr = "allow profile osd"
+    caps osd = "allow *"
+    ```
 
-Exec into the debug pod
+3. Import it, stop maintenance mode, and delete the file:
 
-```
-cat /var/lib/ceph/osd/ceph-<ID>/keyring
-```
-
-Make a file locally `osd.export` where kubectl is and put in the contents of the keyring + permissions
-
-```
-[osd.<ID>]
-key = <key>
-caps mon = "allow profile osd"
-caps mgr = "allow profile osd"
-caps osd = "allow *"
-```
-
-Import it into Ceph
-
-```
-kubectl rook-ceph ceph auth import -i osd.export
-```
-
-Clean up the debug pod.
-
-```
-kubectl rook-ceph debug stop rook-ceph-osd-<ID>
-```
-
-With any luck, the OSD should join and cluster should recover.
+    ```bash
+    kubectl -n rook-ceph exec -i deploy/rook-ceph-tools -- ceph auth import -i - < osd.export
+    kubectl rook-ceph -n rook-ceph maintenance stop rook-ceph-osd-ID
+    rm osd.export
+    ```

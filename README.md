@@ -74,7 +74,7 @@ The cluster is three control-plane nodes and one worker, all running Talos. It's
 |-----------|------------|
 | `media`   | Plex, Jellyfin |
 | `home`    | Atuin |
-| `default` | Outline, Reactive Resume, my blog, Minecraft server |
+| `default` | Outline, TaskView, Forgejo, Reactive Resume, my blog, docs site, Minecraft server |
 | `database` | PostgreSQL, Dragonfly |
 | `tradeforge` | TradeForge, an app I built and self-host |
 | `networking` | Network Optimizer, sing-box, echo-server |
@@ -85,7 +85,7 @@ Plex transcodes on an Intel iGPU (Talos `i915` and `intel-ucode` extensions, [In
 
 | Database | Used for |
 |----------|----------|
-| `postgres17` | Shared [CloudNativePG](https://github.com/cloudnative-pg/cloudnative-pg) cluster for Authentik, Atuin, Forgejo, and Reactive Resume |
+| `postgres17` | Shared [CloudNativePG](https://github.com/cloudnative-pg/cloudnative-pg) cluster for Authentik, Atuin, Forgejo, Reactive Resume, and TaskView |
 | `outline` | Dedicated PostgreSQL cluster for Outline |
 | `tradeforge-pg` | Dedicated PostgreSQL cluster for TradeForge, which reaches it through PostgREST and Supabase Realtime |
 | [Dragonfly](https://github.com/dragonflydb/dragonfly) | Redis-compatible cache for Authentik and Outline |
@@ -127,16 +127,16 @@ Every PR is checked by [CI](./.github/workflows/ci.yaml) before merging:
 
 ### Backups
 
-- **Volumes**: VolSync snapshots app PVCs hourly into a Kopia repository on the UNAS.
-- **Databases**: CloudNativePG backs up through the Barman Cloud plugin.
+- **Volumes**: VolSync snapshots protected app PVCs and Garage's metadata hourly into a Kopia repository on the UNAS.
+- **Databases**: CloudNativePG backs up to Garage through the Barman Cloud plugin, and most databases also get a logical dump to the UNAS every four hours.
 - **etcd**: A CronJob takes a nightly snapshot.
-- **Offsite**: A nightly job copies the Kopia repository and Garage data to offsite S3 storage, encrypted.
+- **Offsite**: A nightly job copies the Kopia repository, database dumps, etcd snapshots, and the contents of Garage's buckets to offsite S3 storage, encrypted.
 
 ### Directories
 
 ```sh
 📁 bootstrap       # Helmfile stages that bring up a new cluster
-📁 docs            # Rebuild runbooks and notes
+📁 docs            # Runbooks, also built into the docs site
 📁 kubernetes      # Kubernetes cluster defined as code
 ├─📁 apps          # Apps deployed into my cluster, grouped by namespace
 ├─📁 components    # Re-usable kustomize components
@@ -144,7 +144,7 @@ Every PR is checked by [CI](./.github/workflows/ci.yaml) before merging:
 📁 talos           # Layered Minijinja templates for Talos machine configs
 ```
 
-Automation lives in [just](https://just.systems) recipes. `just bootstrap cluster` brings the cluster up from scratch, and [docs/rebuild-cluster.md](./docs/rebuild-cluster.md) has the full runbook.
+Automation lives in [just](https://just.systems) recipes. `just bootstrap cluster` brings the cluster up from scratch, and [docs/rebuild-cluster.md](./docs/rebuild-cluster.md) has the full runbook. All the documentation is in [docs](./docs/index.md) and reads the same on GitHub or in a clone as on the internal docs site.
 
 ---
 

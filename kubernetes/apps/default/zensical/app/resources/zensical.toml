@@ -1,6 +1,60 @@
 [project]
 site_name = "Pipitone Labs Docs"
 site_url = "https://docs.pipitonelabs.com/"
+# Pages live in docs/ at the repository root. List new ones there in kustomization.yaml too.
+nav = [
+  { "Home" = "index.md" },
+  { "Cluster overview" = [
+    { "Architecture" = "architecture.md" },
+    { "Hardware and nodes" = "hardware.md" },
+    { "Networking" = "networking.md" },
+    { "Storage" = "storage.md" },
+    { "GitOps with Flux" = "flux.md" },
+    { "Secrets" = "secrets.md" },
+    { "Applications" = "applications.md" },
+  ] },
+  { "1. Build from scratch" = [
+    { "Rebuild overview" = "rebuild-cluster.md" },
+    { "Before you wipe" = "before-you-wipe.md" },
+    { "Set up a workstation" = "workstation.md" },
+    { "Prepare the network" = "network-prerequisites.md" },
+  ] },
+  { "2. Install Talos" = [
+    { "Install Talos Linux" = "install-talos.md" },
+  ] },
+  { "3. Bootstrap Talos" = [
+    { "How machine configs work" = "machine-config.md" },
+    { "Bootstrap Talos" = "bootstrap-talos.md" },
+  ] },
+  { "4. Bootstrap apps" = [
+    { "Bootstrap apps" = "bootstrap-apps.md" },
+  ] },
+  { "5. Restore and verify" = [
+    { "Restore volumes" = "restore-volumes.md" },
+    { "Restore Garage" = "restore-garage.md" },
+    { "Restore databases" = "restore-databases.md" },
+    { "Verify the cluster" = "verify-cluster.md" },
+  ] },
+  { "Operations" = [
+    { "Add an app" = "add-app.md" },
+    { "Talos operations" = "talos-operations.md" },
+    { "Node lifecycle" = "talos-nodes.md" },
+    { "Proxmox workers" = "proxmox-cloud-init.md" },
+    { "Backups" = "backups.md" },
+    { "PostgreSQL" = "postgres.md" },
+    { "Rook and Ceph" = "rook-ceph.md" },
+    { "Command reference" = "commands.md" },
+  ] },
+  { "Troubleshooting" = [
+    { "Common problems" = "workingnotes.md" },
+    { "Known gaps" = "known-gaps.md" },
+    { "Home Assistant" = "home-assistant.md" },
+  ] },
+  { "About" = [
+    { "Repository layout" = "cluster-template.md" },
+    { "Writing pages" = "writing-pages.md" },
+  ] },
+]
 
 [project.theme]
 language = "en"
@@ -10,6 +64,7 @@ features = [
   "content.code.copy",
   "navigation.footer",
   "navigation.instant",
+  "navigation.sections",
   "navigation.top",
   "navigation.tracking",
   "search.highlight",
@@ -35,6 +90,8 @@ toc.permalink = true
 pymdownx.details = {}
 pymdownx.highlight.pygments_lang_class = true
 pymdownx.inlinehilite = {}
+# GitHub-style alerts: > [!WARNING]
+pymdownx.quotes.callouts = true
 pymdownx.superfences = {}
 pymdownx.tabbed.alternate_style = true
 pymdownx.tasklist.custom_checkbox = true
