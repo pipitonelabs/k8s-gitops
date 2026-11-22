@@ -1,6 +1,11 @@
 # Restore Garage
 
-Garage provides S3 for database backups and app uploads. **Untested end to end.**
+Garage provides S3 for database backups and app uploads.
+
+> [!NOTE]
+> Tested on 2026-11-22: the backup restored into a scratch PVC, and both its database and its newest snapshot
+> were read offline with the node key, layout, keys, and five buckets present. **Untested:** starting Garage on a
+> restored volume and reading objects through it.
 
 It needs two things: the object blocks, which stay on NFS, and the `garage-meta` volume, which holds the index,
 layout, and node key.
@@ -44,7 +49,20 @@ The volume also holds Garage's own snapshots, taken every 6 hours, in `/meta/sna
 
 1. Suspend the `garage` Kustomization and HelmRelease, pause its ScaledObject, and scale it to zero.
 2. Mount the volume with `just kube browse-pvc default garage-meta`.
-3. Move `db.lmdb` aside and copy `snapshots/<timestamp>/db.lmdb` into its place, owned by `1000:100`.
+3. In that shell, put the newest good snapshot in place. A snapshot's `db.lmdb` is a single file, but Garage
+   needs a directory with that file inside as `data.mdb`. Copying it straight to `db.lmdb` does not work.
+
+    ```sh
+    cd /mnt
+    ls snapshots
+    snapshot=TIMESTAMP    # one of the names listed
+    mv db.lmdb db.lmdb.broken
+    mkdir db.lmdb
+    cp "snapshots/$snapshot/db.lmdb" db.lmdb/data.mdb
+    chown -R 1000:100 db.lmdb
+    exit
+    ```
+
 4. Undo step 1, then run `/garage repair --yes tables` in the pod.
 
 ## If the metadata backup is gone

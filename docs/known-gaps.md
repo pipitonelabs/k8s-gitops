@@ -5,7 +5,7 @@ Close these before relying on a rebuild.
 ## Never rehearsed
 
 - A full rebuild.
-- A restore of Garage from its metadata backup.
+- Starting Garage on restored metadata. [The restore itself is tested](restore-garage.md).
 - Barman recovery and logical dump restores.
 - An etcd recovery.
 
