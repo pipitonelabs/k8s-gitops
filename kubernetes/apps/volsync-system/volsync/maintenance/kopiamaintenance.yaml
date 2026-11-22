@@ -8,7 +8,9 @@ metadata:
 spec:
   enabled: true
   trigger:
-    schedule: 30 3 * * *
+    # Every 6h, so index epochs advance and compact often enough. Pairs with the repository's
+    # minimum epoch duration of 4h. Once a day leaves thousands of index blobs uncompacted.
+    schedule: 30 */6 * * *
   repository:
     repository: volsync-maintenance-secret
   moverVolumes:

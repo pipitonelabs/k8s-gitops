@@ -14,7 +14,7 @@ Times are UTC.
 | `tradeforge-pg` | WAL, plus a base backup at 01:50 | Garage | 30 days |
 | Logical dumps of six databases | Every 4 hours at :05 | NFS | 7 daily, 4 weekly, 6 monthly |
 | etcd | 03:15 | NFS | 7 days |
-| Kopia maintenance | 03:30 | Kopia on NFS | Not applicable |
+| Kopia maintenance | Every 6 hours at :30 | Kopia on NFS | Not applicable |
 | Offsite copy | 04:20 | Offsite S3 | A mirror |
 
 The offsite copy contains the Kopia repository, the dumps, the etcd snapshots, and the contents of the five
