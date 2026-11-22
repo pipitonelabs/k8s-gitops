@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+# VolSync backup and restore for the garage-meta PVC. The PVC stays in ../app, so the component's copy is dropped.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+components:
+  - ../../../../components/volsync
+patches:
+  - target:
+      kind: PersistentVolumeClaim
+    patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: not-used
