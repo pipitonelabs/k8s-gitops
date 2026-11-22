@@ -52,17 +52,18 @@ spec:
 
 ## helmrelease.yaml (app-template / bjw-s)
 
-Most apps use the shared `app-template` OCIRepository (chart 5.x). Match an existing app like `default/echo-server` or `default/blog` for the current chart version. Key structure: `controllers.<app>.containers.app` (image, env, probes, resources, securityContext), `service`, and a `route` block for Gateway API HTTPRoute (parentRef `envoy-external` for public, `envoy-internal` for LAN-only).
+Most apps use the shared `app-template` OCIRepository (chart 5.x). Match an existing app like `networking/echo-server` or `default/blog` for the current chart version. Key structure: `controllers.<app>.containers.app` (image, env, probes, resources, securityContext), `service`, and a `route` block for Gateway API HTTPRoute (parentRef `envoy-external` for public, `envoy-internal` for LAN-only).
 
 ## Conventions to honor
 
 - Externally-facing route → `parentRefs: [{ name: envoy-external, namespace: networking }]` and hostname `<app>.pipitonelabs.com`. Internal-only → `envoy-internal`.
 - Add a Gatus check via the route annotation `gatus.home-operations.com/endpoint` (the gatus-sidecar auto-discovers HTTPRoutes).
 - Secrets → ExternalSecret with `ClusterSecretStore` `onepassword` (see the manage-secrets skill), never inline plaintext.
-- PVC-backed apps → include the `volsync` component for Restic backups.
+- PVC-backed apps → include the `volsync` component for hourly Kopia backups, with `dependsOn` on `rook-ceph-cluster` (rook-ceph) and `volsync` (volsync-system).
 - Set `securityContext` (runAsNonRoot, drop ALL caps, readOnlyRootFilesystem) as the other apps do.
 
 ## Verify before opening the PR
 
-- `flux-local` runs in CI, but sanity-check locally if possible.
+- `flate` runs in CI. Run it locally first: `mise exec "github:home-operations/flate@$(yq '.env.FLATE_VERSION' .github/workflows/ci.yaml)" -- flate test all --path ./kubernetes`
+- List the app in `docs/applications.md`, which is published to the docs site.
 - Confirm the parent namespace `kustomization.yaml` references the new `ks.yaml`, or Flux will never pick it up.
