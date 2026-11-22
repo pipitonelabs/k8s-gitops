@@ -102,6 +102,26 @@ spec:
         parentRefs:
           - name: envoy-external
             namespace: networking
+        rules:
+          # Prometheus scrapes the Service directly
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /metrics
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: gateway.envoyproxy.io
+                  kind: HTTPRouteFilter
+                  name: gatus-not-found
+            backendRefs: []
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: *port
     service:
       app:
         ports:

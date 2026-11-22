@@ -7,6 +7,10 @@ endpoints:
   - name: flux-webhook
     group: external
     url: https://flux-webhook.pipitonelabs.com
+    ui:
+      hide-hostname: true
+      hide-url: true
+      hide-errors: true
     interval: 1m
     client:
       dns-resolver: tcp://1.1.1.1:53
@@ -36,6 +40,10 @@ endpoints:
   - name: "*.pipitonelabs.com"
     group: certificates
     url: "tls://external.pipitonelabs.com:443"
+    ui:
+      hide-hostname: true
+      hide-url: true
+      hide-errors: true
     interval: 24h
     conditions:
       - "[CONNECTED] == true"

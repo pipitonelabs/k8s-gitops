@@ -79,10 +79,10 @@ spec:
         hostnames:
           - "{{ .Release.Name }}.pipitonelabs.com"
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: networking
         rules:
-          # Only the Graph/token surface is public; /__reset stays cluster-internal.
+          # Only the Graph/token surface is routed; /__reset stays cluster-internal.
           - matches:
               - path:
                   type: PathPrefix
