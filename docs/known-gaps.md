@@ -21,7 +21,6 @@ Close these before relying on a rebuild.
 
 | Gap | Workaround |
 |---|---|
-| `bootstrap talos` stops at node files for machines that do not exist | [Park the files](bootstrap-talos.md#1-set-aside-nodes-that-do-not-exist) |
 | `download-image` only builds the MS-01 image | [Download w2's image directly](install-talos.md#gmktec-w2) |
 | `kube restore` does not work for Grafana or Garage | [See the warning](restore-volumes.md#restore-one-app-in-place) |
 | `kube restore` does not pause KEDA | [Pause it by hand](restore-volumes.md#apps-with-the-nfs-scaler) |

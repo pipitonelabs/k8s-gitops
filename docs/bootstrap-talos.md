@@ -9,16 +9,12 @@ This stage turns machines in maintenance mode into a Kubernetes control plane.
 - [ ] All nodes are [in maintenance mode with clean disks](install-talos.md)
 - [ ] You are [signed in to the secret store](workstation.md#4-sign-in-to-the-secret-store)
 
-## 1. Set aside nodes that do not exist
+## 1. Check which nodes exist
 
-The bootstrap applies every file in `talos/nodes/` and stops at the first node it cannot reach. With the
-Proxmox files in place it stops at `.13`, before `w2` gets a config.
+The bootstrap applies every file in `talos/nodes/`. It skips a worker it cannot reach and lists it when that
+stage ends. An unreachable control-plane node stops it.
 
-```bash
-mv talos/nodes/proxmox ../proxmox-nodes-parked
-```
-
-Skip this if both VMs exist. Do not commit the move.
+`w0` and `w1` are skipped while their VMs do not exist. If `w2` is listed, fix it and run the bootstrap again.
 
 ## 2. Generate the talosconfig
 
@@ -45,7 +41,7 @@ just bootstrap talos
 
 | Stage | What happens | When run again |
 |---|---|---|
-| `nodes` | Applies each config through the maintenance API | Skips configured nodes |
+| `nodes` | Applies each config through the maintenance API | Skips configured nodes and unreachable workers |
 | `k8s` | Creates etcd on the first control-plane node | Continues on `AlreadyExists` |
 | `kubeconfig` | Writes `kubernetes/kubeconfig`, pointed at a node IP | Overwrites it |
 
@@ -69,11 +65,4 @@ kubectl get nodes
 
 ## 6. Continue
 
-Put the Proxmox files back:
-
-```bash
-mv ../proxmox-nodes-parked talos/nodes/proxmox
-git status --short talos/
-```
-
-The last command should print nothing. Then [bootstrap the apps](bootstrap-apps.md).
+Once all four nodes are registered, [bootstrap the apps](bootstrap-apps.md).

@@ -29,7 +29,17 @@ apps: (kubeconfig "node") base helmfile kubeconfig
 nodes:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     [[ -n "{{ nodes }}" ]] || just log fatal "No node files in talos/nodes" "stage" "{{ recipe_name() }}"
+    skipped=""
     for n in {{ nodes }}; do
+        # A worker without an answering Talos API may not exist yet. An unreachable control plane stays fatal.
+        if [[ " {{ controlplanes }} " != *" $n "* ]]; then
+            connected=$(curl -ks -o /dev/null --connect-timeout 5 --max-time 8 -w '%{time_connect}' "https://${n}:50000" || true)
+            if [[ ! "$connected" =~ [1-9] ]]; then
+                just log warn "Worker unreachable, skipping" "stage" "{{ recipe_name() }}" "node" "$n"
+                skipped="$skipped $n"
+                continue
+            fi
+        fi
         if ! op=$(just --yes talos apply-node "$n" --insecure 2>&1); then
             if [[ "$op" == *"certificate required"* ]]; then
                 just log info "Talos already configured, skipping apply of config" "stage" "{{ recipe_name() }}" "node" "$n"
@@ -38,6 +48,9 @@ nodes:
             just log fatal "Failed to apply Talos configuration" "stage" "{{ recipe_name() }}" "node" "$n" "output" "$op"
         fi
     done
+    if [[ -n "$skipped" ]]; then
+        just log warn "Workers without a config. Boot them and run bootstrap again" "nodes" "${skipped# }"
+    fi
 
 [private]
 k8s:
