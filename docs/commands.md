@@ -37,7 +37,7 @@ Nodes are addressed by IP.
 | Command | Does |
 |---|---|
 | `just kube sync KIND` | Force-sync every `es`, `hr`, `ks`, `gitrepo`, or `ocirepo` |
-| `just kube prune-pods` | Delete all Failed, Pending, and Succeeded pods |
+| `just kube prune-pods` | Delete all Failed and Succeeded pods |
 | `just kube browse-pvc NS CLAIM` | Mount a PVC in a temporary pod |
 | `just kube debug-node NODE` | Privileged shell on a node |
 | `just kube view-secret NS SECRET` | Print a decoded secret |

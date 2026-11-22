@@ -17,9 +17,9 @@ sync resource:
             "reconcile.fluxcd.io/forceAt=$(date +%s)"
     done
 
-[doc('Delete pods in Failed, Pending or Succeeded state (replaces task kubernetes:cleanse-pods)')]
+[doc('Delete finished pods, Failed or Succeeded (replaces task kubernetes:cleanse-pods)')]
 prune-pods:
-    for phase in Failed Pending Succeeded; do
+    for phase in Failed Succeeded; do
         kubectl delete pods -A --field-selector status.phase="$phase" --ignore-not-found=true
     done
 
@@ -48,35 +48,95 @@ volsync state:
 [doc('Take a manual VolSync (Kopia) snapshot of one app and wait for it to finish')]
 snapshot ns app:
     now="$(date +%s)"
+    schedule="$(kubectl -n {{ ns }} get replicationsources {{ app }} -o jsonpath='{.spec.trigger.schedule}')"
+    # A manual trigger overrides the schedule, so always take it out again.
+    if [[ -n "$schedule" ]]; then
+        trap "kubectl -n {{ ns }} patch replicationsources {{ app }} --type merge -p '{\"spec\":{\"trigger\":{\"manual\":null}}}'" EXIT
+    fi
     kubectl -n {{ ns }} patch replicationsources {{ app }} --type merge \
         -p "{\"spec\":{\"trigger\":{\"manual\":\"${now}\"}}}"
     kubectl -n {{ ns }} wait replicationsources/{{ app }} \
         --for=jsonpath='{.status.lastManualSync}'="${now}" --timeout=120m
 
-# Works for apps deployed by a HelmRelease that has the same name as the Flux Kustomization and PVC
-# (the layout of the volsync component). Restores the Kopia snapshot `previous` back from the latest.
+# `app` is the PVC name. The Kustomization comes from the PVC's labels, and the HelmReleases from the
+# workloads that mount it. Pauses KEDA and the Grafana operator, which would restart a stopped app.
 [confirm('Restore ' + ns + '/' + app + ' PVC from VolSync (overwrites current data) [y|N] ?')]
 [doc('Restore an app PVC from VolSync in place (previous=0 is the latest snapshot)')]
 restore ns app previous='0':
-    flux -n {{ ns }} suspend kustomization {{ app }}
-    flux -n {{ ns }} suspend helmrelease {{ app }}
-    kubectl -n {{ ns }} get deploy,sts -l helm.toolkit.fluxcd.io/name={{ app }} -o name \
-        | xargs -r -I{} kubectl -n {{ ns }} scale {} --replicas=0
-    until [[ -z "$(kubectl -n {{ ns }} get pods -o json | jq -r --arg c '{{ app }}' '.items[] | select(.spec.volumes[]?.persistentVolumeClaim.claimName == $c) | .metadata.name')" ]]; do
+    ks="$(kubectl -n {{ ns }} get pvc {{ app }} -o json | jq -r '.metadata.labels["kustomize.toolkit.fluxcd.io/name"] // empty')"
+    users="$(kubectl -n {{ ns }} get deploy,sts -o json | jq -c --arg c '{{ app }}' \
+        '[.items[] | select(any(.spec.template.spec.volumes[]?; .persistentVolumeClaim.claimName == $c))]')"
+    [[ -n "$ks" ]] || just log fatal "PVC has no Flux Kustomization label" "pvc" "{{ app }}"
+    [[ "$users" != "[]" ]] || just log fatal "No workload mounts the PVC" "pvc" "{{ app }}"
+    kubectl -n {{ ns }} get replicationdestination {{ app }}-dst -o name >/dev/null
+
+    releases="$(jq -r '[.[].metadata.labels["helm.toolkit.fluxcd.io/name"] // empty] | unique[]' <<<"$users")"
+    grafanas="$(jq -r '[.[].metadata.ownerReferences[]? | select(.kind == "Grafana") | .name] | unique[]' <<<"$users")"
+    scalers="$(kubectl -n {{ ns }} get scaledobjects.keda.sh -o json | jq -r --argjson users "$users" \
+        '.items[] | select(.spec.scaleTargetRef.name as $t | any($users[]; .metadata.name == $t)) | .metadata.name')"
+    workloads="$(
+        {
+            jq -r '.[] | (.kind | ascii_downcase) + "/" + .metadata.name' <<<"$users"
+            for hr in $releases; do
+                kubectl -n {{ ns }} get deploy,sts -l "helm.toolkit.fluxcd.io/name=$hr" -o json \
+                    | jq -r '.items[] | (.kind | ascii_downcase) + "/" + .metadata.name'
+            done
+        } | sort -u
+    )"
+    replicas=""
+    for w in $workloads; do
+        replicas="$replicas $w=$(kubectl -n {{ ns }} get "$w" -o jsonpath='{.spec.replicas}')"
+    done
+
+    # On failure leave the app stopped, so it cannot start on half-restored data.
+    trap 'rc=$?; if ((rc)); then
+        echo "Restore failed. The app is left stopped. Run it again, or to start the app as it is:" >&2
+        for g in $grafanas; do echo "  kubectl -n {{ ns }} patch grafanas.grafana.integreatly.org $g --type merge -p {\\\"spec\\\":{\\\"suspend\\\":null}}" >&2; done
+        for s in $scalers; do echo "  kubectl -n {{ ns }} annotate scaledobjects.keda.sh $s autoscaling.keda.sh/paused-" >&2; done
+        for r in $replicas; do echo "  kubectl -n {{ ns }} scale ${r%=*} --replicas=${r##*=}" >&2; done
+        echo "  flux -n {{ ns }} resume kustomization $ks" >&2
+        for hr in $releases; do echo "  flux -n {{ ns }} resume helmrelease $hr" >&2; done
+    fi' EXIT
+
+    flux -n {{ ns }} suspend kustomization "$ks"
+    for hr in $releases; do flux -n {{ ns }} suspend helmrelease "$hr"; done
+    for g in $grafanas; do
+        kubectl -n {{ ns }} patch grafanas.grafana.integreatly.org "$g" --type merge -p '{"spec":{"suspend":true}}'
+    done
+    for s in $scalers; do
+        kubectl -n {{ ns }} annotate scaledobjects.keda.sh "$s" autoscaling.keda.sh/paused=true --overwrite
+        kubectl -n {{ ns }} wait "scaledobjects.keda.sh/$s" --for=condition=Paused --timeout=60s
+    done
+    for w in $workloads; do kubectl -n {{ ns }} scale "$w" --replicas=0; done
+    until [[ -z "$(kubectl -n {{ ns }} get pods -o json | jq -r --arg c '{{ app }}' '.items[] | select(any(.spec.volumes[]?; .persistentVolumeClaim.claimName == $c)) | .metadata.name')" ]]; do
         just log info "Waiting for pods using the PVC to stop..." "app" "{{ app }}"
         sleep 5
     done
+
+    trigger="restore-{{ previous }}-$(date +%s)"
     kubectl -n {{ ns }} get replicationdestination {{ app }}-dst -o json \
-        | jq 'del(.status)
+        | jq --arg trigger "$trigger" 'del(.status)
             | .metadata = {name: "{{ app }}-manual", namespace: .metadata.namespace}
-            | .spec.trigger.manual = "restore-{{ previous }}-" + (now | tostring)
+            | .spec.trigger.manual = $trigger
             | .spec.kopia.copyMethod = "Direct"
             | .spec.kopia.destinationPVC = "{{ app }}"
             | .spec.kopia.previous = {{ previous }}' \
         | kubectl apply --server-side -f -
-    kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=create --timeout=120s
-    kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=condition=complete --timeout=120m
+    # VolSync deletes the job as soon as it finishes, so wait on the ReplicationDestination.
+    kubectl -n {{ ns }} wait replicationdestination/{{ app }}-manual \
+        --for=jsonpath='{.status.lastManualSync}'="$trigger" --timeout=120m
     kubectl -n {{ ns }} delete replicationdestination {{ app }}-manual
-    flux -n {{ ns }} resume kustomization {{ app }}
-    flux -n {{ ns }} resume helmrelease {{ app }}
-    flux -n {{ ns }} reconcile helmrelease {{ app }} --force
+
+    # A zero is left to Helm, KEDA or the operator, it can come from an earlier failed run.
+    for r in $replicas; do
+        if [[ "${r##*=}" != 0 ]]; then kubectl -n {{ ns }} scale "${r%=*}" --replicas="${r##*=}"; fi
+    done
+    for g in $grafanas; do
+        kubectl -n {{ ns }} patch grafanas.grafana.integreatly.org "$g" --type merge -p '{"spec":{"suspend":null}}'
+    done
+    for s in $scalers; do kubectl -n {{ ns }} annotate scaledobjects.keda.sh "$s" autoscaling.keda.sh/paused-; done
+    flux -n {{ ns }} resume kustomization "$ks"
+    for hr in $releases; do
+        flux -n {{ ns }} resume helmrelease "$hr"
+        flux -n {{ ns }} reconcile helmrelease "$hr" --force
+    done

@@ -36,9 +36,11 @@ kubectl get cronjob -A
 just kube snapshot media plex
 ```
 
-A manual trigger pauses the hourly schedule until Flux removes it. Remove it straight away with:
+The recipe removes its manual trigger afterwards, so the hourly schedule continues. If it was killed, check for
+a leftover trigger, which pauses the schedule, and reconcile the app's Kustomization to remove it:
 
 ```bash
+kubectl -n media get replicationsource plex -o jsonpath='{.spec.trigger}'
 flux -n media reconcile kustomization plex
 ```
 
