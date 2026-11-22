@@ -47,7 +47,7 @@ spec:
               # Digest-pinned: Spegel serves the mutable `latest` tag from peer
               # cache, so a bare `latest` won't pull new builds. Renovate bumps
               # the digest on each new image.
-              tag: latest@sha256:c07ca5f9997788c0b0547f2ee738ada14e8bf024e3926797db4830ae0a92cf5c
+              tag: latest@sha256:5e5ccde281f43375f9746fef779e61067138ee04d07b449b10d9b577ec0e9cfc
             env: &dbEnv
               DB_HOST:
                 valueFrom:
@@ -75,7 +75,7 @@ spec:
               # Digest-pinned: Spegel serves the mutable `latest` tag from peer
               # cache, so a bare `latest` won't pull new builds. Renovate bumps
               # the digest on each new image.
-              tag: latest@sha256:574974fe722f44e030d3fbac13e29b14e4517c64212ad0a8c6b67e22e2a7ea09
+              tag: latest@sha256:385d42c11fa1631b9f2ec106923f65f883be4eccf67b2f228b6f34a4810a1f9e
             env:
               <<: *dbEnv
               TZ: America/New_York
@@ -165,7 +165,7 @@ spec:
               # Digest-pinned: Spegel serves the mutable `latest` tag from peer
               # cache, so a bare `latest` won't pull new builds. Renovate bumps
               # the digest on each new image.
-              tag: latest@sha256:c24e01d4f6be710cf00ee83cc195595163aefb500fdef2e29e60efbe0b5f60fc
+              tag: latest@sha256:3ed20e8ebfda4823bad6edc9a5d99b0455c3b0cba0d35646a1fba0765dd421f8
             # TASKVIEW_API_URL is deliberately unset: the image's entrypoint
             # would write config.js into the (read-only) web root. The same
             # file is mounted from the ConfigMap below instead.
