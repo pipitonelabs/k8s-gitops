@@ -9,6 +9,7 @@ resources:
   - ./blueprint-budget.yaml
   - ./blueprint-core.yaml
   - ./blueprint-apps.yaml
+  - ./ciliumnetworkpolicy.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./httproute.yaml
