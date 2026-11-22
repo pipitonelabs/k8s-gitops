@@ -86,9 +86,7 @@ Expect this order:
 
 `dependency not ready` means something earlier failed: fix the first item in the chain.
 
-> [!WARNING]
-> Do not run `just kube prune-pods` during a rebuild. It deletes every `Pending` pod, including those waiting
-> on restores.
+Pods stay `Pending` while their volumes restore. Leave them alone.
 
 ## Register the webhook
 

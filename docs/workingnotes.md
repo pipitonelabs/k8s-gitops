@@ -42,7 +42,7 @@ kubectl -n NAMESPACE get events --sort-by=.metadata.creationTimestamp
 |---|---|
 | PVC `Pending` after a rebuild | Its restore is running, or Ceph is not ready |
 | A recreated PVC has old or empty data | [Refresh the restore image](restore-volumes.md#recreate-a-pvc-on-a-running-cluster) |
-| Hourly backups stopped after a manual one | [Remove the manual trigger](backups.md#snapshot-a-volume-now) |
+| Hourly backups stopped after a manual one | [Check for a leftover trigger](backups.md#snapshot-a-volume-now) |
 | Apps scaled to zero | The NFS scaler cannot see the NAS |
 | A drain never finishes | [Move the PostgreSQL primaries](talos-operations.md#drain-a-node) |
 | tuppr will not upgrade | Ceph is not `HEALTH_OK`, or a backup is running |
