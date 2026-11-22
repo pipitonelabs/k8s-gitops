@@ -7,6 +7,7 @@ metadata:
   namespace: security
   annotations:
     gatus.home-operations.com/endpoint: |-
+      url: https://sso.pipitonelabs.com/
       group: security
 spec:
   hostnames: ["sso.pipitonelabs.com"]
