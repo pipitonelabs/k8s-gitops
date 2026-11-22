@@ -57,10 +57,8 @@ version=$(yq '.spec.talos.version' kubernetes/apps/system-upgrade/tuppr/upgrades
 just talos download-image "$version"            # MS-01 only, w2 has its own image
 
 # Boot all nodes from their installers first.
-mv talos/nodes/proxmox ../proxmox-nodes-parked  # these VMs do not exist
 just talos generate-talosconfig
 just bootstrap talos
-mv ../proxmox-nodes-parked talos/nodes/proxmox
 just bootstrap apps
 
 flux get ks -A

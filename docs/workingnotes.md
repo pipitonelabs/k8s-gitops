@@ -22,7 +22,7 @@ kubectl -n NAMESPACE get events --sort-by=.metadata.creationTimestamp
 | `network is unreachable` with an IPv6 address | A node name resolved to IPv6. Use `-e IP -n IP` |
 | `op inject` fails | Sign in again and check the reference exists |
 | A schematic request fails | The workstation cannot reach `factory.talos.dev` |
-| Talos bootstrap fails at `.13` | [Park the Proxmox node files](bootstrap-talos.md#1-set-aside-nodes-that-do-not-exist) |
+| Talos bootstrap skipped a worker | [Check it is reachable, then run it again](bootstrap-talos.md#1-check-which-nodes-exist) |
 | Waiting for kube-apiserver forever | Run `talosctl -n 192.168.10.10 service etcd` |
 | helmfile times out | Check Cilium, registry access, and missing CRDs |
 
