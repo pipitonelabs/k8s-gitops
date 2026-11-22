@@ -2,6 +2,8 @@ metadata_dir = "/meta"
 data_dir = "/data"
 db_engine = "lmdb"
 metadata_auto_snapshot_interval = "6h"
+# Without this LMDB never syncs, and a crash or a volume snapshot can capture a corrupt database
+metadata_fsync = true
 
 replication_factor = 1
 compression_level = 2

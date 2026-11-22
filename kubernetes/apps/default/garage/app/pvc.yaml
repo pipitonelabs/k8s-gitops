@@ -4,8 +4,16 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: garage-meta
+  labels:
+    # dataSourceRef is immutable, so Flux only creates this PVC and never patches it. On a new cluster it
+    # restores from VolSync. To resize it, patch the live PVC as well as this file.
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
 spec:
   accessModes: ["ReadWriteOnce"]
+  dataSourceRef:
+    kind: ReplicationDestination
+    apiGroup: volsync.backube
+    name: garage-meta-dst
   resources:
     requests:
       storage: 5Gi
