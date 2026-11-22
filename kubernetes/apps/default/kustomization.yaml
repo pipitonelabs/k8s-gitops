@@ -15,3 +15,4 @@ resources:
   - ./graph-mock/ks.yaml
   - ./forgejo/ks.yaml
   - ./taskview/ks.yaml
+  - ./zensical/ks.yaml
