@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./helmrelease.yaml
+configMapGenerator:
+  - name: zensical-config
+    files:
+      - ./resources/zensical.toml
+      - ./resources/nginx.conf
+  # Every page must be listed here. A ConfigMap is flat and capped at 1MiB.
+  - name: zensical-docs
+    files:
+      - ./resources/docs/index.md
+      - ./resources/docs/writing-pages.md
+generatorOptions:
+  disableNameSuffixHash: true
