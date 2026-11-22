@@ -75,6 +75,8 @@ spec:
         - namespace: networking
           podName: sing-box-*
           program: sing-box
+          # Container log paths are symlinks; inotify cannot detect their rotation
+          poll_without_inotify: true
       env:
         - name: PARSERS
           value: "crowdsecurity/cri-logs crowdsecurity/whitelists"
