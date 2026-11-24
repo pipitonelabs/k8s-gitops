@@ -31,6 +31,17 @@ can show another port's MAC and get another IP. The bootstrap needs each node at
 - [ ] The router has a [BGP neighbor](bgp-config.conf) for `.10`, `.11`, `.12`, and `.15`
 - [ ] Nodes can reach GitHub, the container registries, and `factory.talos.dev`
 
+## Port forwards
+
+The gateway forwards these from the WAN. They are set by hand in UniFi and are not stored in Git.
+
+| Name | WAN port | Forwards to | Needed by |
+|---|---|---|---|
+| `sing-box` | TCP `443` | `192.168.20.82:443` | Remote [sing-box](https://sing-box.sagernet.org/) clients |
+
+- [ ] The `sing-box` rule exists, is enabled, and points at the IP pinned in
+  `kubernetes/apps/networking/sing-box/app/helmrelease.yaml`
+
 ## NFS
 
 - [ ] `superheavy.internal` resolves and answers

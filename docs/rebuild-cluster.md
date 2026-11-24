@@ -13,7 +13,7 @@ The path from empty machines to a running cluster with its data. Follow the page
 |---|---|---|
 | 1 | [Protect the backups](before-you-wipe.md) | Backups are fresh, copied, and paused |
 | 2 | [Set up a workstation](workstation.md) | Tools work and you are signed in |
-| 3 | [Prepare the network](network-prerequisites.md) | DHCP, switches, DNS, BGP, and NFS are ready |
+| 3 | [Prepare the network](network-prerequisites.md) | DHCP, switches, DNS, BGP, port forwards, and NFS are ready |
 | 4 | [Install Talos Linux](install-talos.md) | All four nodes are in maintenance mode |
 | 5 | [Bootstrap Talos](bootstrap-talos.md) | The API answers and nodes are `NotReady` |
 | 6 | [Bootstrap apps](bootstrap-apps.md) | Nodes are `Ready` and Flux is reconciling |
