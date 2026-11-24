@@ -13,7 +13,7 @@ This project uses [just](https://just.systems) for automation (Taskfile was repl
 **Kubernetes Operations (`just kube`):**
 ```bash
 just kube sync es                    # Force-sync all ExternalSecrets (also: hr, ks, gitrepo, ocirepo)
-just kube prune-pods                 # Delete Failed/Pending/Succeeded pods
+just kube prune-pods                 # Delete Failed/Succeeded pods
 just kube browse-pvc NS CLAIM        # Mount a PVC in a throwaway pod
 just kube debug-node NODE            # Privileged shell on a node
 ```
@@ -53,7 +53,7 @@ just bootstrap cluster  # Both stages
 - `bootstrap/` - Initial cluster bootstrap (helmfile.d with CRDs and apps)
 - `terraform/` - Infrastructure as Code for non-K8s resources
 - `.justfile` + `*/mod.just` - `just` automation (modules: bootstrap, kube, talos, workstation in `.workstation/`)
-- `docs/` - Rebuild runbooks (rebuild-cluster, bootstrap-talos, bootstrap-apps)
+- `docs/` - All documentation (start at `docs/index.md`); also the source of docs.pipitonelabs.com, so list new pages in `docs/kustomization.yaml` and the Zensical nav
 
 ### Core Stack
 - **OS**: Talos Linux (immutable, minimal)
@@ -62,7 +62,7 @@ just bootstrap cluster  # Both stages
 - **Ingress**: Envoy Gateway
 - **Storage**: Rook/Ceph (block), NFS (file)
 - **Secrets**: External Secrets Operator with 1Password
-- **Backups**: VolSync with Restic
+- **Backups**: VolSync with Kopia
 - **DNS**: External DNS (dual: UniFi private, Cloudflare public)
 
 ### Manifest Patterns
@@ -93,7 +93,6 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 spec:
   components:
-    - ../../../../components/namespace
     - ../../../../components/volsync
   postBuild:
     substitute:
@@ -102,23 +101,22 @@ spec:
 
 ### Secret Management
 
-Secrets use 1Password via ExternalSecrets with `op://` URI syntax:
+Secrets use 1Password via ExternalSecrets (`op://` URIs are only for `talos/` and `bootstrap/` templates):
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 spec:
   secretStoreRef:
     kind: ClusterSecretStore
-    name: onepassword-connect
-  data:
-    - secretKey: key-name
-      remoteRef:
-        key: op://vault/item/field
+    name: onepassword
+  dataFrom:
+    - extract:
+        key: item-name
 ```
 
 ## CI/CD
 
-- **flux-local.yaml** - Validates manifests on PRs using `flux-local test`
+- **ci.yaml** - Validates manifests on PRs using `flate test`, posts the diff, pre-pulls images, runs zizmor
 - **Renovate** - Automated dependency updates with auto-merge for trusted sources
 - Changes merged to `main` are automatically synced by Flux (1h interval)
 
