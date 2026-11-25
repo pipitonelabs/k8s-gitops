@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/ozark-connect/network-optimizer
-              tag: 2.11.6@sha256:bfd0131286aae84446e1ca087525d81232199e20c4a2b249bd10cd6e73632c98
+              tag: 2.11.7@sha256:fc67447b6041a2cd6c51e6a437933056e0be0c1040a70c84d92c67fabab51376
             env: &env
               TZ: America/New_York
               REVERSE_PROXIED_HOST_NAME: optimizer.pipitonelabs.com
