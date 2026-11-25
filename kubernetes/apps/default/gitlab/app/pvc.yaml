@@ -1,0 +1,12 @@
+---
+# Holds /etc/gitlab (config + gitlab-secrets.json) and /var/opt/gitlab (repos, bundled postgres/redis)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: ceph-block

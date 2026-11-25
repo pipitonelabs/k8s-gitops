@@ -1,0 +1,152 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  interval: 1h
+  values:
+    controllers:
+      gitlab:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: gitlab/gitlab-ce
+              tag: 19.6.2-ce.0@sha256:926ff73d53698c1e3724e65a8be5cc980bd18104f87db6d8d461c6f7a84d7bba
+            env:
+              TZ: America/New_York
+              # Single-container sandbox: bundled postgres/redis, TLS terminated at envoy
+              GITLAB_OMNIBUS_CONFIG: |
+                external_url 'https://gitlab.pipitonelabs.com'
+                letsencrypt['enable'] = false
+                nginx['listen_port'] = 80
+                nginx['listen_https'] = false
+                nginx['proxy_set_headers'] = { 'X-Forwarded-Proto' => 'https', 'X-Forwarded-Ssl' => 'on' }
+                gitlab_rails['trusted_proxies'] = ['10.244.0.0/16']
+                gitlab_rails['monitoring_whitelist'] = ['127.0.0.0/8', '10.244.0.0/16', '192.168.10.0/24']
+                gitlab_rails['gitlab_ssh_host'] = 'ssh.gitlab.pipitonelabs.com'
+                gitlab_rails['gitlab_shell_ssh_port'] = 22
+                gitlab_rails['time_zone'] = 'America/New_York'
+                gitlab_rails['usage_ping_enabled'] = false
+                # Not needed for a sandbox
+                prometheus_monitoring['enable'] = false
+                registry['enable'] = false
+                gitlab_rails['registry_enabled'] = false
+                gitlab_pages['enable'] = false
+                gitlab_kas['enable'] = false
+                # Memory-constrained tuning
+                puma['worker_processes'] = 2
+                sidekiq['concurrency'] = 10
+                gitlab_rails['env'] = { 'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000' }
+                gitaly['env'] = { 'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000' }
+            envFrom:
+              - secretRef:
+                  name: gitlab-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /-/liveness
+                    port: &port 80
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /-/readiness
+                    port: *port
+                  periodSeconds: 15
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              # First boot runs reconfigure + migrations (~5-10 min)
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /-/liveness
+                    port: *port
+                  periodSeconds: 15
+                  timeoutSeconds: 10
+                  failureThreshold: 80
+            resources:
+              requests:
+                cpu: 500m
+                memory: 3Gi
+              limits:
+                memory: 6Gi
+    persistence:
+      data:
+        existingClaim: gitlab
+        advancedMounts:
+          gitlab:
+            app:
+              - path: /etc/gitlab
+                subPath: config
+              - path: /var/opt/gitlab
+                subPath: data
+      logs:
+        type: emptyDir
+        advancedMounts:
+          gitlab:
+            app:
+              - path: /var/log/gitlab
+      shm:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 256Mi
+        advancedMounts:
+          gitlab:
+            app:
+              - path: /dev/shm
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            url: https://gitlab.pipitonelabs.com/-/health
+            group: default
+        hostnames:
+          - gitlab.pipitonelabs.com
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    service:
+      app:
+        controller: gitlab
+        primary: true
+        ports:
+          http:
+            port: *port
+      ssh:
+        type: LoadBalancer
+        controller: gitlab
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: ssh.gitlab.pipitonelabs.com
+          lbipam.cilium.io/ips: 192.168.20.88
+        ports:
+          ssh:
+            port: 22
