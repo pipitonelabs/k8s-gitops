@@ -14,5 +14,6 @@ resources:
   - ./nginx/ks.yaml
   - ./graph-mock/ks.yaml
   - ./forgejo/ks.yaml
+  - ./gitlab/ks.yaml
   - ./taskview/ks.yaml
   - ./zensical/ks.yaml
