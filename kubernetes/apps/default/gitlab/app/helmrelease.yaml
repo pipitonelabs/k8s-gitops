@@ -43,10 +43,13 @@ spec:
                 gitlab_rails['gitlab_shell_ssh_port'] = 22
                 gitlab_rails['time_zone'] = 'America/New_York'
                 gitlab_rails['usage_ping_enabled'] = false
+                # Container registry, images stored on the PVC; TLS terminated at envoy
+                registry_external_url 'https://gitlab-registry.pipitonelabs.com'
+                registry_nginx['listen_port'] = 5050
+                registry_nginx['listen_https'] = false
+                registry_nginx['proxy_set_headers'] = { 'X-Forwarded-Proto' => 'https', 'X-Forwarded-Ssl' => 'on' }
                 # Not needed for a sandbox
                 prometheus_monitoring['enable'] = false
-                registry['enable'] = false
-                gitlab_rails['registry_enabled'] = false
                 gitlab_pages['enable'] = false
                 gitlab_kas['enable'] = false
                 # Memory-constrained tuning
@@ -121,6 +124,8 @@ spec:
               - path: /dev/shm
     route:
       app:
+        # Keep the original route name (BackendTrafficPolicy target) now that there are two routes
+        forceRename: gitlab
         annotations:
           gatus.home-operations.com/endpoint: |-
             url: https://gitlab.pipitonelabs.com/-/health
@@ -134,6 +139,21 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+      registry:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            url: https://gitlab-registry.pipitonelabs.com/v2/
+            group: default
+            conditions: ["[STATUS] == 401"]
+        hostnames:
+          - gitlab-registry.pipitonelabs.com
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: &registryPort 5050
     service:
       app:
         controller: gitlab
@@ -141,6 +161,8 @@ spec:
         ports:
           http:
             port: *port
+          registry:
+            port: *registryPort
       ssh:
         type: LoadBalancer
         controller: gitlab
