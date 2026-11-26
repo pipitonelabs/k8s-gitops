@@ -62,6 +62,18 @@ spec:
             service_memory_limit = "1Gi"
             [runners.kubernetes.pod_labels]
               "gitlab-runner/job" = "true"
+            # Talos applies RuntimeDefault seccomp to every pod, which blocks the user
+            # namespace rootless BuildKit needs. Jobs stay non-root and unprivileged.
+            [[runners.kubernetes.pod_spec]]
+              name = "seccomp-unconfined"
+              patch_type = "strategic"
+              patch = '''
+                securityContext:
+                  seccompProfile:
+                    type: Unconfined
+              '''
+          [runners.feature_flags]
+            FF_USE_ADVANCED_POD_SPEC_CONFIGURATION = true
     resources:
       requests:
         cpu: 10m
