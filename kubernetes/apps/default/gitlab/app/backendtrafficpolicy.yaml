@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json
-# Git push/clone over HTTP can outlive the 60s gateway default
+# Git push/clone over HTTP and image layer pushes can outlive the 60s gateway default
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
@@ -11,6 +11,9 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: gitlab
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: gitlab-registry
   timeout:
     http:
       requestTimeout: 0s
