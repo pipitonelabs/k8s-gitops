@@ -114,14 +114,19 @@ spec:
                   export RCLONE_CONFIG_GARAGE_ACCESS_KEY_ID="$GARAGE_ACCESS_KEY_ID"
                   export RCLONE_CONFIG_GARAGE_SECRET_ACCESS_KEY="$GARAGE_SECRET_ACCESS_KEY"
 
+                  # $3 = --max-delete guard (default 50) against mirroring a wiped source
                   sync() {
                     echo "==> $1 -> $2"
-                    rclone sync "$1" "$2" --max-delete 50 --fast-list --transfers 4 --stats-one-line -v
+                    rclone sync "$1" "$2" --max-delete "${3:-50}" --fast-list --transfers 4 --stats-one-line -v
                   }
 
                   sync /data/apps/postgres secure:postgres
                   sync /data/apps/etcd secure:etcd
-                  for bucket in cloudnative-pg tradeforge-pg outline-pg outline reactive-resume; do
+                  # Barman 30d retention can prune thousands of WAL files in one night
+                  for bucket in cloudnative-pg tradeforge-pg outline-pg; do
+                    sync "garage:$bucket" "secure:garage/$bucket" 5000
+                  done
+                  for bucket in outline reactive-resume; do
                     sync "garage:$bucket" "secure:garage/$bucket"
                   done
               env:
