@@ -21,7 +21,7 @@ spec:
           build:
             image:
               repository: docker.io/zensical/zensical
-              tag: 0.1.3@sha256:aee7a7e5506608ae9b9d7c3377265d6d5265c276ece23c2a5674ac24071e768f
+              tag: 0.1.4@sha256:864dd487a93dc06ff911a5ae600d255a0ad1251e8facad84382130ae28509b4d
             command:
               - /bin/sh
               - -ec
